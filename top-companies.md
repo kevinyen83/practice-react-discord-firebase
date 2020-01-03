@@ -2,8 +2,7 @@
 | ---- | ---- | -------- | --------------------- | -------------------- | --------- | ------- | --- |
 | 1 | Walmart | Retail | $514,405 | Increase $6,670 | 2,200,000 | United States | United States	[5] |
 | 2 | Sinopec | Oil and gas | $414,649 | Increase $5,845 | 619,151 | China | China [6] |
-3	Royal Dutch Shell	Oil and gas	$396,556	Increase $23,352	81,000	Netherlands Netherlands /
-United Kingdom United Kingdom	[7]
+| 3 | Royal Dutch Shell | Oil and gas | $396,556 | Increase $23,352 | 81,000 | Netherlands | Netherlands United Kingdom United Kingdom	[7] |
 4	China National Petroleum	Oil and gas	$392,976	Increase $2,270	1,382,401	China China	[8]
 5	State Grid	Electricity	$387,056	Increase $8,174	917,717	China China	[9]
 6	Saudi Aramco	Oil and gas	$355,905	Increase $110,974	76,418	Saudi Arabia Saudi Arabia	[10]
