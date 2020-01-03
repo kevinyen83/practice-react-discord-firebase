@@ -7,7 +7,7 @@
 | 5 | State Grid | Electricity | $387,056 | Increase $8,174 | 917,717 | China | China [9] |
 | 6 | Saudi Aramco | Oil and gas | $355,905 | Increase $110,974 | 76,418 | Saudi Arabia | Saudi Arabia [10] |
 | 7 | BP | Oil and gas | $303,738 | Increase $9,383 | 73,000 | United Kingdom | United Kingdom [11] |
-8	ExxonMobil	Oil and gas	$290,212	Increase $20,840	71,000	United States United States	[12]
+XDXDXDXDXDXDXDXDXD
 9	Volkswagen	Automotive	$278,341	Increase $14,332	664,496	Germany Germany	[13]
 10	Toyota	Automotive	$272,612	Increase $16,982	370,870	Japan Japan	[14]
 11	Apple	Electronics	$265,595	Increase $59,531	132,000	United States United States	[15]
