@@ -9,7 +9,7 @@
 | 7 | BP | Oil and gas | $303,738 | Increase $9,383 | 73,000 | United Kingdom | United Kingdom [11] |
 | 8 | ExxonMobil | Oil and gas | $290,212 | Increase $20,840 | 71,000 | United States | United States [12] |
 | 9	| Volkswagen | Automotive | $278,341 | Increase $14,332 | 664,496 | Germany | Germany | [13] |
-| 10 | Toyota | Automotive | $272,612 | Increase $16,982 | 370,870 | Japan | Japan | [14] |
+| 10 | Toyota | Automotive | $272,123 | Increase $16,982 | 370,870 | Japan | Japan | [14] |
 11	Apple	Electronics	$265,595	Increase $59,531	132,000	United States United States	[15]
 12	Berkshire Hathaway	Conglomerate	$247,837	Increase $4,021	389,000	United States United States	[16]
 13	Amazon	Retail	$232,887	Increase $10,073	647,000	United States United States	[17]
