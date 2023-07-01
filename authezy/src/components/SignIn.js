@@ -20,11 +20,11 @@ const SignIn = () => {
     };
 
     const loginInWithDiscord = () => {
-        window.location.href = "https://us-central1-authezy-1fe38.cloudfunctions.net/api";
-        };
+        window.location.href = "https://us-central1-authezy-1fe38.cloudfunctions.net/api/login";
+    };
 
 
-  return (
+    return (
     <div className="sign-in-container">
         <button className="login-button" onClick={loginInWithDiscord}>
             <span>
