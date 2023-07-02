@@ -5,19 +5,19 @@ import logo from '/Users/net/authezy/src/assets/discord-icon.png'
 
 
 const SignIn = () => {
-    const [email, setEmail] = useState("");
-    const [password, setPassword] = useState("");
+    // const [email, setEmail] = useState("");
+    // const [password, setPassword] = useState("");
 
-    const signIn = (e) => {
-        e.preventDefault();
-        signInWithEmailAndPassword(auth, email, password)
-        .then((userCredential) => {
-            console.log(userCredential);
-        })
-        .catch((error) => {
-            console.log(error);
-        });
-    };
+    // const signIn = (e) => {
+    //     e.preventDefault();
+    //     signInWithEmailAndPassword(auth, email, password)
+    //     .then((userCredential) => {
+    //         console.log(userCredential);
+    //     })
+    //     .catch((error) => {
+    //         console.log(error);
+    //     });
+    // };
 
     const loginInWithDiscord = () => {
         window.location.href = "https://us-central1-authezy-1fe38.cloudfunctions.net/api/login";
@@ -33,7 +33,7 @@ const SignIn = () => {
             <span className="login-button-text">Login with Discord</span>
         </button>
 
-      <form onSubmit={signIn}>
+      {/* <form onSubmit={signIn}>
         <h1>Log In to your Account</h1>
         <input
           type="email"
@@ -48,7 +48,7 @@ const SignIn = () => {
           onChange={(e) => setPassword(e.target.value)}
         ></input>
         <button type="submit">Log In</button>
-      </form>
+      </form> */}
     </div>
   );
 };
