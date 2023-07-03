@@ -11,7 +11,7 @@ function NavbarPage() {
   return (
     <Navbar expand="xxl" className="bg-body-tertiary" bg="dark" data-bs-theme="dark">
       <Container fluid>
-        <Navbar.Brand onClick={handleReload}>DOLBY.IO</Navbar.Brand>
+        <Navbar.Brand onClick={handleReload}>SAVE ORDER</Navbar.Brand>
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
         <Navbar.Collapse id="basic-navbar-nav">
           <Nav className="me-auto">
