@@ -37,14 +37,6 @@
   }
 }
 
-.bg_colour_a {
-    /* background-color: aquamarine; */
-}
-
-.bg_colour_b {
-    /* background-color: yellowgreen; */
-}
-
 .main_card_container {
     display: grid;
     grid-template-columns: repeat(4, 1fr); /* Adjust the number of columns based on your requirement */
@@ -55,5 +47,4 @@
   
   .main_card_container_transcription {
     overflow: hidden;
-
   }  
