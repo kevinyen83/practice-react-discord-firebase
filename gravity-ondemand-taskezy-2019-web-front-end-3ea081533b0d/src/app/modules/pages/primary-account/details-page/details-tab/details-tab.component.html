@@ -1,0 +1,273 @@
+<div
+  class="bg-white p-8 rounded-3xl"
+  *ngIf="!viewSpinner">
+  <!-- Alert -->
+  <fuse-alert
+    class="mb-5"
+    *ngIf="showAlert"
+    [appearance]="'outline'"
+    [showIcon]="false"
+    [type]="alert.type"
+    [dismissible]="true"
+    [@shake]="alert.type === 'error'">
+    {{ alert.message }}
+  </fuse-alert>
+  <!-- <div class="flex flex-row items-center justify-end">
+    <div *ngIf="editing">
+      <button
+        mat-stroked-button
+        color="primary"
+        class="rounded-[33px] mr-2"
+        (click)="cancelEdit()">
+        Back
+      </button>
+
+      <button
+        mat-raised-button
+        color="primary"
+        [disabled]="detailsForm.invalid"
+        class="add-venue-button rounded-[33px]"
+        id="save-details-button"
+        (click)="saveDetails()">
+        SAVE
+      </button>
+    </div>
+
+    <div *ngIf="!editing">
+      <button
+        mat-raised-button
+        color="primary"
+        class="edit-venue-button rounded-[33px]"
+        (click)="editDetails()">
+        Edit
+      </button>
+    </div>
+  </div> -->
+  <div class="flex flex-col p-6 md:justify-between">
+    <form
+      class="w-full flex lg:flex md:flex-col sm:flex-col justify-between"
+      [formGroup]="detailsForm"
+      *ngIf="!viewSpinner">
+      <div
+        class="flex md:order-2 sm:order-2 lg:flex-col md:flex-col sm:flex-col 2xl:w-2/3 xl:w-2/3 lg:w-full md:w-full sm:w-full">
+        <div
+          class="col1 xl:mr-2 2xl:mr-3 xl:w-1/2 2xl:w-1/2 lg:w-full md:w-full sm:w-full md:order-2 sm:order-2 flex flex-col">
+          <div
+            class="flex flex-col justify-start"
+            *ngIf="abnInfo?.abn !== ''">
+            <div class="flex flex-col justify-start items-start" data-cy="abn-field">
+              <div class="text-zinc-400">ABN</div>
+              <div
+                data-cy="abn-input"
+                class="text-lg text-neutral-800">
+                {{ abnInfo.abn }}
+              </div>
+            </div>
+            <div class="mt-5 flex flex-col justify-start items-start">
+              <div class="text-zinc-400">Name</div>
+              <div
+                data-cy="name-input"
+                class="text-lg text-neutral-800">
+                {{ abnInfo.name }}
+              </div>
+            </div>
+            <div class="mt-5 flex flex-col justify-start items-start">
+              <div class="text-zinc-400">Trading Name</div>
+              <div
+                data-cy="trading-name-input"
+                class="text-lg text-neutral-800">
+                {{ abnInfo?.tradingname }}
+              </div>
+            </div>
+            <div class="mt-5 mb-5 flex flex-col justify-start items-start">
+              <div class="text-zinc-400">Entity Type</div>
+              <div
+                data-cy="entity-type-input"
+                class="text-lg text-neutral-800">
+                {{ abnInfo.entitytype }}
+              </div>
+            </div>
+          </div>
+        </div>
+        <div
+          class="flex lg:w-full md:w-full sm:w-full md:order-3 sm:order-3 col2 2xl:w-1/2 xl:w-1/2 flex-col">
+          <div
+            class="flex flex-col justify-start items-start"
+            *ngIf="!editing">
+            <div class="text-zinc-400">Industry</div>
+            <div
+              data-cy="abn-input"
+              class="text-lg text-neutral-800">
+              {{ currentAccount.detail.industry || "----" }}
+            </div>
+
+            <div class="mt-5 text-zinc-400">Primary Address</div>
+            <div
+              data-cy="abn-input"
+              class="text-lg text-neutral-800">
+              {{ currentAccount.detail.primary_address }}
+            </div>
+
+            <div class="mt-5 text-zinc-400">Postal Address</div>
+            <div
+              data-cy="abn-input"
+              class="text-lg text-neutral-800">
+              {{ currentAccount.detail.postal_address }}
+            </div>
+
+            <div class="mt-5 text-zinc-400">Website</div>
+            <div
+              data-cy="abn-input"
+              class="text-lg text-neutral-800">
+              {{ currentAccount.detail.website || "----" }}
+            </div>
+
+            <div class="mt-5 text-zinc-400">Phone Number</div>
+            <div
+              data-cy="abn-input"
+              class="text-lg text-neutral-800">
+              {{ currentAccount.detail.phone }}
+            </div>
+          </div>
+          <div
+            class="flex w-full flex-col"
+            *ngIf="editing">
+            <mat-form-field class="primary-industry w-full">
+              <mat-label>Industry(Optional)</mat-label>
+              <mat-select
+                placeholder="Security"
+                formControlName="primaryIndustry">
+                <mat-option
+                data-cy="details-edit-industry"
+                  *ngFor="let opt of industryOptions"
+                  [value]="opt"
+                  >{{ opt }}</mat-option
+                >
+              </mat-select>
+            </mat-form-field>
+
+            <mat-form-field class="address">
+              <mat-label>Primary Address</mat-label>
+              <input
+                matInput
+                #addressTitlePrimary
+                data-cy="details-edit-primary"
+                name="primaryAddress"
+                (input)="userTyped($event)"
+                formControlName="primaryAddress" />
+
+              <mat-error
+                *ngIf="detailsForm.get('primaryAddress').hasError('required')">
+                This field is required
+              </mat-error>
+
+            </mat-form-field>
+            <mat-label>Billing Address</mat-label>
+            <mat-checkbox
+            color="primary"
+            formControlName="sameAddress"
+
+            (change)="selectSameAddress($event)"
+            data-cy="details-edit-checkbox"
+            >Same as the Primary address</mat-checkbox>
+
+            <mat-form-field class="address">
+
+              <input
+                matInput
+                #addressTitlePost
+                name="postAddress"
+                data-cy="details-edit-billing"
+                formControlName="postAddress"
+                [readonly]="boxTicked"
+                required />
+              <mat-error
+                *ngIf="detailsForm.get('postAddress').hasError('required')">
+                This field is required
+              </mat-error>
+            </mat-form-field>
+
+
+            <mat-form-field class="website mt-5">
+              <mat-label>Website(Optional)</mat-label>
+              <input
+                matInput
+                #website
+                name="website"
+                data-cy="details-edit-web"
+                formControlName="website" />
+
+            </mat-form-field>
+
+            <mat-form-field class="phone-number w-full"
+            >
+              <mat-label>Phone Number</mat-label>
+              <ngx-mat-intl-tel-input
+
+                [preferredCountries]="['au', 'us', 'gb']"
+                [enablePlaceholder]="true"
+                [enableSearch]="false"
+                data-cy="details-edit-phone"
+                name="phoneNumber"
+                formControlName="phoneNumber"
+                autocomplete="off"
+                format="national"
+                required
+                #phoneNumber
+                enableAutoCountrySelect="true">
+              </ngx-mat-intl-tel-input>
+              <mat-error
+                *ngIf="detailsForm.get('phoneNumber').hasError('required')">
+                This field is required
+              </mat-error>
+              <mat-error
+                *ngIf="
+                  detailsForm.get('phoneNumber').hasError('validatePhoneNumber')
+                ">
+                Invalid Number
+              </mat-error>
+            </mat-form-field>
+          </div>
+        </div>
+      </div>
+
+      <div
+        class="flex lg:w-full md:w-full sm:w-full md:order-3 sm:order-3 col2 2xl:w-1/2 xl:w-1/2 flex-col">
+        <div class="relative flex items-center mx-auto my-5">
+          <div
+            class="logo relative flex items-center w-50 h-50 bg-gray-200 rounded-full m-auto">
+            <img
+              class="photo avatar rounded-full"
+              [src]="currentAvatar || defaultAvatar" />
+            <input
+              #file
+              type="file"
+              accept="image/*"
+              (change)="uploadAvatar(file)"
+              hidden />
+            <button
+              *ngIf="editing"
+              mat-mini-fab
+              color="primary"
+              (click)="file.click()"
+              class="absolute bottom-17 -right-5">
+              <mat-icon class="text-white">camera_enhance</mat-icon>
+            </button>
+          </div>
+        </div>
+        <mat-hint class="description flex self-center text-ms p-3">
+          Please add a company logo in one of the formats .png .jpg .tiff and no
+          more 5MB in size
+        </mat-hint>
+      </div>
+    </form>
+
+  </div>
+  <!-- <div class="" *ngIf="notification">{{notification | async}}</div> -->
+</div>
+
+<div
+  class="progress-spiner w-full h-full absolute left-0 top-0 opacity-0.5"
+  *ngIf="viewSpinner">
+  <mat-spinner class="mat-spinner m-auto md:top-1/2"></mat-spinner>
+</div>

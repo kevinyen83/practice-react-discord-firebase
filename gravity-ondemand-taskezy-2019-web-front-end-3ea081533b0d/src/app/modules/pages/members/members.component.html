@@ -1,0 +1,200 @@
+<div class="flex flex-col flex-auto min-w-0">
+  <mat-drawer-container
+    class="absolute top-0 left-0 bottom-0 right-0 overflow-hidden"
+    [hasBackdrop]="true"
+  >
+    <mat-drawer-content class="flex-auto flex flex-col overflow-hidden">
+      <!--Header-->
+      <div
+        class="header text-white p-10 p-sm-24 bg-primary flex flex-row justify-between"
+      >
+        <!-- APP TITLE -->
+        <div class="text-3xl flex items-center">
+          <div class="logo-icon flex items-center mr-16">
+            <img src="assets/images/icons/web_members.svg" />
+          </div>
+          <span class="logo-text h1">Members</span>
+        </div>
+        <!-- / APP TITLE -->
+        <!--HEADER BUTTONS-->
+        <div class="flex">
+          <button
+            data-cy="invite-member"
+            class="add-invite-member"
+            mat-stroked-button
+            (click)="addInvite()"
+          >
+            <mat-icon class="text-white">add</mat-icon>Invite Member
+          </button>
+        </div>
+      </div>
+      <!--/Header-->
+
+      <div class="content p-14 h-full overflow-y-auto">
+        <div>
+          <app-invite-members-form-array
+            [currentAccount]="currentAccount"
+            [type]="'member'"
+          ></app-invite-members-form-array>
+
+          <!--Member Table-->
+          <table
+            mat-table
+            class="table-members w-full"
+            [dataSource]="membersDataSource"
+            matSort
+            (matSortChange)="sortData($event)"
+          >
+            <ng-container matColumnDef="pic">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header></th>
+              <td *matCellDef="let row">
+                <div class="w-[50px] h-[50px] rounded-full flex bg-white">
+                  <img [src]="row.imageUrl || defaultAvatar" alt="logo" />
+                </div>
+              </td>
+            </ng-container>
+            <!-- Name Column -->
+            <ng-container matColumnDef="name">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header="name">
+                Name
+              </th>
+              <td mat-cell *matCellDef="let row">
+                <div>
+                  <div>{{ row.name }}</div>
+                  <div>
+                    <mat-hint>{{ utils.getRole(row.role) }}</mat-hint>
+                  </div>
+                </div>
+              </td>
+            </ng-container>
+
+            <!-- Email Column -->
+            <ng-container matColumnDef="email">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header="email">
+                Email
+              </th>
+              <td mat-cell *matCellDef="let row">
+                {{ row.email }}
+              </td>
+            </ng-container>
+
+            <!-- Phone Column -->
+            <ng-container matColumnDef="phone">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header="phone">
+                Phone
+              </th>
+              <td mat-cell *matCellDef="let row">
+                {{ row.phone }}
+              </td>
+            </ng-container>
+
+            <!-- Role Column -->
+            <!-- <ng-container matColumnDef="role">
+              <mat-header-cell *matHeaderCellDef mat-sort-header="role">
+                Role</mat-header-cell
+              >
+              <mat-cell *matCellDef="let row">
+                {{ roles[row.role].label }}
+              </mat-cell>
+            </ng-container> -->
+
+            <!-- Department Column -->
+            <ng-container matColumnDef="department">
+              <th
+                mat-header-cell
+                *matHeaderCellDef
+                mat-sort-header="department"
+              >
+                Department
+              </th>
+              <td mat-cell *matCellDef="let row">
+                {{ row?.department }}
+              </td>
+            </ng-container>
+
+            <!-- Status Column -->
+            <ng-container matColumnDef="status">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header="status">
+                Status
+              </th>
+              <td mat-cell *matCellDef="let row">
+                <div class="flex items-center">
+                  <div
+                    class="w-3 h-3 rounded-full mr-2"
+                    [ngClass]="
+                      utils.getStatusColour(
+                        row?.status,
+                        row.date_invited != undefined,
+                        false
+                      )
+                    "
+                  ></div>
+                  <div>
+                    {{
+                      utils.getStatus(
+                        row?.status,
+                        row.date_invited != undefined,
+                        false
+                      )
+                    }}
+                  </div>
+                </div>
+              </td>
+            </ng-container>
+
+            <!-- Controls Column -->
+            <ng-container matColumnDef="controls">
+              <th mat-header-cell *matHeaderCellDef></th>
+              <td mat-cell *matCellDef="let row">
+                <!--buttons go here-->
+                <div
+                  *ngIf="row.date_invited != undefined && row.status == 0"
+                  class="flex flex-row"
+                >
+                  <button mat-icon-button (click)="resendInvite(row)">
+                    <mat-icon class="text-gray-300">autorenew</mat-icon>
+                  </button>
+                  <button mat-icon-button (click)="cancelInvite(row)">
+                    <mat-icon class="text-gray-300">delete</mat-icon>
+                  </button>
+                </div>
+              </td>
+            </ng-container>
+
+            <tr
+              class="bg-slate-100"
+              mat-header-row
+              *matHeaderRowDef="membersDisplayedColumns"
+            ></tr>
+            <tr
+              mat-row
+              class="hover:bg-gray-100 p-2"
+              [ngClass]="{ 'cursor-pointer': !row.date_invited }"
+              (click)="showMember(row)"
+              *matRowDef="
+                let row;
+                columns: membersDisplayedColumns;
+                let index = index
+              "
+            ></tr>
+          </table>
+        </div>
+      </div>
+    </mat-drawer-content>
+  </mat-drawer-container>
+
+  <mat-drawer
+    class="sm:w-full md:w-3/5 lg:w-3/5 xl:w-3/5 2xl:w-3/5 dark:bg-primary"
+    [autoFocus]="false"
+    [mode]="'over'"
+    [position]="'end'"
+    #matDrawerShowMember
+  >
+    <app-resource-details
+      *ngIf="viewMember"
+      [type]="'member'"
+      [currentResource]="currentMember"
+      (close)="matDrawerShowMember.toggle()"
+    ></app-resource-details>
+  </mat-drawer>
+</div>

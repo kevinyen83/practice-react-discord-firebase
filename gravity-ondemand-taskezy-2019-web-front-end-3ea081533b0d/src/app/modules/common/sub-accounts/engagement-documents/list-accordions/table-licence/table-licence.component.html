@@ -1,0 +1,56 @@
+<table mat-table [dataSource]="dataSourceLicence" class="source-licence w-full">
+  <!-- Type Column -->
+  <ng-container matColumnDef="type">
+    <th mat-header-cell *matHeaderCellDef class="text-left">Type</th>
+    <td mat-cell *matCellDef="let element" class="pr-12">
+      {{ element?.type }}
+    </td>
+  </ng-container>
+
+  <!-- Name and Description Column -->
+  <ng-container matColumnDef="name and description">
+    <th mat-header-cell *matHeaderCellDef>Name and Description</th>
+    <td mat-cell *matCellDef="let element" class="pr-12">
+      {{ element?.name }}
+    </td>
+  </ng-container>
+
+  <!-- Timing of Requirements Column -->
+  <ng-container matColumnDef="timing of requirements">
+    <th mat-header-cell *matHeaderCellDef>Timing of Requirements</th>
+    <td mat-cell *matCellDef="let element" class="pr-20">
+      {{ element?.timing_requirement }}
+    </td>
+  </ng-container>
+
+  <!-- Source Column -->
+<!--  <ng-container matColumnDef="source">-->
+<!--    <th mat-header-cell *matHeaderCellDef>Source</th>-->
+<!--    <td mat-cell *matCellDef="let element">-->
+<!--      {{ element?.source }}-->
+<!--    </td>-->
+<!--  </ng-container>-->
+
+  <!-- More Column -->
+<!--  <ng-container matColumnDef="more">-->
+<!--    <th mat-header-cell *matHeaderCellDef></th>-->
+<!--    <td mat-cell *matCellDef="let element">-->
+<!--      <div>-->
+<!--        <button class="more-button" mat-icon-button [matMenuTriggerFor]="menu">-->
+<!--          <mat-icon>more_vert</mat-icon>-->
+<!--        </button>-->
+<!--        <mat-menu #menu="matMenu">-->
+<!--          <button data-testid="menu-edit" mat-menu-item (click)="edit(element)">Edit</button>-->
+<!--          <button data-testid="menu-remove" mat-menu-item (click)="remove(element)">Remove</button>-->
+<!--        </mat-menu>-->
+<!--      </div>-->
+<!--    </td>-->
+<!--  </ng-container>-->
+
+  <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+  <tr
+    mat-row
+    class="hover:bg-gray-100"
+    *matRowDef="let row; columns: displayedColumns"
+  ></tr>
+</table>

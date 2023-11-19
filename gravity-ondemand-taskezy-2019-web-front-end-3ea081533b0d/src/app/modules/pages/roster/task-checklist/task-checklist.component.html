@@ -1,0 +1,183 @@
+<div class="task-checklist">
+  <mat-toolbar class="mat-accent bg-primary m-0">
+    <mat-toolbar-row class="w-full flex justify-between">
+      <div>
+        <span class="title dialog-title">Task checklist</span>
+      </div>
+      <div
+        class="close cursor-pointer mb-4"
+        title="close"
+        (click)="close()"
+        aria-label="Close dialog">
+        <mat-icon>close</mat-icon>
+      </div>
+    </mat-toolbar-row>
+  </mat-toolbar>
+
+  <div class="content p-6">
+    <div *ngIf="!viewCreateTaskChecklist">
+      <p>You can use one of the Templates or create your own Task checklist</p>
+
+      <div class="checklist mt-7">
+        <div
+          class="cursor-pointer text-primary mt-8"
+          *ngFor="let checklist of checklists; let i = index">
+          <div
+            class="flex items-center"
+            (click)="openChecklist(checklist, i)">
+            <mat-icon class="text-primary mr-4">insert_drive_file</mat-icon>
+            <p>{{ checklist["name"] }}</p>
+          </div>
+          <div
+            class="flex flex-col mt-2"
+            *ngIf="checklist.view">
+            <form
+              action=""
+              [formGroup]="detailChecklistForm">
+              <div class="flex items-center w-full">
+                <mat-form-field
+                  class="description-textarea w-full fuse-mat-textarea"
+                  appearance="fill">
+                  <textarea
+                    matInput
+                    placeholder="Task description"
+                    formControlName="description{{ i }}"></textarea>
+                </mat-form-field>
+              </div>
+
+              <mat-form-field
+                class="w-full"
+                appearance="fill">
+                <mat-select
+                  placeholder="Resources"
+                  formControlName="resources{{ i }}">
+                  <mat-option></mat-option>
+                </mat-select>
+              </mat-form-field>
+            </form>
+          </div>
+        </div>
+
+        <div
+          (click)="createTaskChecklist()"
+          class="add-checklist text-primary cursor-pointer mt-16 flex items-center">
+          <mat-icon class="text-primary mr-4">add</mat-icon>
+          <div>Create task checklist</div>
+        </div>
+      </div>
+
+      <div class="buttons mt-10 flex">
+        <button
+          mat-stroked-button
+          type="button"
+          color="accent"
+          (click)="cancel()"
+          class="w-48 mb-4 mr-4"
+          aria-label="create task">
+          Cancel
+        </button>
+
+        <button
+          mat-raised-button
+          type="button"
+          color="primary"
+          title="save checklist"
+          (click)="save()"
+          class="mb-4 w-48"
+          aria-label="release task">
+          Save
+        </button>
+      </div>
+    </div>
+
+    <div *ngIf="viewCreateTaskChecklist">
+      <p
+        class="mb-4 flex items-center cursor-pointer"
+        (click)="returnToList()">
+        <mat-icon class="mr-4 text-gray-400">keyboard_backspace</mat-icon>Create
+        new Task Checklist
+      </p>
+      <form
+        class="mt-5"
+        action=""
+        [formGroup]="taskChecklistForm">
+        <mat-form-field
+          class="w-1/3"
+          appearance="fill">
+          <input
+            matInput
+            placeholder="Task Checklist for Venue"
+            formControlName="nameChecklist" />
+        </mat-form-field>
+
+        <div
+          class="mb-2 w-2/3"
+          formArrayName="createTask"
+          *ngFor="let form of createTaskControls.controls; let i = index">
+          <div
+            class="flex justify-between mb-3"
+            [formGroupName]="i">
+            <div class="flex flex-col w-full">
+              <p>Task {{ i + 1 }}</p>
+
+              <div class="flex items-center w-full">
+                <mat-form-field
+                  class="description-textarea w-full fuse-mat-textarea"
+                  appearance="fill">
+                  <textarea
+                    matInput
+                    placeholder="Task description"
+                    formControlName="taskDescription"></textarea>
+                </mat-form-field>
+              </div>
+
+              <mat-form-field
+                class="w-full"
+                appearance="fill">
+                <mat-select
+                  placeholder="Resources"
+                  formControlName="taskResources">
+                  <mat-option></mat-option>
+                </mat-select>
+              </mat-form-field>
+            </div>
+
+            <mat-icon
+              class="mt-10 ml-3 cursor-pointer"
+              (click)="deleteResourceFields(i)"
+              >close</mat-icon
+            >
+          </div>
+        </div>
+      </form>
+
+      <div
+        class="flex items-center cursor-pointer text-primary"
+        (click)="addTaskField()">
+        <mat-icon class="mr-4 text-primary">add</mat-icon>
+        Add Task
+      </div>
+
+      <div class="buttons mt-10 flex">
+        <button
+          mat-raised-button
+          type="button"
+          (click)="cancel()"
+          class="createtask-button border border-blue-500 border-solid w-48 mb-4 mr-4 text-primary"
+          aria-label="create task">
+          Cancel
+        </button>
+
+        <button
+          mat-raised-button
+          type="button"
+          title="save task"
+          (click)="saveChecklist()"
+          class="releasetask-button mb-4 w-48 bg-blue-400 text-white"
+          aria-label="release task">
+          Save
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

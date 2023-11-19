@@ -1,0 +1,63 @@
+<div class="venue-managers mt-10">
+  <div class="flex justify-between">
+  <h2 data-cy="venue-managers-header" class="mb-6 font-bold my-6 text-3xl">Venue managers</h2>
+  <button
+  class="mt-6 ml-2"
+  color="primary"
+  (click)="addManager()"
+  mat-flat-button
+  data-cy="add-venue-manager"
+>
+Add venue manager
+</button>
+</div>
+  <mat-table class="table-managers" [dataSource]="dataSource" matSort>
+    <!-- Name Column -->
+    <ng-container matColumnDef="name">
+      <mat-header-cell *matHeaderCellDef mat-sort-header="name">
+        Name
+      </mat-header-cell>
+      <mat-cell *matCellDef="let row">
+        <div *ngIf="row?.name">{{ row.name }}</div>
+        <div *ngIf="row?.invite_name">{{ row.invite_name }}</div>
+      </mat-cell>
+    </ng-container>
+
+    <!-- Email Column -->
+    <ng-container matColumnDef="email">
+      <mat-header-cell *matHeaderCellDef mat-sort-header="email"
+        >Email</mat-header-cell
+      >
+      <mat-cell *matCellDef="let row">
+        {{ row.email }}
+      </mat-cell>
+    </ng-container>
+
+
+    <ng-container matColumnDef="activeLink">
+      <mat-header-cell
+        *matHeaderCellDef
+        mat-sort-header="activeLink"
+        class="link-container"
+      ></mat-header-cell>
+      <mat-cell
+        fxLayout="row"
+        fxLayoutAlign="space-between center"
+        *matCellDef="let row"
+        class="link-container flex justify-end"
+      >
+        <mat-icon class="menu cursor-pointer" (click)="removeManager(row)">
+          delete_outline
+        </mat-icon>
+
+      </mat-cell>
+    </ng-container>
+
+    <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+    <mat-row
+      class="hover:bg-gray-100"
+      *matRowDef="let row; columns: displayedColumns; let index = index"
+    >
+    </mat-row>
+  </mat-table>
+</div>

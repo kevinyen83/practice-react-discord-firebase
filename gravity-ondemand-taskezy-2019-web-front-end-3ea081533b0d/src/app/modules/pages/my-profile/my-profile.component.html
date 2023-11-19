@@ -1,0 +1,245 @@
+<div class="flex flex-col flex-auto min-w-0">
+  <!--Header-->
+  <div
+    class="header accent text-white p-10 p-sm-24 bg-primary"
+    fxLayout="column"
+    fxLayoutAlign="start"
+    fxLayout.gt-xs="row"
+    fxLayoutAlign.gt-xs="space-between center"
+  >
+    <!-- APP TITLE -->
+    <div fxLayout="row" fxLayoutAlign="start center">
+      <div
+        class="logo flex text-3xl"
+        fxLayout="row"
+        fxLayoutAlign="start center"
+      >
+        <div class="logo-icon">
+          <mat-icon class="logo-icon mr-16 text-white"> person </mat-icon>
+        </div>
+        <span class="logo-text h1"> My Profile </span>
+      </div>
+    </div>
+    <!-- / APP TITLE -->
+  </div>
+  <!--/Header-->
+
+  <!--Content-->
+
+  <div class="content p-8">
+    <div class="w-full flex flex-row">
+      <div class="logo-block flex flex-col mx-3 w-full">
+        <app-avatar-upload
+          [currentUser]="currentUser"
+          (uploadSuccess)="saveMyProfile($event)"
+        ></app-avatar-upload>
+        <div class="w-full flex mt-2 flex-col bg-white p-6 rounded-[10px]">
+          <div
+            class="payment-block bg-white p-6 rounded-[10px] md:mt-2 sm:mt-2 flex w-full"
+          >
+            <div class="text-primary text-2xl font-semibold">
+              Payment methods
+            </div>
+          </div>
+
+          <!--<div
+            class="activity-block mr-2 bg-white flex w-full p-6 rounded-[10px]"
+          >
+            <div class="text-2xl font-medium">Activity feed</div>
+          </div>-->
+        </div>
+      </div>
+      <div class="connections-block w-full mx-3 bg-white p-6 rounded-[10px]">
+        <div
+          data-cy="connections-header"
+          class="text-primary text-2xl font-semibold"
+        >
+          Connections
+        </div>
+        <div class="text-lg font-medium mt-6 p-3 border rounded-[10px]">
+          <div class="text-lg font-medium">Active connections</div>
+          <div class="user-invitations" *ngIf="memberships.length">
+            <div class="font-medium text-base mb-4">
+              You have {{ memberships.length }} active connection:
+            </div>
+            <div
+              class="invite flex flex-auto justify-between items-center p-2 border-b border-zinc-300"
+              data-cy="invite"
+              *ngFor="let member of memberships"
+            >
+              <div
+                class="flex flex-row flex-auto items-center justify-between mr-2"
+              >
+                <div class="account-name">
+                  <p class="mat-body-strong font-bold">
+                    {{ member?.account_name }}
+                  </p>
+                  <div class="flex items-center">
+                    <p class="mat-caption flex">
+                      {{ member.role }}
+                    </p>
+
+                    <span [ngClass]="getStatusClass(member?.status)">{{
+                      member?.status | titlecase
+                    }}</span>
+                  </div>
+                </div>
+                <div class="date-invited">
+                  {{ member.date_invited | date: "dd/MM/yyyy" }}
+                </div>
+              </div>
+              <div class="flex" *ngIf="member.status == 'Pending'">
+                <button
+                  mat-button
+                  [disabled]="member.spinner"
+                  color="primary"
+                  class="ml-2"
+                  (click)="acceptInvite(member)"
+                >
+                  Accept
+                  <mat-spinner
+                    [diameter]="20"
+                    color="primary"
+                    *ngIf="member.spinner"
+                  ></mat-spinner>
+                </button>
+                <button
+                  mat-button
+                  color="warn"
+                  [disabled]="member.spinner"
+                  class="ml-2"
+                  (click)="declineInvite(member)"
+                >
+                  Decline
+                  <mat-spinner
+                    [diameter]="20"
+                    color="warn"
+                    *ngIf="member.spinner"
+                  ></mat-spinner>
+                </button>
+              </div>
+              <div class="w-1/3" *ngIf="member.status == 4">
+                Authority is being Verified
+              </div>
+              <div class="w-1/3" *ngIf="member.status == 5">
+                Authority has been Declined
+              </div>
+              <div class="w-1/3" *ngIf="member.status == 6">
+                Authority has been Verified. Please Confirm
+                <button
+                  mat-button
+                  color="primary"
+                  class="ml-2"
+                  (click)="confirmInvite(member)"
+                >
+                  Confirm
+                  <mat-spinner
+                    [diameter]="20"
+                    color="primary"
+                    *ngIf="member.spinner"
+                  ></mat-spinner>
+                </button>
+              </div>
+              <div class="w-1/3" *ngIf="member.status == 7">
+                You declined this Invite
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="pending-connections p-3 mt-6 border rounded-[10px]">
+          <div class="text-lg font-medium">Pending connections</div>
+          <div class="user-invitations" *ngIf="invitations.length">
+            <div class="font-medium text-base mb-4">
+              You have {{ invitations.length }} pending connection:
+            </div>
+            <div
+              class="invite flex flex-auto justify-between items-center p-2 border-b border-zinc-300"
+              data-cy="invite"
+              *ngFor="let invite of invitations"
+            >
+              <div
+                class="flex flex-row flex-auto items-center justify-between mr-2"
+              >
+                <div class="account-name">
+                  <p class="mat-body-strong font-bold">
+                    {{ invite?.account_name }}
+                  </p>
+                  <div class="flex items-center">
+                    <p class="mat-caption flex">
+                      {{ invite.role }}
+                    </p>
+
+                    <span [ngClass]="getStatusClass(invite?.status)">{{
+                      invite?.status
+                    }}</span>
+                  </div>
+                </div>
+                <div class="date-invited">
+                  {{ invite.date_invited | date: "dd/MM/yyyy" }}
+                </div>
+              </div>
+              <div class="flex" *ngIf="invite.status == 'Pending'">
+                <button
+                  mat-button
+                  [disabled]="invite.spinner"
+                  color="primary"
+                  class="ml-2"
+                  (click)="acceptInvite(invite)"
+                >
+                  Accept
+                  <mat-spinner
+                    [diameter]="20"
+                    color="primary"
+                    *ngIf="invite.spinner"
+                  ></mat-spinner>
+                </button>
+                <button
+                  mat-button
+                  color="warn"
+                  [disabled]="invite.spinner"
+                  class="ml-2"
+                  (click)="declineInvite(invite)"
+                >
+                  Decline
+                  <mat-spinner
+                    [diameter]="20"
+                    color="warn"
+                    *ngIf="invite.spinner"
+                  ></mat-spinner>
+                </button>
+              </div>
+              <div
+                class="w-1/3"
+                *ngIf="invite.status == 'Waiting For Approval'"
+              >
+                Authority is being Verified
+              </div>
+              <div class="w-1/3" *ngIf="invite.status == 'Failed'">
+                Authority has been Declined
+              </div>
+              <div class="w-1/3" *ngIf="invite.status == 'Verified'">
+                Authority has been Verified. Please Confirm
+                <button
+                  mat-button
+                  color="primary"
+                  class="ml-2"
+                  (click)="confirmInvite(invite)"
+                >
+                  Confirm
+                  <mat-spinner
+                    [diameter]="20"
+                    color="primary"
+                    *ngIf="invite.spinner"
+                  ></mat-spinner>
+                </button>
+              </div>
+              <div class="w-1/3" *ngIf="invite.status == 'Declined'">
+                You declined this Invite
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

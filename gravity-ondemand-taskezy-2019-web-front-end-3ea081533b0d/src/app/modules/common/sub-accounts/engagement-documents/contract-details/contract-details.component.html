@@ -1,0 +1,120 @@
+<div class="contract-details mt-4">
+  <div class="flex flex-row items-center">
+    <h1 class="text-3xl my-6 font-bold flex items-center">
+      <div data-cy="contract-details-header">Contract Details</div>
+      <button data-cy="contract-details-edit" mat-icon-button class="flex" aria-label="edit" (click)="edit()">
+        <mat-icon class="text-gray-400">drive_file_rename_outline</mat-icon>
+      </button>
+    </h1>
+  </div>
+  <div class="flex flex-row" *ngIf="!editing">
+    <div class="flex flex-col w-1/2">
+      <div class="flex flex-col mb-3">
+        <p class="text-gray-400">Contract Start Date</p>
+        <p>{{venue?.contract_start_date | date:'dd MMMM yyyy'}}</p>
+      </div>
+      <div class="flex flex-col mb-3">
+        <p class="text-gray-400">Term</p>
+        <p>{{venue?.contract_term}}</p>
+      </div>
+      <div class="flex flex-col mb-3">
+        <p class="text-gray-400">Contract Review Date</p>
+        <p>{{venue?.contract_review_date | date:'dd MMMM yyyy'}}</p>
+      </div>
+      <div class="flex flex-col mb-3">
+        <p class="text-gray-400">Executing Parties</p>
+        <p>{{venue?.executing_parties}}</p>
+      </div>
+    </div>
+    <div class="flex flex-col w-1/2">
+      <div class="flex flex-col">
+        <p class="text-gray-400">Key Terms and Comments</p>
+        <p>{{venue?.comment}}</p>
+      </div>
+    </div>
+  </div>
+  <form action="" [formGroup]="contractDetailsForm" *ngIf="editing">
+
+    <div class="flex justify-between">
+      <div class="flex flex-col w-1/2 mr-6">
+
+        <mat-form-field class="contract-start-date">
+          <mat-label>Contract Start Date</mat-label>
+          <input matInput
+                 name="contract_start_date"
+                 [matDatepicker]="startDatePicker"
+                 formControlName="contract_start_date"
+                 (dateInput)="reviewDates()"
+                 data-cy="contract-start-date-input">
+          <mat-datepicker-toggle data-cy="toggle-start-date" matSuffix [for]="startDatePicker"></mat-datepicker-toggle>
+          <mat-datepicker #startDatePicker></mat-datepicker>
+          <mat-error
+            data-cy="mat-error-start"
+            *ngIf="contractDetailsForm.get('contract_start_date').hasError('pastDate')"
+          >
+            End can not be before the start
+          </mat-error>
+        </mat-form-field>
+
+        <mat-form-field class="term">
+          <mat-label>Term</mat-label>
+          <input matInput
+                 name="contract_term"
+                 formControlName="contract_term"
+                 data-cy="contract-term">
+        </mat-form-field>
+
+        <mat-form-field class="contract-review-date">
+          <mat-label>Contract Review Date</mat-label>
+          <input matInput
+                 name="contract_review_date"
+                 formControlName="contract_review_date"
+                 (dateInput)="reviewDates()"
+                 [matDatepicker]="reviewDatePicker"
+                 data-cy="contract-review-date">
+          <mat-datepicker-toggle data-cy="toggle-review-date" matSuffix [for]="reviewDatePicker"></mat-datepicker-toggle>
+          <mat-datepicker #reviewDatePicker></mat-datepicker>
+          <mat-error
+            *ngIf="contractDetailsForm.get('contract_review_date').hasError('pastDate')"
+          >
+            End can not be before the start
+          </mat-error>
+        </mat-form-field>
+
+        <mat-form-field class="executing-parties">
+          <mat-label>Executing Parties</mat-label>
+          <input matInput
+                 name="executing_parties"
+                 formControlName="executing_parties"
+                 data-cy="executing-parties">
+        </mat-form-field>
+
+      </div>
+
+      <div class="w-1/2">
+        <mat-form-field class="w-full fuse-mat-textarea" appearance="fill">
+          <mat-label>Key Terms and Comments</mat-label>
+          <textarea matInput
+            cdkTextareaAutosize
+            name="comment"
+            formControlName="comment"
+            #autosize="cdkTextareaAutosize"
+            cdkAutosizeMinRows="5"
+            cdkAutosizeMaxRows="7"
+            data-cy="key-term-comments"></textarea>
+        </mat-form-field>
+
+        <button color="primary" class="w-40 cancel-button"
+                mat-stroked-button (click)="cancel()"
+                data-cy="contract-details-cancel-button">
+          Cancel
+        </button>
+        <button color="primary" class="ml-2 w-40 edit-button"
+                mat-flat-button (click)="save()" [disabled]="contractDetailsForm.invalid"
+                data-cy="contract-details-save-button">
+          Save
+        </button>
+      </div>
+    </div>
+  </form>
+</div>

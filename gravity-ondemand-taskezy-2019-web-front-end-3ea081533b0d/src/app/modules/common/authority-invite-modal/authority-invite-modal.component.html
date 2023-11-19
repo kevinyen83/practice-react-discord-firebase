@@ -1,0 +1,25 @@
+<div class="w-full overflow-hidden">
+  <div
+    class="w-full bg-primary flex justify-between items-center p-3 text-white text-2xl">
+    <div
+      data-cy="header-auth-layout"
+      class="ml-3 font-bold">
+      Authority Verification
+    </div>
+    <button
+      mat-icon-button
+      (click)="cancel()">
+      <mat-icon class="text-white">close</mat-icon>
+    </button>
+  </div>
+  <div class="w-full overflow-auto h-[80vh] bg-white p-5">
+    <div class="text-md font-medium text-secondary text-center">
+      <app-authority-verification
+        [profile]="profile"
+        [status]="status"
+        [invitation]="invitation"
+        [hideBack]="true"
+        (back)="save($event)"></app-authority-verification>
+    </div>
+  </div>
+</div>

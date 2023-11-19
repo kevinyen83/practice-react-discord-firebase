@@ -1,0 +1,75 @@
+<div class="release-roster">
+  <mat-toolbar class="mat-accent relative bg-primary m-0 flex justify-between">
+    <mat-toolbar-row class="flex justify-between">
+      <div>
+        <span class="title dialog-title">{{ title }}</span>
+      </div>
+      <div
+        class="close cursor-pointer mb-4 text-white"
+        (click)="close()"
+        aria-label="Close dialog">
+        <mat-icon class="absolute right-1.5 top-1">close</mat-icon>
+      </div>
+    </mat-toolbar-row>
+  </mat-toolbar>
+
+  <div class="content p-6">
+    <div class="content-header">
+      <h1 class="font-bold mt-3 text-lg flex items-center">
+        <div>
+          <span *ngIf="currentShift">
+            {{ currentTask?.start | date: "fullDate" }}
+          </span>
+          <span *ngIf="!currentShift">{{ this.header }}</span>
+        </div>
+      </h1>
+      <h3 *ngIf="currentShift">
+        {{ currentShift?.start | date: "shortTime" }} -
+        {{ currentShift?.end | date: "shortTime" }}
+      </h3>
+    </div>
+
+    <div class="content-description mt-4">
+      <form action="" [formGroup]="releaseForm">
+        <div class="flex justify-between">
+          <mat-form-field class="release-to w-full mr-2">
+            <mat-label>Release to</mat-label>
+            <mat-select
+              formControlName="releaseTo"
+              (selectionChange)="changeField($event)" required>
+              <mat-option value="Client">Client</mat-option>
+              <mat-option value="Supplier">Supplier</mat-option>
+              <mat-option value="Client and supplier">Client and supplier</mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+
+
+        <mat-radio-group class="flex flex-col mt-5 leading-7" aria-label="Select an option" formControlName="view">
+          <mat-radio-button value="View only">View only</mat-radio-button>
+          <mat-radio-button value="Edit and Return">Edit and Return</mat-radio-button>
+        </mat-radio-group>
+      </form>
+
+      <div class="buttons flex justify-between mt-24">
+
+        <button
+          mat-raised-button
+          type="button"
+          (click)="close()"
+          class="cancel-button text-primary w-48 border border-solid border-blue-500">
+          Cancel
+        </button>
+
+        <button
+          mat-button
+          [disabled]="releaseForm.invalid"
+          (click)="releaseRosterAndClose()"
+          class="release-button w-48 text-white bg-blue-400"
+          aria-label="saver">
+          Released
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

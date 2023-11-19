@@ -1,0 +1,88 @@
+<app-auth-layout class="w-full" [name]="'Log In'" [status]="'login'" [circles]="false" [headerName]="'login-component-header'">
+  <fuse-alert
+    class="mt-4 mb-1"
+    *ngIf="showAlert"
+    [appearance]="'outline'"
+    [showIcon]="false"
+    [type]="alert.type"
+    [dismissible]="true"
+    [@shake]="alert.type === 'error'">
+    {{ alert.message }}
+  </fuse-alert>
+  <form
+  class="flex w-full flex-col m-auto"
+    action=""
+    [formGroup]="signInForm"
+  >
+  <div data-cy="email-input" class="email w-full m-auto">
+    <mat-form-field class="w-full">
+      <mat-label>Email</mat-label>
+      <input matInput [formControlName]="'email'" autocomplete="email"/>
+      <mat-error *ngIf="signInForm.get('email').hasError('required')">
+        Email address is required
+      </mat-error>
+      <mat-error *ngIf="signInForm.get('email').hasError('email')">
+        Please enter a valid email address
+      </mat-error>
+    </mat-form-field>
+  </div>
+
+  <mat-form-field data-cy="password-input" class="password w-full m-auto">
+    <mat-label>Password</mat-label>
+    <input
+      matInput
+      type="password"
+      [formControlName]="'password'"
+      #passwordField
+      autocomplete="current-password"
+    />
+
+    <button
+      class="button-login"
+      mat-icon-button
+      type="button"
+      (click)="
+        passwordField.type === 'password'
+          ? (passwordField.type = 'text')
+          : (passwordField.type = 'password')
+      "
+      matSuffix
+    >
+      <mat-icon
+        class="icon-size-5"
+        *ngIf="passwordField.type === 'password'"
+      >visibility</mat-icon>
+      <mat-icon
+        class="icon-size-5"
+        *ngIf="passwordField.type === 'text'"
+      >visibility_off</mat-icon>
+    </button>
+
+    <mat-error> Password is required </mat-error>
+  </mat-form-field>
+
+  <div class="w-full m-auto">
+    <mat-checkbox color="primary" class="text-black" [formControlName]="'rememberMe'">Keep me signed in</mat-checkbox>
+    <a
+      class="text-base font-medium ml-28 text-center"
+      [routerLink]="['/auth/forgot-password']"
+      style="color: #bebec0"
+      >Forgot password?
+    </a>
+  </div>
+
+  <button
+    mat-raised-button
+    data-cy="login-button"
+    id="login-button"
+    color="primary"
+    class="text-xl font-medium w-full m-auto rounded-full mt-8"
+    (click)="signIn()">
+    Log In
+  </button>
+
+</form>
+<div class="flex flex-col mt-2 text-base font-medium">
+  <div class="self-center">Don't have an account? <a class="text-primary hover:underline" [routerLink]="['/auth/register']">Sign Up</a></div>
+</div>
+</app-auth-layout>

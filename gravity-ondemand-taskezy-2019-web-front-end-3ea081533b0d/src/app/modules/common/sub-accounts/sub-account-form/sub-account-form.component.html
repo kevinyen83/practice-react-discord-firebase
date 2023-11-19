@@ -1,0 +1,140 @@
+<div
+  class="adding-profile rounded-xl w-full bg-white abn-verification p-6"
+  *ngIf="viewMode === 'VIEW_MODE_ABN_SEARCH'">
+  <fuse-alert
+    class="mt-4 mb-1"
+    *ngIf="showAlert"
+    [appearance]="'outline'"
+    [showIcon]="false"
+    [type]="alert.type"
+    [dismissible]="true"
+    [@shake]="alert.type === 'error'">
+    {{ alert.message }}
+  </fuse-alert>
+  <!-- <div class="abn-verification p-6"> -->
+  <!--    <div class="flex items-center mb-4 cursor-pointer" *ngIf="type === 'client'" (click)="backToClients()">-->
+  <!--      <mat-icon class="text-primary mr-2">arrow_back</mat-icon>-->
+  <!--      <div class="text-gray-300 text-xl">Clients  /  Add new client</div>-->
+  <!--    </div>-->
+
+  <!--    <div class="flex items-center mb-4 cursor-pointer" *ngIf="type === 'supplier'" (click)="backToSuppliers()">-->
+  <!--      <mat-icon class="text-zinc-400 mr-2">arrow_back</mat-icon>-->
+  <!--      <div class="text-zinc-400 text-xl">Suppliers  /  Add new supplier</div>-->
+  <!--    </div>-->
+  <p class="text-xl">Please provide the company ABN for verification</p>
+
+  <form
+    class="flex items-center justify-center w-full"
+    [formGroup]="abnForm">
+    <mat-form-field
+      data-cy="abn"
+      class="w-full abn">
+      <mat-label>ABN</mat-label>
+      <input
+        placeholder="## ### ### ###"
+        data-cy="abn-input"
+        matInput
+        formControlName="abn" />
+      <mat-error
+        *ngIf="
+          abnForm.get('abn').hasError('invalid') ||
+          abnForm.get('abn').hasError('pattern')
+        ">
+        Invalid ABN
+      </mat-error>
+      <mat-error *ngIf="abnForm.get('abn').hasError('notFound')">
+        ABN is not found
+      </mat-error>
+      <mat-error *ngIf="abnForm.get('abn').hasError('alreadyConnected')">
+        Already Connected to a {{type}} with this ABN
+      </mat-error>
+      <mat-error *ngIf="abnForm.get('abn').hasError('self')">
+        Can not invite your own company as a sub account
+      </mat-error>
+    </mat-form-field>
+
+    <button
+      data-cy="search-button"
+      color="primary"
+      mat-raised-button
+      class="w-[200px] ml-2 mt-2"
+      (click)="searchAbn()">
+      Search
+      <mat-spinner
+        [diameter]="22"
+        *ngIf="spinnerSearch"></mat-spinner>
+    </button>
+  </form>
+  <!-- </div> -->
+</div>
+
+<div
+  class="adding-profile rounded-xl w-full bg-white p-6"
+  *ngIf="viewMode === 'VIEW_MODE_ACCOUNT_INFOR'">
+  <p data-cy="text-info" class="mb-2 flex justify-start font-medium text-neutral-900 text-xl">
+    {{ message }}
+  </p>
+
+  <div class="flex flex-col justify-start">
+    <div class="flex flex-col justify-start items-start">
+      <div class="text-zinc-400">ABN</div>
+      <div
+        data-cy="abn-input"
+        class="text-lg text-neutral-800">
+        {{ abnInfo.Abn }}
+      </div>
+    </div>
+    <div class="mt-5 flex flex-col justify-start items-start">
+      <div class="text-zinc-400">Name</div>
+      <div
+        data-cy="name-input"
+        class="text-lg text-neutral-800">
+        {{ abnInfo.EntityName }}
+      </div>
+    </div>
+    <div class="mt-5 flex flex-col justify-start items-start">
+      <div class="text-zinc-400">Trading Name</div>
+      <div
+        data-cy="trading-name-input"
+        class="text-lg text-neutral-800">
+        {{ abnInfo?.BusinessName[0] }}
+      </div>
+    </div>
+    <div class="mt-5 flex flex-col justify-start items-start">
+      <div class="text-zinc-400">Entity Type</div>
+      <div
+        data-cy="entity-type-input"
+        class="text-lg text-neutral-800">
+        {{ abnInfo.EntityTypeName }}
+      </div>
+    </div>
+  </div>
+
+  <div class="buttons flex justify-start mt-12">
+    <button
+      mat-stroked-button
+      color="primary"
+      class="w-[200px]"
+      (click)="backToAbn()">
+      Reset
+    </button>
+    <button
+      data-cy="button-confirm"
+      mat-raised-button
+      color="primary"
+      class="button-confirm w-[200px] ml-4"
+      (click)="confirmAbn()">
+      <span *ngIf="!isExist">Continue</span>
+      <span *ngIf="isExist">Request a connection</span>
+    </button>
+  </div>
+</div>
+
+<div *ngIf="viewMode === 'VIEW_MODE_DETAIL'">
+  <app-details-form
+    [accountType]="type"
+    [passAbnInfo]="accountInfo"
+    (savedDetails)="savedDetails()"
+    (cancelled)="backToAbn()"
+    [status]="'create'"></app-details-form>
+</div>

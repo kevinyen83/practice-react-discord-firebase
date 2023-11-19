@@ -1,0 +1,513 @@
+<div>
+  <mat-toolbar
+    class="mat-accent m-0 p-7 sm:min-h-32 sm:max-h-32 sticky top-0 z-99"
+    [ngClass]="rosterService.getBGColour(currentShift)"
+  >
+    <mat-toolbar-row class="flex flex-col items-start">
+      <div class="header-shift text-4xl">{{ header }}</div>
+      <div class="mt-2 w-full">
+        <div class="flex sm:justify-start md:justify-end" *ngIf="status != 'edit'">
+          <button
+          mat-flat-button
+            color="primary"
+            class="save-button ml-2"
+            data-cy="shift-form-save-draft"
+            [disabled]="addShiftForm.invalid"
+            (click)="save()"
+          >
+            <span>Save Draft</span>
+          </button>
+          <button
+          mat-flat-button
+            data-cy="save-release"
+            color="primary"
+            class="save-button ml-2"
+            [disabled]="addShiftForm.invalid || viewSpinner || !isSelectedTasksLength ||isDurationZero()"
+            (click)="saveAndRelease()"
+          >
+            <span class="text-white">Save and Release</span>
+          </button>
+        </div>
+        <div>
+          <div class="flex sm:justify-start md:justify-end" *ngIf="status === 'edit'">
+            <button
+            mat-flat-button
+              color="primary"
+              (click)="close()"
+              data-cy="shift-form-edit-close"
+              class="release-button ml-2"
+            >
+              <span>Close</span>
+            </button>
+            <button
+              mat-flat-button
+              color="primary"
+              class="save-button ml-2"
+              data-cy="shift-form-edit-save"
+              [disabled]="addShiftForm.invalid"
+              (click)="save()"
+            >
+              <span>Save</span>
+            </button>
+          </div>
+        </div>
+        <div class="text-xs">
+          <div
+            class="close cursor-pointer absolute right-1.5 top-1"
+            (click)="close()"
+            aria-label="Close dialog"
+          >
+            <mat-icon>close</mat-icon>
+          </div>
+        </div>
+      </div>
+
+    </mat-toolbar-row>
+  </mat-toolbar>
+
+  <!-- Alert -->
+  <fuse-alert
+    class="mt-4 mb-1"
+    *ngIf="showAlert"
+    [appearance]="'outline'"
+    [showIcon]="false"
+    [type]="alert.type"
+    [dismissible]="true"
+    [@shake]="alert.type === 'error'"
+  >
+    {{ alert.message }}
+  </fuse-alert>
+
+
+  <div class="content pr-10 pl-10 pb-10 pt-4 overflow-hidden">
+    <form [formGroup]="addShiftForm" (submit)="(false)">
+      <mat-form-field class="client w-full" data-cy="client-field"
+                      *ngIf="status === 'add' || status === 'edit' && viewAs?.value === 'client' || status === 'edit' && viewAs?.value === 'subscriber'">
+        <mat-label class="font-bold">Client</mat-label>
+        <mat-select
+          formControlName="client"
+          required
+          (selectionChange)="onSelectClient($event)"
+        >
+          <mat-option *ngFor="let client of clients" [value]="client">{{
+            client?.detail?.name
+          }}</mat-option>
+        </mat-select>
+
+        <mat-error *ngIf="addShiftForm.get('client').hasError('required')">
+          Client is required
+        </mat-error>
+        <mat-error
+          *ngIf="addShiftForm.get('client').hasError('noClientsError')"
+        >
+          No Clients created
+        </mat-error>
+      </mat-form-field>
+
+      <mat-form-field class="venue w-full" data-cy="venue-field">
+        <mat-label class="font-bold">Venue</mat-label>
+        <mat-select
+          formControlName="venue"
+          required
+          (selectionChange)="onSelectVenue($event)"
+        >
+          <mat-option
+            *ngFor="let venue of selectedClientVenues"
+            [value]="venue"
+          >
+            {{ venue?.name }}
+          </mat-option>
+        </mat-select>
+        <mat-error *ngIf="addShiftForm.get('venue').hasError('required')">
+          Venue is required
+        </mat-error>
+        <mat-error *ngIf="addShiftForm.get('venue').hasError('noVenuesError')">
+          No Venues Created
+        </mat-error>
+      </mat-form-field>
+
+      <div class="flex flex-row">
+        <mat-form-field class="start-day w-full">
+          <mat-label class="font-bold">Start Date</mat-label>
+          <input
+            matInput
+            [matDatepicker]="startDate"
+            placeholder="Start Date"
+            name="startDate"
+            (dateChange)="changeDate($event, 'startDatetime')"
+            [min]="currentDate"
+            formControlName="startDatetime"
+            required
+            data-cy="start-date-label"
+          />
+          <mat-datepicker-toggle
+          data-cy="start-date-datepicker"
+            matSuffix
+            [for]="startDate"
+          ></mat-datepicker-toggle>
+          <mat-datepicker #startDate></mat-datepicker>
+          <mat-error
+            *ngIf="
+              addShiftForm.get('startDatetime').hasError('matDatepickerMin')
+            "
+          >
+            Shift can not be added in the past
+          </mat-error>
+          <mat-error
+            *ngIf="addShiftForm.get('startDatetime').hasError('required')"
+          >
+            Start Date is required!
+          </mat-error>
+        </mat-form-field>
+
+        <mat-form-field class="start-time w-full px-1">
+          <mat-label class="font-bold">Start Time</mat-label>
+          <input
+            [mtxDatetimepicker]="shiftStart"
+            name="startTime"
+            formControlName="startDatetime"
+            matInput
+            (dateChange)="changeDate($event, 'startDatetime')"
+            [min]="currentDate"
+            required
+            data-cy="start-time-label"
+          />
+          <mtx-datetimepicker-toggle
+          data-cy="start-time-dateTimePicker"
+            [for]="shiftStart"
+            matSuffix
+          ></mtx-datetimepicker-toggle>
+          <mtx-datetimepicker
+            #shiftStart
+            type="time"
+            mode="portrait"
+            startView="clock"
+            [twelvehour]="false"
+          >
+          </mtx-datetimepicker>
+          <mat-error
+            *ngIf="
+              addShiftForm.get('startDatetime').hasError('mtxDatetimepickerMin')
+            "
+          >
+            Shift can not be added in the past
+          </mat-error>
+          <mat-error
+            *ngIf="addShiftForm.get('startDatetime').hasError('required')"
+          >
+            Start Time is required
+          </mat-error>
+        </mat-form-field>
+      </div>
+
+      <div class="flex flex-row">
+        <mat-form-field class="start-day w-full">
+          <mat-label class="font-bold">End Date</mat-label>
+          <input
+            matInput
+            [matDatepicker]="endDate"
+            placeholder="End Date"
+            name="endDate"
+            (dateChange)="changeDate($event, 'endDatetime')"
+            [min]="addShiftForm.get('startDatetime').value"
+            formControlName="endDatetime"
+            required
+            data-cy="end-date-label"
+          />
+          <mat-datepicker-toggle
+          data-cy="end-date-datepicker"
+            matSuffix
+            [for]="endDate"
+          ></mat-datepicker-toggle>
+          <mat-datepicker #endDate></mat-datepicker>
+          <mat-error
+            *ngIf="addShiftForm.get('endDatetime').hasError('matDatepickerMin')"
+          >
+            End can not be before the start
+          </mat-error>
+          <mat-error
+            *ngIf="addShiftForm.get('endDatetime').hasError('required')"
+          >
+            End Date is required!
+          </mat-error>
+        </mat-form-field>
+
+        <mat-form-field class="end-time w-full px-1">
+          <mat-label class="font-bold">End Time</mat-label>
+          <input
+            [mtxDatetimepicker]="shiftEnd"
+            name="endTime"
+            (dateChange)="changeDate($event, 'endDatetime')"
+            formControlName="endDatetime"
+            matInput
+            [min]="addShiftForm.get('startDatetime').value"
+            required
+            data-cy="end-time-label"
+          />
+          <mtx-datetimepicker-toggle
+          data-cy="end-time-dateTimePicker"
+            [for]="shiftEnd"
+            matSuffix
+          ></mtx-datetimepicker-toggle>
+          <mtx-datetimepicker
+            #shiftEnd
+            type="time"
+            mode="portrait"
+            startView="clock"
+            [twelvehour]="false"
+          >
+          </mtx-datetimepicker>
+          <mat-error
+            *ngIf="
+              addShiftForm.get('endDatetime').hasError('mtxDatetimepickerMin')
+            "
+          >
+            End can not be before the start
+          </mat-error>
+          <mat-error
+            *ngIf="addShiftForm.get('endDatetime').hasError('required')"
+          >
+            End Time is required
+          </mat-error>
+
+        </mat-form-field>
+      </div>
+      <div class="text-zinc-400">Duration: {{ timeDif() }}</div>
+      <mat-error *ngIf="isDurationZero()">
+        Start time and end time can't be identical
+      </mat-error>
+      <div
+        class="notification-accreditations mt-4"
+        *ngIf="notificationAccreditation"
+      >
+        <div class="flex">
+          <mat-icon class="text-red-500">warning</mat-icon>
+          <p class="text-notification ml-2">{{ notificationAccreditation }}</p>
+        </div>
+      </div>
+
+      <div class="accreditation w-full mt-5"
+           *ngIf="status === 'add' || status === 'edit' && viewAs?.value === 'supplier' || viewAs?.value === 'subscriber'">
+        <h1 class="font-bold text-xl mb-4">Resources Required:</h1>
+        <div
+          class="flex flex-col"
+          *ngIf="
+            selectedVenue &&
+            selectedVenue.roles &&
+            selectedVenue.roles?.length > 0
+          "
+        >
+          <div
+            class="mb-2 resources-requirements"
+            formArrayName="resourcesRequirements"
+            *ngFor="
+              let form of resourcesRequirementsControls.controls;
+              let i = index
+            "
+          >
+            <div
+              *ngIf="viewAs?.value !== 'supplier'"
+              class="relative flex justify-between items-start"
+              [formGroupName]="i"
+            >
+
+              <button mat-icon-button [disabled]="form?.selectedUsers ? form?.selectedUsers[i]?.supplier?.uuid === currentAccount?.uuid : false">
+                <mat-icon
+                  *ngIf="i !== 0"
+                  class="absolute -left-7 text-gray-400 mr-2"
+                  (click)="removeResourceRequirements(i)"
+                  data-cy="shift-role-close"
+                >close</mat-icon
+                >
+              </button>
+
+              <mat-form-field class="shift-role w-full mr-1" data-cy="shift-role-dropdown-field">
+                <mat-label>Shift Role</mat-label>
+                <mat-select
+                  formControlName="shiftRole"
+                  (selectionChange)="changeRole($event)"
+                  [required]="i === 0"
+                  [compareWith]="roleCmp"
+                  data-cy="shift-role-dropdown-select"
+                >
+                  <mat-option
+                    *ngFor="let role of selectedVenue?.roles"
+                    [value]="role"
+                    data-cy="shift-role-dropdown"
+                  >
+                    <!-- <div class="flex justify-between"> -->
+                    <div>{{ role?.name }}</div>
+                    <!-- <div class="text-gray-400">{{role?.rate | currency}}/h</div> -->
+                    <!-- </div> -->
+                  </mat-option>
+                  <!-- <mat-option class="text-primary cursor-pointer flex items-center" (click)="addNewRole()"><mat-icon class="text-primary">add</mat-icon>Create new role</mat-option> -->
+                </mat-select>
+              </mat-form-field>
+
+              <mat-form-field class="shift-number" appearance="fill">
+                <mat-label>Number</mat-label>
+                <input
+                  matInput
+                  data-cy="number-field"
+                  type="number"
+                  (input)="changeNumber(i)"
+                  min="0"
+                  formControlName="shiftNumber"
+                  [required]="i === 0"
+                />
+                <mat-error *ngIf="form.get('shiftNumber').hasError('err')"
+                  >This field must be more 0</mat-error
+                >
+              </mat-form-field>
+
+              <!-- <mat-form-field class="charge-rate" appearance="fill">
+                <mat-label>Charge Rate($)</mat-label>
+                <input matInput type="text" pattern="^[0-9]+$" (input)="changeRate(i)" formControlName="changeRate" [required]="i === 0">
+              </mat-form-field> -->
+              <button
+                mat-flat-button
+                class="search-button ml-1 mt-7"
+                id="search-button"
+                color="primary"
+                data-cy="search-button"
+                matTooltip="assign resources"
+                (click)="search(i, form)"
+              >
+                Search
+              </button>
+            </div>
+
+            <!-- <div class="flex justify-end">
+              <button mat-flat-button
+                      color="primary"
+                      title="search resources"
+                      (click)="search(i, form)"
+                      class="search-button"
+                      aria-label="search">
+                <span>Search</span>
+              </button>
+            </div> -->
+
+            <div class="selected-resources">
+              <div
+                class="flex items-center justify-between"
+                data-cy="selected-resources"
+                *ngFor="let user of form?.selectedUsers; let i = index"
+              >
+
+                <div class="flex justify-between items-center" *ngIf="status === 'add' || status === 'edit' && user?.supplier?.uuid === currentAccount?.uuid
+                || status === 'edit' && currentShift?.account_uuid === currentAccount?.uuid">
+                  <div class="flex items-center">
+                    <div class="h-10 w-10">
+                      <button
+                        data-cy="remove-resource-icon"
+                        mat-icon-button
+                        *ngIf="form?.selectedUsers.length > 1 && viewAs?.value !== 'supplier'"
+                        (click)="deleteSelectedResource(i, form)"
+                      >
+                        <mat-icon>close</mat-icon>
+                      </button>
+                    </div>
+
+                    <div
+                      style="width: 50px; height: 50px"
+                      class="rounded-full bg-white border border-solid border-gray-400"
+                    >
+                      <img
+                        class="w-full"
+                        [src]="user.resource?.logo || defaultAvatar"
+                      />
+                    </div>
+                    <div class="flex-col p-2">
+                      <div
+                        class="capitalize"
+                        [ngClass]="{ italic: user?.resource?.name == '' }"
+                      >
+                        {{
+                        user?.resource?.name == ""
+                          ? "To be Assigned"
+                          : user?.resource?.name
+                        }}
+                      </div>
+                      <div class="text-zinc-400 capitalize">
+                        {{ user?.supplier?.detail?.name || user?.supplier?.name }}
+                      </div>
+                    </div>
+                  </div>
+                  <div class="flex items-center p-2">
+                    <mat-checkbox
+                      color="primary"
+                      [(ngModel)]="user.supervisor"
+                      [ngModelOptions]="{ standalone: true }"
+                    >
+                      Supervising Resource
+                    </mat-checkbox>
+                  </div>
+
+                  <button
+                    mat-raised-button
+                    *ngIf="status !== 'add'"
+                    (click)="changeResource(user)"
+                    data-cy="change-resource"
+                    type="button"
+                  >
+                    Change resource
+                  </button>
+                </div>
+              </div>
+            </div>
+            <span
+              class="cursor-pointer text-primary flex items-center mt-2"
+              (click)="openTaskChecklist(form)"
+            >
+              <mat-icon class="text-primary">add</mat-icon>
+              Add Task Checklist
+            </span>
+          </div>
+
+          <!-- <p class="cursor-pointer text-primary flex items-center" (click)="goToAccreditationsRequired()" *ngIf="viewAdditionalFields" >
+            <mat-icon class="text-primary mr-2">assignment</mat-icon>
+            Accreditations Required
+          </p> -->
+
+          <div class="flex flex-col mt-8" data-cy="add-another-resuource-requirement">
+            <p
+              class="cursor-pointer text-primary mt-3 flex items-center"
+              (click)="addResourcesField()"
+            >
+              <mat-icon class="text-primary">add</mat-icon>
+              Add another Resource Requirement
+            </p>
+          </div>
+        </div>
+        <div
+          *ngIf="
+            !selectedVenue ||
+            !selectedVenue.roles ||
+            selectedVenue.roles?.length == 0
+          "
+        >
+          <mat-hint>This venue doesn't have any roles defined.</mat-hint>
+        </div>
+      </div>
+
+      <div class="buttons flex justify-between mt-18">
+        <!-- <button *ngIf="status === 'add'"
+             mat-flat-button
+             color="primary"
+             [disabled]="addShiftForm.invalid"
+             (click)="releaseShift()"
+             class="release-button text-center w-[200px] rounded-full">
+          <span>Release</span>
+        </button> -->
+
+
+
+      </div>
+    </form>
+  </div>
+</div>
+
+<div class="progress-spiner absolute top-1/2 left-64" *ngIf="viewSpinner">
+  <mat-spinner class="mat-spinner"></mat-spinner>
+</div>

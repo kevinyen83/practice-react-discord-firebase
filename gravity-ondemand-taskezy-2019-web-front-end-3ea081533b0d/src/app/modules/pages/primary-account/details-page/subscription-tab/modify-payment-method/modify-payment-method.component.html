@@ -1,0 +1,34 @@
+<div class="modify-payment-method p-12">
+  <p class="flex items-center cursor-pointer text-gray-400" (click)="returnToSubscription()"><mat-icon class="mr-4">keyboard_backspace</mat-icon> Subsciption  /  Modify payment method</p>
+  <p class="mt-8 text-xl">Please select your preferable payment method</p>
+  <p class="font-bold mt-4">Your saved payment card:</p>
+  <mat-radio-group class="flex flex-col" aria-label="Select an option">
+    <mat-radio-button class="border-2 w-2/3 flex border-gray-400 rounded-xl mb-2 mt-4 p-4" value="1">
+      <div class="flex justify-between">
+<!--        <img src="assets/images/cards/visa-card.png" alt="visa">-->
+        <div>
+          <p class="number-card">**** **** **** 1234</p>
+          <p>Expires</p>
+        </div>
+      </div>
+    </mat-radio-button>
+
+    <mat-radio-button class="border-2 w-2/3 border-gray-400 rounded-xl p-4" value="2">
+      <div class="flex justify-between">
+<!--        <img src="assets/images/cards/master-card.png" alt="master card">-->
+        <div>
+          <p class="number-card">**** **** **** 1234</p>
+          <p>Expires</p>
+        </div>
+      </div>
+    </mat-radio-button>
+  </mat-radio-group>
+
+  <button mat-raised-button
+          type="button"
+          (click)="save()"
+          class="save-button mt-4 w-60 w-35 text-white bg-blue-400 rounded-3xl"
+          aria-label="Save">
+    Save
+  </button>
+</div>

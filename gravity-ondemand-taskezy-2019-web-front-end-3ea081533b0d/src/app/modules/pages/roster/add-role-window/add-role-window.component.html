@@ -1,0 +1,86 @@
+<div class="add-role">
+  <mat-toolbar class="mat-accent relative bg-primary m-0 flex justify-between">
+    <mat-toolbar-row class="flex justify-between">
+      <div>
+        <span class="title dialog-title">Add Role</span>
+      </div>
+<!--      <div-->
+<!--        class="close cursor-pointer mb-4 text-white"-->
+<!--        (click)="close()"-->
+<!--        aria-label="Close dialog">-->
+<!--        <mat-icon class="absolute right-1.5 top-1">close</mat-icon>-->
+<!--      </div>-->
+    </mat-toolbar-row>
+  </mat-toolbar>
+
+  <div class="content p-6">
+    <form class="flex w-full" [formGroup]="addRoleForm" action="">
+
+      <div class="block-one w-[475px] mr-2 flex flex-col">
+
+        <mat-form-field class="charge-rate" appearance="fill">
+          <mat-label>Role</mat-label>
+          <input matInput type="text" formControlName="role">
+        </mat-form-field>
+
+<!--        <mat-form-field class="accreditation w-full">-->
+<!--          <mat-label class="font-bold">Accreditation</mat-label>-->
+<!--          <mat-select formControlName="accreditation">-->
+<!--            <mat-option>-->
+<!--            </mat-option>-->
+<!--          </mat-select>-->
+<!--        </mat-form-field>-->
+
+        <mat-form-field class="rate-type w-full">
+          <mat-label class="font-bold">Rate type</mat-label>
+          <mat-select formControlName="rateType">
+            <mat-option value="Standart">Standart</mat-option>
+            <mat-option value="Premium">Premium</mat-option>
+            <mat-option value="Discount">Discount</mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field class="rate-field" appearance="fill">
+          <mat-label>Rate($)</mat-label>
+          <input matInput type="text" formControlName="rate">
+        </mat-form-field>
+
+        <p class="text-[16px] font-semibold mb-4">Accreditations</p>
+
+        <div *ngIf="selectedLicence.length" class="checkboxes-accreditation leading-7">
+          <div class="flex flex-col" *ngFor="let licence of selectedLicence">
+            <mat-checkbox checked *ngFor="let name of licence.names; let i = index;" (change)="changeChecked($event, name)">{{name}}</mat-checkbox>
+          </div>
+<!--          <mat-checkbox *ngFor="let licence of selectedLicence" checked (change)="changeChecked($event, licence)">-->
+<!--            <span *ngFor="let name of licence.names; let i = index;">{{name}} <span *ngIf="i !== licence.names.length - 1">,</span> </span>-->
+<!--          </mat-checkbox>-->
+        </div>
+
+        <p class="text-primary underline cursor-pointer mt-4" (click)="toAccreditations()">SELECT ACCREDITATIONS</p>
+
+        <div class="buttons mt-5 w-full flex justify-end">
+          <div (click)="close()" class="cancel-button text-center p-3 cursor-pointer w-[200px] rounded-[33px] border border-headers-blue text-primary ml-2 mr-3">
+            Cancel
+          </div>
+
+          <div (click)="saveRole()" class="save-button text-center p-3 text-white cursor-pointer w-[200px] rounded-[33px] bg-primary ml-2 mr-3">
+            Save
+          </div>
+        </div>
+      </div>
+
+      <div class="block-two w-[475px] flex flex-col">
+        <mat-form-field class="item-code" appearance="fill">
+          <mat-label>Item code</mat-label>
+          <input matInput type="text" formControlName="itemCode">
+        </mat-form-field>
+
+        <mat-form-field class="description-field" appearance="fill">
+          <mat-label>Description</mat-label>
+          <input matInput type="text" formControlName="description">
+        </mat-form-field>
+      </div>
+
+    </form>
+  </div>
+</div>

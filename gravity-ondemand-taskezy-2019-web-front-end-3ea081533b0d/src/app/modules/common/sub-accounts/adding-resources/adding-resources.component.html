@@ -1,0 +1,148 @@
+<div class="invite-resource bg-white p-6 rounded-[20px]" *ngIf="viewInviteForm">
+  <p
+    class="text-zinc-400 font-normal flex text-xl items-center mb-14 cursor-pointer"
+    (click)="backToList()">
+
+    <mat-icon class="mr-2">arrow_back</mat-icon><span>Resources / Invite new resource</span>
+  </p>
+
+  <p class="text-xl font-medium">Please provide the Email or Mobile number of Resource you would like to invite:</p>
+
+  <form
+    action=""
+    class="w-4/5 mt-8 flex lg:flex-col md:flex-col sm:flex-col justify-between"
+    [formGroup]="inviteResourceForm">
+
+    <mat-form-field class="email w-full mr-2">
+      <mat-label>Email</mat-label>
+      <input
+        matInput
+        name="emailIdentificator"
+        formControlName="emailIdentificator"/>
+    </mat-form-field>
+
+    <mat-form-field class="mobile-number w-full mr-2">
+      <mat-label>Mobile Number</mat-label>
+      <!-- <input matInput name="mobileNumber" formControlName="mobileNumber" /> -->
+      <ngx-mat-intl-tel-input
+        [preferredCountries]="['au','us', 'gb']"
+        [enablePlaceholder]="true"
+        [enableSearch]="false"
+        formControlName="mobileNumber"
+        name="mobileNumber"
+        autocomplete="off"
+        format="national"
+        required
+        #mobileNumber
+        enableAutoCountrySelect="true">
+      </ngx-mat-intl-tel-input>
+      <mat-error *ngIf="inviteResourceForm.get('mobileNumber').hasError('required')">
+        Phone Number is required
+      </mat-error>
+      <mat-error *ngIf="inviteResourceForm.get('mobileNumber').hasError('validatePhoneNumber')">
+        Invalid Number
+    </mat-error>
+    </mat-form-field>
+
+    <button
+      mat-raised-button
+      type="button"
+      color="primary"
+      class="
+          invite-member-button
+          w-48
+          rounded-full
+          mt-6"
+      id="invite-member-button"
+      (click)="searchResource()"
+      aria-label="save-details-button">
+      Search
+    </button>
+  </form>
+</div>
+
+<div class="adding-member bg-white p-8 rounded-2xl" *ngIf="!viewInviteForm">
+  <div class="add-member">
+    <p
+      class="text-gray-400 flex items-center mb-14 cursor-pointer"
+      (click)="backToResource()">
+      <mat-icon class="mr-2">arrow_back</mat-icon
+      ><span>Resources / Invite Resource</span>
+    </p>
+
+    <form
+      action=""
+      [formGroup]="addResourceForm"
+      class="flex lg:flex-col md:flex-col sm:flex-col mt-4 w-4/5">
+
+      <div class="flex flex-col 2xl:w-1/2 xl:w-1/2 lg:w-full md:w-full sm:w-full">
+
+        <div class="flex flex-col md:flex-wrap xl:mr-3 2xl:mr-3 sm:flex-wrap justify-between">
+
+          <mat-form-field class="name w-full lg:mr-3 xl:mr-3 2xl:mr-3">
+            <mat-label>Name</mat-label>
+            <input matInput name="name" formControlName="name" />
+          </mat-form-field>
+
+          <mat-form-field class="type w-full">
+            <mat-label>Type</mat-label>
+            <mat-select placeholder="Type" formControlName="type">
+              <mat-option value="Direct">Direct</mat-option>
+              <mat-option value="Indirect">Indirect</mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+      </div>
+
+      <div class="flex flex-col 2xl:w-1/2 xl:w-1/2 lg:w-full md:w-full sm:w-full">
+        <mat-form-field class="email w-full">
+          <mat-label>E-mail*</mat-label>
+          <input matInput name="email" formControlName="email" />
+        </mat-form-field>
+
+        <mat-form-field class="phone w-full">
+          <mat-label>Mobile number*</mat-label>
+          <!-- <input matInput name="phone" formControlName="phone" /> -->
+          <ngx-mat-intl-tel-input
+            [preferredCountries]="['au','us', 'gb']"
+            [enablePlaceholder]="true"
+            [enableSearch]="false"
+            formControlName="phone"
+            name="phone"
+            autocomplete="off"
+            format="national"
+            enableAutoCountrySelect="true">
+          </ngx-mat-intl-tel-input>
+          <mat-error *ngIf="addResourceForm.get('phone').hasError('required')">
+            Phone Number is required
+          </mat-error>
+          <mat-error *ngIf="addResourceForm.get('phone').hasError('validatePhoneNumber')">
+            Invalid Number
+          </mat-error>
+        </mat-form-field>
+      </div>
+
+    </form>
+  </div>
+
+  <div class="buttons flex" *ngIf="!viewInviteForm">
+    <button
+      mat-stroked-button
+      color="primary"
+      class="cancel-button text-center w-[200px] mr-2 rounded-full mt-6"
+      (click)="backToResource()"
+      aria-label="save-details-button">
+      Cancel
+    </button>
+
+    <button
+      mat-raised-button
+      color="primary"
+      class="invite-button text-center w-[200px] rounded-full mt-6"
+      (click)="inviteResource()"
+      aria-label="save-details-button">
+      Invite
+    </button>
+  </div>
+
+</div>

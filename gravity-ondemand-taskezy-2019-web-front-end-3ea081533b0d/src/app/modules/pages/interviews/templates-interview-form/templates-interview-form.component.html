@@ -1,0 +1,89 @@
+<div class="templates">
+  <!-- Alert -->
+  <fuse-alert
+    class="mt-4 mb-1"
+    *ngIf="showAlert"
+    [appearance]="'outline'"
+    [showIcon]="false"
+    [type]="alert.type"
+    [dismissible]="true"
+    [@shake]="alert.type === 'error'">
+    {{alert.message}}
+  </fuse-alert>
+
+  <div class="templates-form">
+    <form action="" [formGroup]="templatesForm">
+      <div class="flex justify-between sm:flex-col md:flex-row">
+        <mat-form-field class="name w-1/2 sm:w-full">
+          <mat-label>Name</mat-label>
+          <input matInput
+                 name="name"
+                 formControlName="name">
+        </mat-form-field>
+
+        <mat-form-field class="description w-1/2 ml-0.5 sm:w-full">
+          <mat-label>Description</mat-label>
+          <input matInput
+                 name="description"
+                 formControlName="description">
+        </mat-form-field>
+      </div>
+
+      <div class="question-add-container">
+        <span>Questions</span>
+      </div>
+      <div class="question-list">
+        <div
+          formArrayName="questions"
+          *ngFor="let item of templatesForm.get('questions')['controls']; let i = index;"
+        >
+          <div [formGroupName]="i" class="question-item flex justify-between">
+            <mat-form-field class="questionName w-2/4">
+              <mat-label>Question</mat-label>
+              <input matInput
+               name="questionName"
+               formControlName="questionName">
+            </mat-form-field>
+
+            <mat-form-field class="answer-option w-2/4 ml-1">
+              <mat-label>Answer Option</mat-label>
+              <mat-select placeholder="Type" formControlName="answerOption" (selectionChange)="changeAnswerOption($event)" required>
+                <mat-option #option *ngFor="let option of listAnswerOption" [value]="option">{{option}}</mat-option>
+              </mat-select>
+              <mat-error *ngIf="templatesForm.get('questions')['controls'][i].get('answerOption').hasError('required')">
+                Answer Option is required
+              </mat-error>
+            </mat-form-field>
+
+            <button
+              mat-raised-button
+              *ngIf="item.get('answerOption').value  === 'Select'"
+              class="add-option-btn"
+              color="primary"
+              (click)="handleAnswerOptionList(i)">
+              <mat-icon>add</mat-icon>
+            </button>
+            <button mat-raised-button
+                    color="warn"
+                    class="close-question-btn ml-1 mt-2"
+                    (click)="handleRemoveQuestion(i)">
+              <mat-icon>close</mat-icon>
+            </button>
+          </div>
+        </div>
+        <div class="question-add-container">
+          <button mat-raised-button
+                  color="primary"
+                  class="add-question-btn mt-5"
+                  (click)="handleAddQuestion()">Add a question</button>
+        </div>
+      </div>
+
+
+      <div class="footer-container flex justify-end mt-10">
+        <button mat-raised-button color="accent" class="close-button" (click)="handleClose()">Close</button>
+        <button mat-raised-button color="primary" class="save-button ml-1" (click)="handleSave()">Save</button>
+      </div>
+    </form>
+  </div>
+</div>

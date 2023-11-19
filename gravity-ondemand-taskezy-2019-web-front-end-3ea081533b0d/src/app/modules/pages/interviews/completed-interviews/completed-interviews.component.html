@@ -1,0 +1,135 @@
+<div class="interview-list" *ngIf="viewList">
+  <div class="table-of-templates">
+    <mat-table
+      [dataSource]="dataSource"
+      matSort
+      (matSortChange)="sortData($event)"
+    >
+      <!-- Email Column -->
+      <ng-container matColumnDef="email">
+        <mat-header-cell mat-header-cell *matHeaderCellDef mat-sort-header>
+          Email
+        </mat-header-cell>
+        <mat-cell mat-cell *matCellDef="let row">
+          {{ row.email }}
+        </mat-cell>
+      </ng-container>
+
+      <!-- Template Column -->
+      <ng-container matColumnDef="template">
+        <mat-header-cell mat-header-cell *matHeaderCellDef mat-sort-header>
+          Template Used
+        </mat-header-cell>
+        <mat-cell mat-cell *matCellDef="let row">
+          {{ row.template }}
+        </mat-cell>
+      </ng-container>
+
+      <!-- Status Column -->
+      <ng-container matColumnDef="status">
+        <mat-header-cell mat-header-cell *matHeaderCellDef mat-sort-header>
+          Status</mat-header-cell
+        >
+        <mat-cell mat-cell *matCellDef="let row">
+          {{ row.status }}
+        </mat-cell>
+      </ng-container>
+
+      <ng-container matColumnDef="updated">
+        <mat-header-cell
+          *matHeaderCellDef
+          mat-sort-header="activeLink"
+          class="link-container"
+          >Updated</mat-header-cell
+        >
+        <mat-cell
+          fxLayout="row"
+          fxLayoutAlign="space-between center"
+          *matCellDef="let row"
+          class="link-container"
+        >
+          {{ row.updated | date: "medium" }}
+        </mat-cell>
+      </ng-container>
+
+      <ng-container matColumnDef="action">
+        <mat-header-cell
+          *matHeaderCellDef
+          mat-sort-header="action"
+          class="action-container"
+        ></mat-header-cell>
+        <mat-cell
+          fxLayout="row"
+          fxLayoutAlign="space-between center"
+          *matCellDef="let row"
+          class="action-container flex justify-end"
+        >
+          <mat-icon class="menu cursor-pointer" [matMenuTriggerFor]="beforeMenu"
+            >more_vert</mat-icon
+          >
+          <mat-menu #beforeMenu="matMenu" xPosition="before">
+            <button mat-menu-item (click)="viewDetail(row)">View</button>
+          </mat-menu>
+        </mat-cell>
+      </ng-container>
+
+      <mat-header-row
+        mat-header-row
+        *matHeaderRowDef="displayedColumns"
+      ></mat-header-row>
+      <mat-row
+        mat-row
+        class="hover:bg-gray-100"
+        *matRowDef="let row; columns: displayedColumns"
+      >
+      </mat-row>
+    </mat-table>
+    <p class="total pl-3 text-gray-400 bg-white">
+      Total Interviews: {{ dataSource?.data ? dataSource.data.length : 0 }}
+    </p>
+    <mat-paginator
+      #paginator
+      [pageSizeOptions]="[5, 10, 25, 100]"
+    ></mat-paginator>
+  </div>
+</div>
+<div
+  class="interview-detail border-2 rounded-2xl border-gray-200 p-12 leading-8"
+  *ngIf="!viewList"
+>
+  <div class="detail-container">
+    <div class="line-item-container">
+      <h3>
+        <b>Email: </b>
+        {{ selectedInterview.email }}
+      </h3>
+
+      <h4>
+        <b>Template: </b>
+        {{ selectedInterview.template }}
+      </h4>
+    </div>
+    <h3 class="mt-3 text-2xl">Questions:</h3>
+    <div class="answer-list-container">
+      <div
+        *ngFor="let question of selectedInterview.questions; let i = index"
+        class="line-group-item-container"
+      >
+        <h4>
+          <b>Question: {{ question.questionName }}:</b>
+        </h4>
+        <p><b>Answer:</b> {{ selectedInterview.answers[i] }}</p>
+      </div>
+    </div>
+    <div class="footer-container flex justify-end">
+      <button
+        mat-raised-button
+        color="primary"
+        class="save-button"
+        (click)="handleBack()"
+      >
+        Back
+      </button>
+    </div>
+  </div>
+</div>

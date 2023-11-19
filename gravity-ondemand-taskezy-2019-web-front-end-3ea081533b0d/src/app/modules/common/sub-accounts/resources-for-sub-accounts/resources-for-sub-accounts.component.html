@@ -1,0 +1,220 @@
+<div *ngIf="resources?.length" class="resources mt-12 mb-5">
+  <!--  <form-->
+  <!--    class="form-header flex w-full justify-between lg:flex-wrap md:flex-wrap sm:flex-wrap items-center"-->
+  <!--    [formGroup]="formSearch"-->
+  <!--    action=""-->
+  <!--  >-->
+  <!--    <div class="flex lg:w-full md:w-full lg:justify-center md:justify-center sm:justify-center sm:flex-wrap 2xl:w-2/3 xl:w-2/3 text-center">-->
+  <!--      <mat-form-field class="search-by w-[355.16px] mr-4">-->
+  <!--        <mat-select-->
+  <!--          placeholder="Search by"-->
+  <!--          formControlName="searchBy"-->
+  <!--          (selectionChange)="changeSearchBy($event)">-->
+
+  <!--          <mat-option value="resource">Resource</mat-option>-->
+  <!--          <mat-option value="venue">Venue</mat-option>-->
+  <!--          <mat-option value="licence">Licence Type</mat-option>-->
+  <!--          <mat-option value="status">Status</mat-option>-->
+  <!--          <mat-option value="rating">Rating</mat-option>-->
+  <!--        </mat-select>-->
+  <!--      </mat-form-field>-->
+
+  <!--      <mat-form-field class="select w-[355.16px] mr-4">-->
+  <!--        <mat-select placeholder="Select" formControlName="select" multiple>-->
+  <!--          <mat-option *ngFor="let select of selecting" [value]="select">{{-->
+  <!--            select-->
+  <!--          }}</mat-option>-->
+  <!--        </mat-select>-->
+  <!--      </mat-form-field>-->
+
+  <!--      <button-->
+  <!--        mat-raised-button-->
+  <!--        color="primary"-->
+  <!--        type="button"-->
+  <!--        class="search-button w-[151px] rounded-full mb-4"-->
+  <!--        (click)="search()"-->
+  <!--        aria-label="search-button"-->
+  <!--      >-->
+  <!--        Search-->
+  <!--      </button>-->
+  <!--    </div>-->
+  <!--    <button-->
+  <!--      mat-raised-button-->
+  <!--      type="button"-->
+  <!--      color="primary"-->
+  <!--      class="search-button w-[200px] text-base lg:m-auto md:m-auto sm:m-auto mt-1.5 sm:mt-5 rounded-full mb-4"-->
+  <!--      (click)="inviteResource()"-->
+  <!--      aria-label="search-button">-->
+
+  <!--      <mat-icon>add</mat-icon>-->
+  <!--      Invite Resource-->
+
+  <!--    </button>-->
+  <!--  </form>-->
+
+  <div class="table-resources">
+    <div>
+      <mat-table class="w-full" [dataSource]="dataSource">
+        <!-- Logo Column -->
+        <ng-container matColumnDef="logo">
+          <mat-header-cell mat-header-cell *matHeaderCellDef></mat-header-cell>
+          <mat-cell mat-cell *matCellDef="let row">
+            <div class="logo w-10 text-6xl rounded-full mr-2">
+              <div *ngIf="!row.detail.avatar">
+                <mat-icon class="text-6xl">account_circle</mat-icon>
+              </div>
+              <div
+                *ngIf="row.detail.avatar"
+                class="w-10 h-10 rounded-full overflow-hidden"
+              >
+                <img [src]="row.detail.avatar" alt="avatar" />
+              </div>
+            </div>
+          </mat-cell>
+        </ng-container>
+
+        <!-- Resource Name Column -->
+        <ng-container matColumnDef="resourceName">
+          <mat-header-cell mat-header-cell *matHeaderCellDef>
+            Resource Name
+          </mat-header-cell>
+          <mat-cell mat-cell *matCellDef="let row">
+            {{ row.name }}
+          </mat-cell>
+        </ng-container>
+
+        <!-- Date commenced Column -->
+        <ng-container matColumnDef="email">
+          <mat-header-cell mat-header-cell *matHeaderCellDef>
+            Email
+          </mat-header-cell>
+          <mat-cell mat-cell *matCellDef="let row">
+            {{ row.email }}
+          </mat-cell>
+        </ng-container>
+
+        <!--      &lt;!&ndash; Venue Column &ndash;&gt;-->
+        <!--      <ng-container matColumnDef="venue">-->
+        <!--        <mat-header-cell mat-header-cell *matHeaderCellDef>-->
+        <!--          Venue</mat-header-cell-->
+        <!--        >-->
+        <!--        <mat-cell mat-cell *matCellDef="let row"> </mat-cell>-->
+        <!--      </ng-container>-->
+
+        <!--      &lt;!&ndash;Last shift column&ndash;&gt;-->
+        <!--      <ng-container matColumnDef="lastShift">-->
+        <!--        <mat-header-cell *matHeaderCellDef class="link-container"-->
+        <!--          >Last shift</mat-header-cell-->
+        <!--        >-->
+        <!--        <mat-cell-->
+        <!--          fxLayout="row"-->
+        <!--          fxLayoutAlign="space-between center"-->
+        <!--          *matCellDef="let row"-->
+        <!--          class="link-container"-->
+        <!--        >-->
+        <!--        </mat-cell>-->
+        <!--      </ng-container>-->
+
+        <!--      &lt;!&ndash;Total hours column&ndash;&gt;-->
+        <!--      <ng-container matColumnDef="totalHours">-->
+        <!--        <mat-header-cell *matHeaderCellDef class="link-container"-->
+        <!--          >Total hours</mat-header-cell-->
+        <!--        >-->
+        <!--        <mat-cell-->
+        <!--          fxLayout="row"-->
+        <!--          fxLayoutAlign="space-between center"-->
+        <!--          *matCellDef="let row; let i = index"-->
+        <!--          class="link-container"-->
+        <!--        >-->
+        <!--          {{ i + 8 }}-->
+        <!--        </mat-cell>-->
+        <!--      </ng-container>-->
+
+        <!--Last shift column-->
+        <ng-container matColumnDef="phoneNumber">
+          <mat-header-cell *matHeaderCellDef class="link-container"
+            >Phone number</mat-header-cell
+          >
+          <mat-cell
+            fxLayout="row"
+            fxLayoutAlign="space-between text-center"
+            *matCellDef="let row; let i = index"
+            class="link-container"
+          >
+          </mat-cell>
+        </ng-container>
+
+        <!--Venue column-->
+        <ng-container matColumnDef="type">
+          <mat-header-cell *matHeaderCellDef class="link-container"
+            >Venue</mat-header-cell
+          >
+          <mat-cell
+            fxLayout="row"
+            fxLayoutAlign="space-between text-center"
+            *matCellDef="let row; let i = index"
+            class="link-container"
+          >
+            <!--          {{row.venue}}-->
+          </mat-cell>
+        </ng-container>
+
+        <!--Status column-->
+        <ng-container matColumnDef="status">
+          <mat-header-cell *matHeaderCellDef class="link-container"
+            >Status</mat-header-cell
+          >
+          <mat-cell
+            fxLayout="row"
+            fxLayoutAlign="space-between center"
+            *matCellDef="let row"
+            class="link-container"
+          >
+            <div
+              class="rounded-[33px] w-[127px] h-[45px] text-center p-3"
+              [ngClass]="{
+                'bg-gray-200 text-gray-500': row.status === 'Rejected',
+                'bg-green-200 text-green-500': row.status === 'Avaliable',
+                'bg-gray-300': row.status === 'Banned',
+                'bg-gray-200 text-gray-500': row.status === 'Unavaliable'
+              }"
+            >
+              <div>{{ row.status }}</div>
+            </div>
+          </mat-cell>
+        </ng-container>
+
+        <mat-header-row
+          class="bg-slate-100"
+          mat-header-row
+          *matHeaderRowDef="displayedColumns"
+        ></mat-header-row>
+        <mat-row
+          class="hover:bg-gray-100 pt-2 pb-2 cursor-pointer"
+          (click)="viewResource(row)"
+          mat-row
+          *matRowDef="let row; columns: displayedColumns"
+        >
+        </mat-row>
+      </mat-table>
+    </div>
+  </div>
+</div>
+
+<div
+  *ngIf="!resources?.length"
+  class="h-[500px] flex items-center mt-12 justify-center bg-white rounded-2xl p-2"
+>
+  <div class="text-xl" *ngIf="accountType == 'client'">
+    Resources allocated Shifts to this Client will appear here.
+  </div>
+  <div
+    class="text-xl"
+    *ngIf="accountType == 'venue' || accountType == 'clientVenue'"
+  >
+    Resources allocated Shifts to this Venue will appear here.
+  </div>
+  <div class="text-xl" *ngIf="accountType == 'supplier'">
+    Resources you have used from this Supplier will appear here.
+  </div>
+</div>

@@ -1,0 +1,175 @@
+<!-- <div class="tabs"> -->
+<!-- <div class="group-tabs"> -->
+
+<!-- <div class="labels flex" *ngIf="!currentVenue">
+      <div class="cursor-pointer text-center p-3 text-xl ml-6 mr-2 w-[273.26px] rounded-t-xl" [ngClass]="{'bg-white text-primary font-semibold': tab === 'Details', 'text-zinc-400 font-medium': tab !== 'Details'}" (click)="selectTab('Details')">Details</div>
+      <div class="cursor-pointer text-center p-3 text-xl mr-2 w-[273.26px] rounded-t-xl" [ngClass]="{'bg-white text-primary font-semibold': tab === 'Members', 'text-zinc-400 font-medium': tab !== 'Members'}" (click)="selectTab('Members')">Members</div>
+      <div class="cursor-pointer text-center p-3 text-xl mr-2 w-[273.26px] rounded-t-xl" [ngClass]="{'bg-white text-primary font-semibold': tab === 'Venues', 'text-zinc-400 font-medium': tab !== 'Venues'}" *ngIf="account !== 'supplier'" (click)="selectTab('Venues')">Venues</div>
+      <div class="cursor-pointer text-center p-3 text-xl mr-2 w-[273.26px] rounded-t-xl" [ngClass]="{'bg-white text-primary font-semibold': tab === 'Resources', 'text-zinc-400 font-medium': tab !== 'Resources'}" (click)="selectTab('Resources')">Resources</div>
+      <div class="cursor-pointer text-center p-3 text-xl mr-6 w-[273.26px] rounded-t-xl" [ngClass]="{'bg-white text-primary font-semibold': tab === 'Documents', 'text-zinc-400 font-medium': tab !== 'Documents'}" (click)="selectTab('Documents')">Documents</div>
+    </div> -->
+<div class="flex justify-between w-full mt-6 overflow-y-auto">
+  <app-tabs-detail
+    class="w-fit"
+    [buttons]="tabs"
+    [selectedAccount]="selectedAccount"
+    [currentResource]="currentResource"
+    [currentVenue]="currentVenue"
+    [subTabs]="subTabs"
+    (goToNextPage)="selectTab($event)"
+  ></app-tabs-detail>
+  <div class="w-full h-[calc(100vh-180px)] bg-white overflow-auto">
+    <div
+      class="progress-spiner w-96 absolute top-1/2 left-1/2 opacity-0.5"
+      *ngIf="viewSpinner"
+    >
+      <mat-spinner class="mat-spinner m-auto -ml-14"></mat-spinner>
+    </div>
+    <!-- asd -->
+    <div class="tab" *ngIf="tab === 'Details'">
+      <app-details-form
+        [accountType]="accountType"
+        [status]="status"
+        [suppliers]="suppliers"
+        [clients]="clients"
+        [isCreatingClient]="false"
+      ></app-details-form>
+    </div>
+
+    <div class="members-tab" *ngIf="tab === 'Members'">
+      <app-list-members
+        [accountType]="accountType"
+        (goToDetails)="goToDetails()"
+      ></app-list-members>
+    </div>
+
+    <div
+      class="venues-tab"
+      *ngIf="accountType !== 'supplier' && tab === 'Venues'"
+    >
+      <div *ngIf="viewAddVenue || !venues.length">
+        <app-add-venue
+          [statusForm]="statusForm"
+          [accountType]="accountType"
+          [currentAccount]="currentAccount"
+          [currentVenue]="currentVenue"
+          (closeAddVenueForm)="closeVenue()"
+          [isCreatingVenueFromClient]="false"
+        ></app-add-venue>
+      </div>
+      <div *ngIf="!currentVenue && !viewAddVenue && venues.length">
+        <app-sub-list-venues
+          (newVenue)="goToAddForm()"
+          (selectVenue)="gotoOpenVenue($event)"
+        ></app-sub-list-venues>
+      </div>
+    </div>
+
+    <div *ngIf="currentVenue">
+      <app-sub-view-venue
+        [venue]="currentVenue"
+        [accountType]="'clientVenue'"
+        [venueClient]="selectedAccount"
+        [currentAccount]="currentAccount"
+        [showSidemenu]="false"
+        (pressBack)="closeVenue()"
+      ></app-sub-view-venue>
+    </div>
+
+    <div class="resources-tab" *ngIf="tab === 'Resources' && !currentResource">
+      <app-resources-for-sub-accounts
+        *ngIf="viewListResource"
+        [resources]="resources"
+        [accountType]="accountType"
+        (updateView)="updateView($event)"
+      ></app-resources-for-sub-accounts>
+    </div>
+    <div *ngIf="currentResource">
+      <div
+        class="flex items-center cursor-pointer my-8"
+        (click)="backToResources()"
+      >
+        <mat-icon class="active:text-primary text-gray-400 mr-2"
+          >arrow_back</mat-icon
+        >
+        <div class="text-xl text-gray-400">
+          Resources / {{ currentResource?.name }}
+        </div>
+      </div>
+
+      <app-resource-details
+        *ngIf="tab === 'Resource Details'"
+        [type]="'resource'"
+        [currentResource]="currentResource"
+      ></app-resource-details>
+
+      <app-reports-tab *ngIf="tab === 'Reports'"></app-reports-tab>
+
+      <app-roster-details
+        [currentAccount]=""
+        [currentResource]="currentResource"
+        *ngIf="tab === 'Roster Details'"
+      ></app-roster-details>
+
+      <app-documents
+        *ngIf="tab === 'Documents'"
+        [documents]="documents"
+        [selectedAccount]="currentResource"
+        [currentAccount]="currentAccount"
+        [header]=""
+        [type]="'resource'"
+        (saveDocuments)="saveDocuments($event)"
+      ></app-documents>
+
+      <!-- <div
+        class="assessments bg-white p-6 rounded-xl mt-5"
+        *ngIf="tab === 'Interviews and Assessments'"
+      > -->
+      <div
+        class="assessments bg-white p-6 rounded-xl mt-5"
+        *ngIf="tab === 'Assessments'"
+      >
+        <app-resource-assessments
+          [assessments]="assessments"
+        ></app-resource-assessments>
+        <!-- <app-resource-interviews
+          [status]="'Interviews'"
+          [interviews]="interviews"
+        ></app-resource-interviews> -->
+      </div>
+    </div>
+
+    <div class="documents-tab" *ngIf="tab === 'Documents' && !currentResource">
+      <app-documents
+        [documents]="documents"
+        [selectedAccount]="selectedAccount"
+        [currentAccount]="currentAccount"
+        [type]="accountType"
+      ></app-documents>
+    </div>
+
+    <div
+      class="accreditations-tab flex justify-between"
+      *ngIf="tab === 'Accreditations'"
+    >
+      <div>
+        <app-resource-licences
+          [licences]="accreditations"
+          [label]="'Licences and Accreditations'"
+        ></app-resource-licences>
+      </div>
+      <!-- <app-resource-licences
+        [licences]="inductions"
+        [label]="'Inductions'"
+      ></app-resource-licences> -->
+
+      <!-- <div
+        class="text-primary rounded-b-xl flex items-center text-xl text-bold cursor-pointer mr-4"
+        data-cy="add-accreditation-button"
+
+      > -->
+
+      <!-- </div> -->
+    </div>
+  </div>
+</div>

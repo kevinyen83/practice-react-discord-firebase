@@ -1,0 +1,51 @@
+<div class="task-checklist">
+  <div class="header-checklist bg-primary text-white flex justify-between text-2xl p-4">
+    <div>Task Checklist</div>
+    <mat-icon class="text-white text-sm" mat-dialog-close data-cy="close-button">close</mat-icon>
+  </div>
+
+  <div class="content-checklist p-4">
+
+    <form action="">
+      <div class="flex justify-between items-center">
+
+        <mat-form-field class="w-full fuse-mat-textarea" appearance="fill" data-cy="task-textarea-field-first">
+          <mat-label>Task#1</mat-label>
+          <textarea matInput data-cy="task-textarea-first"></textarea>
+        </mat-form-field>
+
+        <mat-icon>delete_outline</mat-icon>
+
+      </div>
+
+      <div class="flex justify-between items-center" data-cy="task-textarea-field-second">
+
+        <mat-form-field class="w-full fuse-mat-textarea" appearance="fill">
+          <mat-label>Task#2</mat-label>
+          <textarea matInput data-cy="task-textarea-second"></textarea>
+        </mat-form-field>
+
+        <mat-icon>delete_outline</mat-icon>
+
+      </div>
+
+      <div class="buttons-checklist flex justify-between mt-4">
+
+        <button class="w-40 cancel-button rounded-3xl"
+                mat-raised-button
+                mat-dialog-close
+                data-cy="cancel-button">
+          Cancel
+        </button>
+
+        <button class="w-40 save-button bg-blue-400 rounded-3xl text-white"
+                mat-raised-button
+                mat-dialog-close
+                data-cy="save-button">
+          Save
+        </button>
+
+      </div>
+    </form>
+  </div>
+</div>

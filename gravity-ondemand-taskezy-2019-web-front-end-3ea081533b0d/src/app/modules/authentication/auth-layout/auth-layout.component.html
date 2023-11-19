@@ -1,0 +1,168 @@
+<div class="flex z-99 flex-col w-full h-full justify-between relative">
+  <fuse-loading-bar></fuse-loading-bar>
+  <div class="header-login w-full flex items-center justify-between p-3">
+    <div class="icon">
+      <img src="assets/images/logo/taskezy_2_logo.svg" />
+    </div>
+  </div>
+
+  <div class="flex flex-row justify-center w-full">
+    <div
+      class="shadow-md flex flex-row justify-center overflow-hidden rounded-2xl w-3/4 h-full">
+      <div
+        class="w-3/5 p-12 description bg-primary hidden lg:block xl:block 2xl:block relative"
+        *ngIf="!noSplit">
+        <div
+          *ngIf="status === 'login'"
+          class="flex flex-col h-full justify-around">
+          <h1 class="text-white font-bold text-center text-4xl">
+            Welcome to TaskEzy!
+          </h1>
+          <div class="main-logo bg-primary w-full">
+            <img
+              src="assets/images/logo/taskezy_white_gray_1.svg"
+              alt="logo" />
+          </div>
+          <div
+            class="text-description font-medium text-3xl text-center text-white">
+            <div class="leading-10">
+              <p>Workforce Management,</p>
+              <p>Compliance and Reporting Made</p>
+              <p>Easy</p>
+            </div>
+          </div>
+        </div>
+
+        <div
+          class="flex flex-col h-full justify-around w-full"
+          *ngIf="status === 'forgot-password'">
+          <img
+            class="mb-16"
+            src="assets/images/logo/6-6.svg"
+            alt="forgot-password-img" />
+        </div>
+
+        <div
+          class="flex flex-col h-full justify-around w-full"
+          *ngIf="status === 'reset-password'">
+          <img
+            class="mb-16"
+            src="assets/images/logo/7-7.svg"
+            alt="reset-password-img" />
+        </div>
+
+        <div
+          class="flex flex-col h-full justify-around w-full"
+          *ngIf="status === 'register'">
+          <img
+            class="mb-16"
+            src="assets/images/logo/sign-up.svg"
+            alt="register-img" />
+        </div>
+
+        <div
+          class="flex flex-col h-full justify-around w-full"
+          *ngIf="status === 'verify-email'">
+          <img
+            class="mb-16"
+            src="assets/images/logo/5-5.svg"
+            alt="verify-email-img" />
+        </div>
+
+        <div
+          class="flex flex-col h-full justify-around w-full"
+          *ngIf="status === 'verify-mobile'">
+          <img
+            class="mb-16"
+            src="assets/images/logo/2-2.svg"
+            alt="verify-mobile-img" />
+        </div>
+
+        <div
+          class="flex flex-col h-full justify-around w-full"
+          *ngIf="status === 'id-check'">
+          <img
+            class="mb-16"
+            src="assets/images/logo/3-3.svg"
+            alt="id-check-img" />
+        </div>
+
+        <div
+          class="flex flex-col h-full items-center justify-around w-full"
+          *ngIf="
+            (status === 'welcome' && !hasInvites) || status === 'verifying-now'
+          ">
+          <img
+            *ngIf="asResource"
+            src="assets/images/logo/image_resource.svg"
+            alt="welcome-img" />
+          <img
+            *ngIf="!asResource"
+            class="2xl:p-4"
+            src="assets/images/logo/welcome-page.svg"
+            alt="welcome-img" />
+        </div>
+
+        <div
+          class="flex flex-col h-full items-center justify-around w-full"
+          *ngIf="status === 'welcome' && hasInvites">
+          <img
+            src="assets/images/logo/welcome-page.svg"
+            alt="welcome-img" />
+        </div>
+      </div>
+      <div class="w-full">
+        <div
+          class="w-full bg-primary flex items-center p-8 text-white text-3xl"
+          *ngIf="showHeader">
+          <button
+            mat-icon-button
+            (click)="toBackCall()"
+            *ngIf="showBack">
+            <mat-icon class="text-white">arrow_back</mat-icon>
+          </button>
+          <div
+            data-cy="header-auth-layout"
+            class="ml-3 font-bold">
+            {{ name }}
+          </div>
+        </div>
+        <div class="w-full h-full bg-white p-15">
+          <button
+            mat-icon-button
+            color="primary"
+            data-cy="header-arrow-back"
+            *ngIf="showBack && !showHeader"
+            (click)="toBackCall()">
+            <mat-icon>arrow_back</mat-icon>
+          </button>
+
+          <h1
+            *ngIf="showTitle"
+            [attr.data-cy]="headerName"
+            class="text-primary font-bold text-3xl mb-12 text-center">
+            {{ name }}
+          </h1>
+
+          <div class="text-md font-medium text-secondary text-center">
+            <ng-content></ng-content>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <app-auth-footer class="justify-self-end"></app-auth-footer>
+  <div
+    class="overflow-hidden w-full h-full bg-gradient-to-b from-primary/[0.4] to-transparent absolute -z-1">
+    <div
+      *ngIf="circles"
+      class="flex justify-center h-full items-center">
+      <div
+        class="absolute z-50 flex justify-center items-center w-[1182px] h-[1182px] opacity-[0.1] bg-primary rounded-full"></div>
+      <div
+        class="absolute w-[1014px] z-60 h-[1014px] bg-primary opacity-[0.15] rounded-full"></div>
+      <div
+        class="absolute w-[860px] z-70 h-[860px] bg-primary opacity-[0.20] rounded-full"></div>
+    </div>
+  </div>
+</div>

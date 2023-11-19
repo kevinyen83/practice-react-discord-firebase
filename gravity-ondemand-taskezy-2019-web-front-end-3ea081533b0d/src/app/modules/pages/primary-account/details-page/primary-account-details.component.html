@@ -1,0 +1,193 @@
+<div class="absolute inset-0 flex flex-col min-w-0">
+  <mat-drawer-container
+    class="absolute top-0 left-0 bottom-0 right-0 flex flex-1"
+    [hasBackdrop]="true"
+  >
+    <mat-drawer-content class="flex-auto flex flex-col">
+      <div class="flex flex-col flex-auto min-w-0">
+        <!--Header-->
+        <div class="sticky top-0 overflow-hidden z-99">
+          <app-header-with-buttons
+            [title]="'Details'"
+            [isDetailPage]="true"
+          ></app-header-with-buttons>
+          <div class="sticky">
+            <app-buttons-detail-page
+              *ngIf="activeTab === 'Details'"
+            ></app-buttons-detail-page>
+            <app-buttons-detail-acrreditations-page
+              *ngIf="activeTab === 'Accreditations'"
+            ></app-buttons-detail-acrreditations-page>
+          </div>
+        </div>
+
+        <!-- <ng-template *ngTemplateOutlet="buttonsTemplate">
+          <button (click)="onButtonClick('A')">A</button>
+          <button (click)="onButtonClick('B')">B</button>
+          <button (click)="onButtonClick('C')">C</button></ng-template
+        > -->
+        <!-- <div
+          class="header accent text-white p-10 p-sm-24 bg-primary"
+          fxLayout="column"
+          fxLayoutAlign="start"
+          fxLayout.gt-xs="row"
+          fxLayoutAlign.gt-xs="space-between center"
+        >
+
+
+          <div fxLayout="row" fxLayoutAlign="start center">
+            <div
+              class="logo flex text-3xl justify-between"
+              fxLayout="row"
+              fxLayoutAlign="start center"
+            >
+                     <div class="logo-icon">
+                       <mat-icon class="logo-icon mr-16 text-white">
+                                 article
+                       </mat-icon>
+                     </div>
+              <div class="logo-icon flex items-center">
+                <img src="assets/images/icons/web_Details.svg" />
+              </div>
+              <span class="logo-text h1 absolute left-0 ml-26 "> Details </span>
+
+              <div class="flex flex-row items-center">
+                <div>
+                  <button
+                  mat-stroked-button
+                    color="primary"
+                    class="rounded-[33px] mr-2"
+                   >
+                    Back
+                  </button>
+
+                  <button
+                  mat-stroked-button
+                    color="primary"
+                    class="add-venue-button rounded-[33px]"
+                    id="save-details-button"
+                    data-cy="save-details-button"
+                    [disabled]=""
+                    >
+                    Save
+                  </button>
+                </div>
+
+                <div>
+                  <button
+                  mat-stroked-button
+                    color="primary"
+                    class="edit-venue-button rounded-[33px] text-white"
+                    id="edit-details-button"
+                    data-cy="edit-details-button"
+                    >
+                    Edit
+                  </button>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+
+        </div> -->
+
+        <!--/Header-->
+
+        <!--Content-->
+
+        <div class="flex flex-auto w-full">
+          <div class="p-4 bg-gray-200">
+            <app-tabs-detail
+              class="w-fit h-hit"
+              [buttons]="tabs"
+              (goToNextPage)="handleSelectTab($event)"
+            ></app-tabs-detail>
+          </div>
+
+          <div class="w-full overflow-auto">
+            <app-details-tab
+              #tabsDetail
+              *ngIf="activeTab === 'Details'"
+              class="h-full overflow-auto"
+            ></app-details-tab>
+            <div
+              *ngIf="activeTab === 'Accreditations'"
+              class="h-[calc(100vh-180px)] overflow-auto"
+            >
+              <app-accreditations-tab
+                [listAccreditations]="accreditations"
+                (onDelete)="handleRemoveAction($event)"
+              >
+              </app-accreditations-tab>
+              <!-- <div
+                class="text-primary rounded-b-xl p-4 flex items-center text-xl text-bold cursor-pointer"
+                data-cy="add-accreditation-button"
+                (click)="toggleAccreditation()"
+              > -->
+              <!-- <mat-icon class="text-primary">add</mat-icon> -->
+              <!-- <div class="flex justify-end mr-4">
+                <button
+                  class="text-primary rounded-b-xl p-4 flex items-center text-xl text-bold cursor-pointer"
+                  mat-raised-button
+                  color="primary"
+                  class="edit-venue-button rounded-[33px]"
+                  data-cy="add-accreditation-button"
+                  (click)="toggleAccreditation()"
+                >
+                  Add accreditations
+                </button>
+              </div> -->
+              <!-- <a>+Add accreditations</a> -->
+              <!-- <mat-icon class="text-primary">add</mat-icon> -->
+              <!-- <div class="flex justify-end mr-4">
+                <button class="text-primary rounded-b-xl p-4 flex items-center text-xl text-bold cursor-pointer"
+                mat-raised-button
+        color="primary"
+        class="edit-venue-button rounded-[33px]"
+        data-cy="add-accreditation-button"
+                (click)="toggleAccreditation()">
+                Add accreditations
+              </button>
+            </div> -->
+              <!-- <a>+Add accreditations</a> -->
+              <!-- </div> -->
+            </div>
+            <app-subscription-tab
+              *ngIf="activeTab === 'Subscription'"
+              (goToPlan)="goToPlan()"
+            ></app-subscription-tab>
+
+            <app-account-invites-tab
+              *ngIf="activeTab === 'Account Invites'"
+              [invitations]="invitations"
+            ></app-account-invites-tab>
+          </div>
+        </div>
+        <!-- <div class="content h-full p-3 flex">
+          <div class=""></div>
+
+          <div *ngIf="isPlan">
+            <app-modify-payment-method
+              (return)="returnToSubscription()"
+            ></app-modify-payment-method>
+          </div>
+        </div> -->
+      </div>
+    </mat-drawer-content>
+    <mat-drawer
+      class="sm:w-full md:w-3/5 lg:w-3/5 xl:w-3/5 2xl:w-3/5 dark:bg-primary"
+      data-cy="accreditation-drawer"
+      [mode]="'side'"
+      [position]="'end'"
+      #matDrawerAddAccreditation
+    >
+      <app-add-accreditation
+        [method]="'account'"
+        [accreditations]="accreditations"
+        [accountUUID]="currentAccount?.uuid"
+        (closeSideNav)="closeSideNav($event)"
+      ></app-add-accreditation>
+    </mat-drawer>
+  </mat-drawer-container>
+</div>

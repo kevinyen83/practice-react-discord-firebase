@@ -1,0 +1,25 @@
+<div>
+  <div *ngIf="accountType !== 'supplier' && accountType !== 'client'">
+    <app-contract-details
+      [venue]="venue"
+      [venueClient]="venueClient"
+    ></app-contract-details>
+
+    <app-list-accordions
+      [venue]="venue"
+      [accountType]="accountType"
+      [currentAccount]="currentAccount"
+      [venueClient]="venueClient"
+    ></app-list-accordions>
+  </div>
+
+  <app-documents
+    [documents]="documents"
+    [header]="header"
+    [venue]="venue"
+    [selectedAccount]="venueClient"
+    [currentAccount]="currentAccount"
+    [type]="accountType"
+    (saveDocuments)="saveDocuments($event)"
+  ></app-documents>
+</div>

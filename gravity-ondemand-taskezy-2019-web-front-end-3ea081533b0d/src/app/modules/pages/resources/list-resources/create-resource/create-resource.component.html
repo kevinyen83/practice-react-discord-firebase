@@ -1,0 +1,202 @@
+<div class="flex flex-col flex-auto min-w-0">
+  <!-- Alert -->
+  <fuse-alert
+    class="mt-4 mb-1"
+    *ngIf="showAlert"
+    [appearance]="'outline'"
+    [showIcon]="false"
+    [type]="alert.type"
+    [dismissible]="true"
+    [@shake]="alert.type === 'error'"
+  >
+    {{ alert.message }}
+  </fuse-alert>
+  <mat-drawer-container
+    class="absolute top-0 left-0 bottom-0 right-0"
+    [hasBackdrop]="true"
+  >
+    <mat-drawer-content class="flex-auto flex flex-col overflow-hidden">
+      <!--Header-->
+      <div
+        class="header accent text-white p-sm-24 bg-primary"
+        fxLayout="column"
+        fxLayoutAlign="start"
+        fxLayout.gt-xs="row"
+        fxLayoutAlign.gt-xs="space-between center"
+      >
+        <!-- APP TITLE -->
+        <app-header-with-buttons
+          [title]="currentResource?.name"
+          [isExist]="true"
+          [type]="type"
+          [status]="currentResource?.status"
+          [isResourcePage]="true"
+        ></app-header-with-buttons>
+        <app-buttons-resources-details-active
+          *ngIf="currentTab === 'Resource details'"
+          [currentResource]="currentResource"
+        ></app-buttons-resources-details-active>
+        <app-buttons-detail-acrreditations-page
+          *ngIf="currentTab === 'Accreditations'"
+        ></app-buttons-detail-acrreditations-page>
+        <!--        <div class="header-container">-->
+        <!--          <div-->
+        <!--            *ngIf="currentResource"-->
+        <!--            class="logo flex items-center"-->
+        <!--            fxLayout="row"-->
+        <!--            fxLayoutAlign="start center"-->
+        <!--          >-->
+        <!--            <div class="mr-16">-->
+        <!--              <img src="./assets/images/icons/resource.svg" alt="icon" />-->
+        <!--            </div>-->
+        <!--            <span class="logo-text pl-2 text-3xl">-->
+        <!--              {{ currentResource.name }}-->
+        <!--            </span>-->
+
+        <!--            <div-->
+        <!--              data-cy="status-element"-->
+        <!--              class="w-24 ml-4 rounded-3xl text-center p-1"-->
+        <!--              [ngClass]="-->
+        <!--                utils.getStatusColour(currentResource?.status, false, true)-->
+        <!--              "-->
+        <!--            >-->
+        <!--              <span>{{-->
+        <!--                utils.getStatus(currentResource?.status, false, true)-->
+        <!--              }}</span>-->
+        <!--            </div>-->
+        <!--          </div>-->
+
+        <!--          &lt;!&ndash;      <div class="buttons w-full flex justify-end items-center" fxLayout="row" fxLayoutAlign="space-between center">&ndash;&gt;-->
+        <!--          &lt;!&ndash;        <button mat-flat-button (click)="cancel()">CANCEL</button>&ndash;&gt;-->
+        <!--          &lt;!&ndash;        <button class="save-button ml-2" mat-stroked-button (click)="saveResource()">SAVE</button>&ndash;&gt;-->
+        <!--          &lt;!&ndash;      </div>&ndash;&gt;-->
+        <!--        </div>-->
+        <!-- / APP TITLE -->
+      </div>
+      <!--/Header-->
+      <div class="flex justify-between w-full">
+        <!-- <app-invite-resource *ngIf="!viewTab" (closeInviteResource)="goToDetailResource($event)"></app-invite-resource> -->
+
+        <app-tabs-detail
+          class="w-fit"
+          [buttons]="tabs"
+          (goToNextPage)="goToNextPage($event)"
+        ></app-tabs-detail>
+
+        <div class="p-4 w-full h-[calc(100vh-180px)] overflow-auto">
+          <div
+            class="flex items-center cursor-pointer my-8"
+            (click)="backToResources()"
+          >
+            <mat-icon class="active:text-primary text-gray-400 mr-2"
+              >arrow_back</mat-icon
+            >
+            <div data-cy="back-line" class="text-xl text-gray-400">
+              Resources / {{ currentResource?.name }}
+            </div>
+          </div>
+
+          <app-resource-details
+            *ngIf="viewDetailResource"
+            [type]="type"
+            [currentResource]="currentResource"
+            [modalClasses]="'bg-inherit'"
+            [modalTextColor]="'text-black'"
+          ></app-resource-details>
+
+          <app-reports-tab *ngIf="viewReportsResource"></app-reports-tab>
+
+          <app-roster-details
+            [currentAccount]=""
+            [currentResource]=""
+            *ngIf="viewRosterDetails"
+          ></app-roster-details>
+
+          <app-documents
+            *ngIf="viewDocumentsResource"
+            [documents]="documents"
+            [selectedAccount]="currentResource"
+            [currentAccount]="currentAccount"
+            [header]="headerDocuments"
+            [type]="'resource'"
+            (saveDocuments)="saveDocuments($event)"
+          ></app-documents>
+
+          <div
+            class="assessments bg-white p-6 rounded-xl mt-5"
+            *ngIf="viewInterviewsAssessments"
+          >
+            <app-resource-assessments
+              [assessments]="assessments"
+            ></app-resource-assessments>
+            <!-- <app-resource-interviews
+              [status]="'Interviews'"
+              [interviews]="interviews"
+            ></app-resource-interviews> -->
+          </div>
+
+          <div
+            class="accreditations-licences bg-white rounded-xl p-6 mt-5"
+            *ngIf="viewLicencesAccreditation"
+          >
+            <div class="flex justify-between">
+              <app-resource-licences
+                [licences]="accreditations"
+                [label]="'Licences and Accreditations'"
+                (deleteAccreditations)="deleteAccreditations($event)"
+              ></app-resource-licences>
+              <!--              <div>-->
+              <!--                <button-->
+              <!--                  mat-raised-button-->
+              <!--                  color="primary"-->
+              <!--                  type="button"-->
+              <!--                  (click)="toggleAccreditation()"-->
+              <!--                  data-cy="add-accreditation-button"-->
+              <!--                  aria-label="Save"-->
+              <!--                >-->
+              <!--                  Add Accreditation-->
+              <!--                </button>-->
+              <!--              </div>-->
+            </div>
+            <!-- <div
+              class="text-primary rounded-b-xl p-4 flex items-center text-xl text-bold cursor-pointer"
+              data-cy="add-accreditation-button"
+              (click)="toggleAccreditation()"
+            >
+              <mat-icon class="text-primary">add</mat-icon>
+              <a>Add accreditations</a>
+            </div> -->
+            <!-- <app-resource-licences
+              [licences]="inductions"
+              [label]="'Inductions'"
+            ></app-resource-licences> -->
+          </div>
+
+          <div
+            class="charge-rates-statistics bg-white rounded-xl p-6 mt-5"
+            *ngIf="viewChargeRatesStatistics"
+          >
+            <app-resource-charge-rates
+              [rates]="rates"
+            ></app-resource-charge-rates>
+          </div>
+        </div>
+      </div>
+    </mat-drawer-content>
+
+    <mat-drawer
+      class="sm:w-full md:w-3/5 lg:w-3/5 xl:w-3/5 2xl:w-3/5 dark:bg-primary"
+      data-cy="accreditation-drawer"
+      [mode]="'side'"
+      [position]="'end'"
+      #matDrawerAddAccreditation
+    >
+      <app-add-accreditation
+        [method]="'resource'"
+        [accreditations]="accreditations"
+        [accountUUID]="selectedUUID"
+        (closeSideNav)="closeSideNav($event)"
+      ></app-add-accreditation>
+    </mat-drawer>
+  </mat-drawer-container>
+</div>

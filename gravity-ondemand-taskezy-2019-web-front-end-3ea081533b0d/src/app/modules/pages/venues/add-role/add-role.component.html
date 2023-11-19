@@ -1,0 +1,67 @@
+<div class="add-role">
+  <div class="header-role bg-primary text-white p-4">
+      Add Role
+  </div>
+
+  <div class="content-role p-4">
+    <form class="flex flex-col" action="">
+
+      <mat-form-field class="role w-full">
+        <mat-label>Role</mat-label>
+        <input matInput
+               name="role">
+      </mat-form-field>
+
+      <mat-form-field class="accreditation-field w-full">
+        <mat-label>Accreditation</mat-label>
+        <mat-select>
+          <mat-option *ngFor="let accreditation of listAccreditations" [value]="accreditation.name">{{accreditation.name}}</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field class="rate-type-field w-full">
+        <mat-label>Rate type</mat-label>
+        <mat-select>
+          <mat-option value="Standart">Standart</mat-option>
+          <mat-option value="Premium">Premium</mat-option>
+          <mat-option value="Discount">Discount</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field class="item-code w-full">
+        <mat-label>Item code</mat-label>
+        <input matInput
+               name="itemCode">
+      </mat-form-field>
+
+      <mat-form-field class="description w-full">
+        <mat-label>Description</mat-label>
+        <input matInput
+               name="description">
+      </mat-form-field>
+
+      <mat-form-field class="rate w-full">
+        <mat-label>Rate($)</mat-label>
+        <input matInput
+               name="rate">
+      </mat-form-field>
+
+      <div class="buttons-role flex justify-between mt-4">
+
+        <button class="w-40 cancel-button rounded-3xl"
+                mat-raised-button
+                mat-dialog-close>
+          Cancel
+        </button>
+
+        <button class="w-40 save-button bg-blue-400 rounded-3xl text-white"
+                mat-raised-button
+                mat-dialog-close>
+          Save
+        </button>
+
+      </div>
+
+    </form>
+  </div>
+</div>

@@ -1,0 +1,138 @@
+.home-main-container {
+  background-color: #000000;
+}
+
+.home-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: start;
+  height: 100vh;
+  padding: 50px 0px;
+  z-index: 1000;
+}
+
+.logo-white {
+  height: 34px;
+}
+
+.home-title {
+  color: #fff;
+  font-size: 54px;
+  font-family: Inter;
+  font-style: normal;
+  font-weight: 600;
+  line-height: normal;
+}
+
+.home-form-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+}
+
+.home-address-button {
+  display: flex;
+  width: 534px;
+  height: 56px;
+  background: #fff;
+  border: none;
+
+  color: #838383;
+  font-size: 14px;
+  font-family: Inter;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+
+  align-items: center;
+  justify-content: start;
+  gap: 14px;
+  padding-left: 18px;
+}
+
+.location-icon {
+  width: 13px;
+  height: 18px;
+  background-color: white;
+}
+
+.home-delivery-button {
+  display: flex;
+  padding: 0px 14px;
+  height: 56px;
+  justify-content: space-between;
+  align-items: center;
+  background: #fff;
+  border: none;
+
+  color: #202124;
+  font-size: 14px;
+  font-family: Inter;
+  font-style: normal;
+  font-weight: 600;
+  line-height: normal;
+  gap: 25px;
+}
+
+.chevron-icon {
+  background-color: white;
+}
+
+.home-find-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  padding: 0px 24px;
+  height: 56px;
+  border-radius: 5px;
+  background: #f7c510;
+
+  color: #000001;
+  font-size: 14px;
+  font-family: Inter;
+  font-style: normal;
+  font-weight: 600;
+  line-height: normal;
+}
+
+.home-desc {
+  color: #fff;
+  font-size: 12px;
+  font-family: Inter;
+  font-style: normal;
+  font-weight: 500;
+  line-height: normal;
+}
+
+.home-desc > a {
+  color: #fff;
+}
+
+.home-address-container {
+  display: flex;
+  flex-direction: column;
+  gap: 48px;
+}
+
+.footer-text {
+  color: #fff;
+  font-size: 12px;
+  font-family: Inter;
+  font-style: normal;
+  font-weight: 500;
+  line-height: normal;
+}
+
+.home-footer {
+  display: flex;
+  gap: 41px;
+}
+
+.pizza-bg {
+  position: absolute;
+  right: 0;
+  height: 90vh;
+  z-index: 1;
+}

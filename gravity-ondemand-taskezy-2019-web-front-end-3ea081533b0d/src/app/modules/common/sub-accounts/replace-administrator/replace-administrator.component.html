@@ -1,0 +1,81 @@
+<div class="replace-administrator">
+  <div class="header relative text-white p-8 p-sm-24 h-[114px] bg-primary">
+    <!-- APP TITLE -->
+    <div
+      class="absolute right-2 top-2"
+      (click)="toClose()">
+      <mat-icon class="text-white cursor-pointer">close</mat-icon>
+    </div>
+    <div
+      class="row"
+      fxLayout="row"
+      fxLayoutAlign="space-between center">
+      <div
+        class="header-text flex items-center"
+        fxLayout="row">
+        <!--        <div class="logo-icon mr-16">-->
+        <!--          <img src="./assets/images/icons/supplier.svg" alt="icon"/>-->
+        <!--        </div>-->
+        <div
+          class="logo truncate"
+          title="Replace the administrator"
+          fxLayout="column">
+          <span class="logo-text text-5xl"> Replace the Administrator </span>
+        </div>
+      </div>
+    </div>
+    <!-- / APP TITLE -->
+  </div>
+
+  <div class="content-replace-admin p-6">
+    <div class="block-of-admin mt-4">
+      <!--      <div class="text-primary text-3xl font-semibold">Invite Administrator</div>-->
+      <p class="font-medium">
+        Please invite a new Administrator to delete the current one
+      </p>
+
+      <form
+        [formGroup]="replaceAdminForm"
+        action="">
+        <mat-form-field class="w-full mt-8 name-administrator">
+          <mat-label>Name</mat-label>
+          <input
+            matInput
+            name="nameAdministrator"
+            formControlName="nameAdministrator" />
+        </mat-form-field>
+
+        <mat-form-field class="w-full email-administrator">
+          <mat-label>Email</mat-label>
+          <input
+            matInput
+            name="emailAdministrator"
+            formControlName="emailAdministrator" />
+        </mat-form-field>
+
+        <div class="buttons">
+          <button
+            mat-raised-button
+            class="edit-venue-button"
+            (click)="cancel()">
+            Cancel
+          </button>
+
+          <button
+            mat-raised-button
+            color="primary"
+            class="edit-venue-button"
+            (click)="invite()">
+            Invite
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div
+    class="progress-spiner absolute top-1/2 left-64"
+    *ngIf="viewSpinner">
+    <mat-spinner class="mat-spinner"></mat-spinner>
+  </div>
+</div>

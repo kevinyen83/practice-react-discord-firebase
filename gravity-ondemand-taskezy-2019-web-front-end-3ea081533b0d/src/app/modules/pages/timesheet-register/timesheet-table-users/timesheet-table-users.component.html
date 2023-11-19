@@ -1,0 +1,2860 @@
+<mat-accordion displayMode="flat" multi class="block overflow-hidden">
+  <mat-expansion-panel
+    data-cy="timesheet-table"
+    [expanded]="rosterService.openedClients.includes(idxClient) ? true : false"
+    (opened)="openAccordionClient(idxClient, 'client')"
+    (closed)="closePanel(idxClient, 'client')"
+    *ngFor="let client of _clientsForView; let idxClient = index"
+    class="bg-gray-100 w-full h-full pt-6 pb-6"
+    hideToggle
+  >
+    <mat-expansion-panel-header
+      class="mat-row flex justify-between min-h-max border-b-0"
+    >
+      <div class="mat-cell flex items-center text-center w-1/3 mr-4">
+        <div class="flex items-center text-center">
+          <div class="cursor-pointer"><mat-icon>arrow_drop_down</mat-icon></div>
+
+          <div
+            class="rounded-full flex w-10 h-10 justify-center items-center border bg-white flex-initial"
+          >
+            <img [src]="client?.avatar || defaultAvatar" alt="logo" />
+          </div>
+        </div>
+        <div class="ml-2">{{ client?.detail?.name }}</div>
+      </div>
+      <div class="mat-cell flex justify-center items-center text-center w-1/6">
+        {{ client?.venues?.length }}
+      </div>
+      <div class="mat-cell flex justify-center items-center text-center w-1/6">
+        {{ countResources(client) }}
+      </div>
+      <div class="mat-cell flex justify-center items-center text-center w-1/6">
+        {{ countHours(client, "time") | number: "1.0-1" }}
+      </div>
+      <div class="mat-cell flex justify-center items-center text-center w-1/6">
+        {{ countHours(client, "amount") | number: "1.0-1" }}
+      </div>
+      <div
+        class="mat-cell flex justify-center items-center text-center ml-8 w-1/6"
+      >
+        <div class="w-3 h-3 bg-green-500 rounded-full"></div>
+        <div class="ml-2">{{ client?.status }}</div>
+      </div>
+    </mat-expansion-panel-header>
+
+    <mat-accordion
+      data-cy="venue"
+      *ngFor="let venue of client?.venues; let idxVenue = index"
+      class="w-full h-full"
+    >
+      <mat-expansion-panel
+        class="mb-2 pt-6 pb-6"
+        [expanded]="
+          rosterService.openedVenues.includes(idxVenue) ? true : false
+        "
+        (opened)="openAccordionClient(idxVenue, 'venue')"
+        (closed)="closePanel(idxVenue, 'venue')"
+        hideToggle
+      >
+        <mat-expansion-panel-header class="w-full pl-0 pr-0">
+          <div class="td w-1/3 flex justify-center items-center">
+            <div class="cursor-pointer flex items-center">
+              <mat-icon>arrow_drop_down</mat-icon>
+            </div>
+            <div>{{ venue?.name }}</div>
+          </div>
+          <div class="td w-1/6 flex justify-center items-center"></div>
+          <div class="td w-1/6 flex justify-center items-center">
+            {{ countResources(venue) }}
+          </div>
+          <div class="td w-1/6 flex justify-center items-center">
+            {{ getTotalTime(venue, "time") | number: "1.0-1" }}
+          </div>
+          <div class="td w-1/6 flex justify-center items-center">
+            {{ getTotalTime(venue, "amount") | number: "1.0-1" }}
+          </div>
+          <div class="td w-1/6 flex justify-center items-center">
+            <div class="w-3 h-3 bg-green-500 rounded-full"></div>
+            <div class="ml-2">{{ venue?.status }}</div>
+          </div>
+        </mat-expansion-panel-header>
+
+        <table
+          data-cy="table-tasks"
+          class="block border border-gray-200 overflow-x-auto"
+        >
+          <div class="w-[1740px] h-[48px] flex flex-nowrap">
+            <div
+              class="text-zinc-400 h-full border-r"
+              [style.width]="col.width"
+              *ngFor="let col of shiftsColumns"
+            >
+              <div class="text-center h-full">
+                <div class="mt-0">{{ col?.name }}</div>
+                <div class="text-gray-300 font-light" *ngIf="col.description">
+                  {{ col.description }}
+                </div>
+              </div>
+            </div>
+          </div>
+          <div *ngFor="let shift of _shifts">
+            <div *ngFor="let task of shift?.tasks; let inx = index">
+              <tr
+                *ngIf="
+                  shift?.client_uuid === client?.uuid &&
+                  shift?.venue?.uuid === venue?.uuid &&
+                  ((task?.timesheet?.signon?.signature &&
+                    task?.timesheet?.signoff?.signature &&
+                    task?.resource?.release_status == 2) ||
+                    task?.resource?.release_status !== 2 ||
+                    !task?.timesheet?.signon?.signature)
+                "
+                class="flex border-b w-[1740px]"
+              >
+                <td class="text-center w-[156px] border-r border-t relative">
+                  <div class="flex h-full items-center">
+                    <div class="flex items-center">
+                      <mat-icon
+                        data-cy="three-dots"
+                        class="cursor-pointer"
+                        [matMenuTriggerFor]="firstMenu"
+                        >more_vert</mat-icon
+                      >
+                      <mat-menu #firstMenu="matMenu" xPosition="before">
+                        <button
+                          mat-menu-item
+                          [disabled]="
+                            !isTaskPast(task) ||
+                            task?.timesheet?.splits?.length !== 0
+                          "
+                          (click)="getResult('Split time', task, shift)"
+                        >
+                          Split Time
+                        </button>
+                        <button
+                          mat-menu-item
+                          [disabled]="!isTaskPast(task) || isEditing"
+                          (click)="getResult('Additional field', task)"
+                        >
+                          Add additional time
+                        </button>
+                        <button
+                          class="icon-comment"
+                          mat-menu-item
+                          (click)="addComment(task)"
+                        >
+                          Add comment
+                        </button>
+                      </mat-menu>
+                    </div>
+                    <div class="ml-4 text-center">
+                      <div class="flex items-center">
+                        <div class="format-date">
+                          {{ task?.datetime | date: "dd MMM YY" }}
+                        </div>
+                        <mat-icon
+                          #comment
+                          class="icon-comment text-sm cursor-pointer"
+                          *ngIf="
+                            task?.notes &&
+                            task?.notes?.length &&
+                            isViewCommentIcon(task)
+                          "
+                          (click)="showComment(shift, task)"
+                          >comment</mat-icon
+                        >
+                      </div>
+                    </div>
+                  </div>
+
+                  <div
+                    *ngIf="
+                      uuidCreateComment &&
+                      uuidCreateComment === task?.uuid &&
+                      commentStatus === 'create'
+                    "
+                    class="comment-field icon-comment shadow-lg z-99 absolute p-3 -top-5 left-10 bg-white rounded-xl w-50 h-35"
+                  >
+                    <div
+                      class="header-comment flex justify-between text-gray-300 text-sm"
+                    >
+                      <div>Add comment</div>
+                      <mat-icon
+                        class="text-sm text-gray-300 cursor-pointer"
+                        (click)="closeComment(task)"
+                        >close</mat-icon
+                      >
+                    </div>
+
+                    <mat-form-field
+                      class="fuse-mat-textarea"
+                      appearance="standard"
+                    >
+                      <textarea
+                        matInput
+                        [formControl]="commentControl"
+                        cdkTextareaAutosize
+                        cdkAutosizeMinRows="1"
+                        cdkAutosizeMaxRows="1"
+                      ></textarea>
+                    </mat-form-field>
+
+                    <hr class="m-0" />
+                    <div
+                      class="text-primary text-left cursor-pointer"
+                      (click)="
+                        submitComment(
+                          client,
+                          shift,
+                          task,
+                          commentControl.value,
+                          inx
+                        )
+                      "
+                    >
+                      Submit
+                    </div>
+                  </div>
+
+                  <div
+                    *ngIf="
+                      uuidOpenedComment &&
+                      uuidOpenedComment === task?.uuid &&
+                      commentStatus === 'edit' &&
+                      isViewCommentIcon(task)
+                    "
+                    class="icon-comment z-99 shadow-lg absolute bg-white p-3 top-0 left-28 rounded-xl w-50 h-35"
+                  >
+                    <div *ngFor="let note of task?.notes">
+                      <div *ngIf="!note.hidden">
+                        <div class="flex justify-end">
+                          <mat-icon
+                            class="text-sm text-gray-300 cursor-pointer"
+                            (click)="closeComment(task)"
+                            >close</mat-icon
+                          >
+                        </div>
+                        <div class="flex justify-between">
+                          <div>{{ note.note }}</div>
+                          <mat-icon
+                            class="text-lg text-right cursor-pointer"
+                            (click)="deleteComment(client, shift, task, note)"
+                            >delete_outline</mat-icon
+                          >
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </td>
+
+                <td class="text-center w-[225px] p-3 border-r border-t">
+                  <div class="flex items-center justify-center">
+                    <div class="flex flex-col">
+                      <div class="font-bold">{{ task?.resource?.name }}</div>
+                      <div class="text-gray-400">{{ task?.role?.name }}</div>
+                    </div>
+
+                    <div
+                      *ngIf="
+                        task?.timesheet?.challenges &&
+                        task?.timesheet?.challenges?.length
+                      "
+                    >
+                      <mat-icon (click)="showChallenges(task)"
+                        >keyboard_arrow_down</mat-icon
+                      >
+                    </div>
+                  </div>
+                </td>
+
+                <td
+                  class="p-3 flex items-center text-center border-t w-[162px] border-r"
+                >
+                  <!-- <div class="flex justify-center items-center w-full h-full">
+                    <div class="w-3 h-3 rounded-full"
+                      [ngClass]="{'bg-green-500': (!splitTimeEdit && !editingAdditionalTime) &&!task?.editing &&!editingAdditionalTime && task?.timesheet?.signon?.signature && task?.timesheet?.signoff?.signature,
+                                  'bg-yellow-500': (newField && currentTaskUUID === task.uuid && shift?.client_uuid === client?.uuid && shift?.venue?.uuid === venue?.uuid) && splitTimeEdit==true,
+                                  'bg-zinc-400': !task?.editing && task?.resource?.release_status === 2 && !task?.timesheet?.signon?.signature,
+                                  'bg-red-500': !task?.editing && task?.resource?.release_status !== 2}"></div>
+                    <div class="ml-2 status-finalised" *ngIf="(!splitTimeEdit && !editingAdditionalTime) &&!task?.editing && task?.timesheet?.signon?.signature && task?.timesheet?.signoff?.signature">Finalised</div>
+                    <div class="ml-2 status-unworked" *ngIf="!task?.editing && task?.resource?.release_status === 2 && !task?.timesheet?.signon?.signature">Unworked</div>
+                    <div class="ml-2 status-unaccepted" *ngIf="!task?.editing && task?.resource?.release_status !== 2">Unaccepted</div>
+                    <div class="ml-2 status-progress" *ngIf="(newField && currentTaskUUID === task.uuid && shift?.client_uuid === client?.uuid && shift?.venue?.uuid === venue?.uuid) && splitTimeEdit==true">In Progress</div>
+                  </div> -->
+
+                  <div class="flex justify-center items-center w-full h-full">
+                    <div
+                      class="w-3 h-3 rounded-full"
+                      [ngClass]="{
+                        'bg-green-500':
+                          !(
+                            currentTaskUUID === task.uuid &&
+                            shift?.client_uuid === client?.uuid &&
+                            shift?.venue?.uuid === venue?.uuid &&
+                            (splitTimeEdit || editingAdditionalTime)
+                          ) &&
+                          !task?.editing &&
+                          task?.timesheet?.signon?.signature &&
+                          task?.timesheet?.signoff?.signature &&
+                          task?.resource?.release_status == 2,
+                        'bg-yellow-500':
+                          currentTaskUUID === task.uuid &&
+                          shift?.client_uuid === client?.uuid &&
+                          shift?.venue?.uuid === venue?.uuid &&
+                          (splitTimeEdit || editingAdditionalTime),
+                        'bg-zinc-400':
+                          !task?.editing &&
+                          task?.resource?.release_status === 2 &&
+                          !task?.timesheet?.signon?.signature,
+                        'bg-red-500':
+                          !task?.editing && task?.resource?.release_status !== 2
+                      }"
+                    ></div>
+                    <div
+                      class="ml-2 status-finalised"
+                      *ngIf="
+                        !(
+                          currentTaskUUID === task.uuid &&
+                          shift?.client_uuid === client?.uuid &&
+                          shift?.venue?.uuid === venue?.uuid &&
+                          (splitTimeEdit || editingAdditionalTime)
+                        ) &&
+                        !task?.editing &&
+                        task?.timesheet?.signon?.signature &&
+                        task?.timesheet?.signoff?.signature &&
+                        task?.resource?.release_status == 2
+                      "
+                    >
+                      Finalised
+                    </div>
+                    <div
+                      class="ml-2 status-unworked"
+                      *ngIf="
+                        !task?.editing &&
+                        task?.resource?.release_status === 2 &&
+                        !task?.timesheet?.signon?.signature
+                      "
+                    >
+                      Unworked
+                    </div>
+                    <div
+                      class="ml-2 status-unaccepted"
+                      *ngIf="
+                        !task?.editing && task?.resource?.release_status !== 2
+                      "
+                    >
+                      Unaccepted
+                    </div>
+                    <div
+                      class="ml-2 status-progress"
+                      *ngIf="
+                        currentTaskUUID === task.uuid &&
+                        shift?.client_uuid === client?.uuid &&
+                        shift?.venue?.uuid === venue?.uuid &&
+                        (splitTimeEdit || editingAdditionalTime)
+                      "
+                    >
+                      In Progress
+                    </div>
+                  </div>
+                  <!-- <div>{{getSplitStatus(task)}}
+                    {{getShiftStatus}}
+                  </div> -->
+                </td>
+
+                <td
+                  class="sign-on-field text-center flex items-center w-[100px] p-3 border-r border-t"
+                >
+                  <div class="w-full" *ngIf="!viewFields">
+                    <span *ngIf="task?.timesheet?.signon?.signature"
+                      >{{ task?.timesheet?.signon?.datetime | date: "HH:mm" }}
+                    </span>
+                    <!--                    <span *ngIf="!task?.timesheet?.signon.signature">{{ createTime(shift.datetime) }}</span>-->
+                  </div>
+                </td>
+                <td
+                  class="sign-off-field text-center flex items-center w-[100px] p-3 border-r border-t"
+                >
+                  <div class="w-full" *ngIf="!viewFields">
+                    <span *ngIf="task?.timesheet?.signoff?.signature"
+                      >{{ task?.timesheet?.signoff?.datetime | date: "HH:mm" }}
+                    </span>
+                    <!--                    <span *ngIf="!task?.timesheet?.signoff?.signature">{{ createTime(shift.datetime, shift.duration) }}</span>-->
+                  </div>
+                </td>
+                <td
+                  class="sub-total-field text-center flex items-center w-[117px] p-3 border-r border-t"
+                >
+                  <div class="w-full">
+                    {{ getSubtotal(task) | roundUp }}
+                  </div>
+                </td>
+                <td
+                  class="flex text-center items-center w-[110px] p-3 border-r border-t"
+                >
+                  <div class="w-full" *ngIf="!viewFields">
+                    <div>
+                      <span>{{ getSubBreak(task) | roundUp }}</span>
+                    </div>
+                    <!-- <span *ngIf="!break && !task?.timesheet?.breaks?.length">-</span>
+                    *ngIf="!break && task?.timesheet?.breaks && task?.timesheet?.breaks.length"-->
+                  </div>
+                </td>
+                <td
+                  class="total-hours flex justify-center items-center p-3 border-r w-[128px] border-t"
+                >
+                  <div>
+                    {{
+                      (getSubtotal(task) | roundUp) -
+                        (getSubBreak(task) | roundUp) | number: "1.0-1"
+                    }}
+                  </div>
+                </td>
+                <td
+                  class="flex justify-center items-center p-3 border-r w-[110px] border-t"
+                >
+                  <div class="flex text-center items-center">
+                    <!-- {{(task?.timesheet?.splits[0] || task?.timesheet?.additional_times[0]) ? 'Split exists' : venue.resource_rates[0].rates[0]
+                    .item_code}} -->
+                    {{
+                      task?.timesheet?.splits?.length > 0
+                        ? "Split exists"
+                        : task?.role?.item_code
+                    }}
+                  </div>
+                  <!-- <div
+                  class="flex items-center justify-center p-3 h-full"
+
+
+                  [matMenuTriggerFor]="itemCodeForMainRow">
+                  <div>{{task?.role?.item_code}}
+
+
+                  </div>
+                  <mat-icon class="ml-2">arrow_drop_down</mat-icon>
+                  <mat-menu
+                  #itemCodeForMainRow="matMenu"
+                  xPosition="before">
+                  <div *ngFor="let resource of venue.resource_rates; let x = index">
+                  <button
+                  [matMenuTriggerFor]="additionalResourceRateDetails"
+                    class="cursor-pointer flex justify-between"
+                    mat-menu-item>
+                    {{resource.name}}
+                  </button>
+                  <mat-menu #additionalResourceRateDetails="matMenu">
+                    <button
+                        class="cursor-pointer"
+                        mat-menu-item
+                        (click)="selectResult(x, i,'remainderItemCodeFirst',venue)">
+                        {{venue.resource_rates[x].rates[0]
+                          .item_code}}: {{venue.resource_rates[x].rates[0]
+                          .name}} - {{venue.resource_rates[x].rates[0]
+                            .value}}$/h
+                      </button>
+                      <button
+                        class="cursor-pointer"
+                        mat-menu-item
+                        (click)="selectResult(x, i,'remainderItemCodeSecond',venue)">
+                        {{venue.resource_rates[x].rates[1]
+                          .item_code}}: {{venue.resource_rates[x].rates[1]
+                          .name}} - {{venue.resource_rates[x].rates[1]
+                            .value}}$/h
+                      </button>
+                      <button
+                        class="cursor-pointer"
+                        mat-menu-item
+                        (click)="selectResult(x, i,'remainderItemCodeThird',venue)">
+                        {{venue.resource_rates[x].rates[2]
+                          .item_code}}: {{venue.resource_rates[x].rates[2]
+                          .name}} - {{venue.resource_rates[x].rates[2]
+                            .value}}$/h
+                      </button>
+                    </mat-menu>
+                </div>
+                </mat-menu>
+
+                </div> -->
+                </td>
+                <td
+                  class="flex justify-center items-center p-3 border-r w-[118px] border-t"
+                >
+                  <!-- <div *ngIf="!task?.role?.rates">{{(task?.timesheet?.splits[0] || task?.timesheet?.additional_times[0]) ? 'Split exists' : getSplitTimeChargeRate(venue) | number: '1.0-1'}}</div>
+                  <div *ngFor="let rate of task?.role?.rates">
+                    {{rate.name}} - {{rate.value}}
+                  </div> -->
+                  <div>
+                    {{
+                      task?.timesheet?.splits?.length > 0
+                        ? "Split exists"
+                        : task?.role?.rates?.length > 0
+                        ? task?.role?.rates[0].value
+                        : ""
+                    }}
+                  </div>
+                </td>
+                <td
+                  class="flex items-center justify-center p-3 border-r w-[107px] border-t"
+                >
+                  <!-- {{getAmount(task?.role?.rates, task?.total_hours)| number: "1.0-1"}} -->
+                  <!-- {{(task?.timesheet?.splits[0] || task?.timesheet?.additional_times[0]) ? getTotalAmount(task) : (roundUpToFirstDecimal(task.timesheet?.subTotal/60)- roundUpToFirstDecimal(task?.timesheet?.allBreak / 60)) * task?.role?.rates[0]?.value | number: '1.0-1'}} -->
+                  {{
+                    (task?.timesheet?.splits?.[0] || task?.timesheet?.additional_times?.[0])
+                      ? (getTotalAmount(task) | roundUp)
+                      : (( (((task?.timesheet?.subTotal|| 0) / 60) | roundUp) - (((task?.timesheet?.allBreak || 0) / 60) | roundUp)) * (task?.role?.rates?.[0]?.value || 0) | number: '1.0-1')
+                  }}
+                </td>
+                <td class="text-center p-3 border-r w-[157px] border-t">
+                  <div
+                    data-cy="result-menu"
+                    class="flex items-center justify-center p-3 h-full"
+                    [matMenuTriggerFor]="beforeMenu"
+                  >
+                    <div class="whitespace-nowrap">
+                      {{ getStatus(task?.timesheet?.result) }}
+                      <!-- {{ task?.resultMenu }} -->
+                    </div>
+                    <mat-icon
+                      class="ml-2"
+                      *ngIf="
+                        !task?.timesheet?.splits[0] &&
+                        !task?.timesheet?.additional_times[0]
+                      "
+                      >arrow_drop_down</mat-icon
+                    >
+                  </div>
+                </td>
+
+                <mat-menu #beforeMenu="matMenu" xPosition="before">
+                  <button
+                    [disabled]="
+                      task?.timesheet?.splits[0] ||
+                      task?.timesheet?.additional_times[0]
+                    "
+                    class="cursor-pointer"
+                    data-cy="button-result"
+                    mat-menu-item
+                    (click)="changeResultMainTopRow('Billable', task, shift)"
+                  >
+                    Billable
+                  </button>
+                  <button
+                    [disabled]="
+                      task?.timesheet?.splits[0] ||
+                      task?.timesheet?.additional_times[0]
+                    "
+                    class="cursor-pointer"
+                    data-cy="button-result"
+                    mat-menu-item
+                    (click)="
+                      changeResultMainTopRow('Non billable', task, shift)
+                    "
+                  >
+                    Non billable
+                  </button>
+                  <button
+                    [disabled]="
+                      task?.timesheet?.splits[0] ||
+                      task?.timesheet?.additional_times[0]
+                    "
+                    class="cursor-pointer"
+                    mat-menu-item
+                    data-cy="button-result"
+                    (click)="changeResultMainTopRow('Unresolved', task, shift)"
+                  >
+                    Unresolved
+                  </button>
+                </mat-menu>
+
+                <td
+                  class="text-center flex items-center p-3 w-[150px] border-t border-r"
+                >
+                  <div class="w-full flex flex-col">
+                    <span *ngIf="task?.notes">{{
+                      task?.notes[task?.notes?.length - 1]?.author
+                    }}</span>
+                    <span data-cy="last-edit-field" *ngIf="task?.notes">{{
+                      task?.notes[task?.notes?.length - 1]?.datetime
+                        | date: "dd/MM/YYYY HH:mm"
+                    }}</span>
+                  </div>
+                </td>
+              </tr>
+              <tr
+                class="sow-challenges w-[1740px] border-b"
+                *ngIf="
+                  task?.showChallenge &&
+                  shift?.client_uuid === client?.uuid &&
+                  shift?.venue?.uuid === venue?.uuid
+                "
+              >
+                <div
+                  class="flex"
+                  *ngFor="let challenge of task?.timesheet?.challenges"
+                >
+                  <td class="text-center w-[156px] border-t"></td>
+                  <td
+                    class="text-center flex justify-center items-center w-[225px]"
+                  ></td>
+                  <td class="w-[162px] p-3">
+                    <div class="flex flex-col items-center">
+                      <div>{{ challenge?.user?.name }}</div>
+                      <div class="text-gray-300 text-center">
+                        {{ challenge?.user?.role }}
+                      </div>
+                    </div>
+                  </td>
+                  <td
+                    class="flex flex-col justify-center items-center w-[100px] p-3"
+                  >
+                    <div class="flex">
+                      <div class="mr-2">
+                        {{ createTime(challenge?.signon?.time) }}
+                      </div>
+                      <mat-checkbox
+                        color="primary"
+                        [formControl]="signOnCheckbox"
+                      ></mat-checkbox>
+                    </div>
+                    <div>
+                      <mat-icon
+                        class="text-green-400"
+                        *ngIf="challenge?.signon.accepted"
+                        >done</mat-icon
+                      >
+                    </div>
+                  </td>
+                  <td
+                    class="flex flex-col justify-center items-center w-[100px] p-3"
+                  >
+                    <div class="flex">
+                      <div class="mr-2">
+                        {{ createTime(challenge?.signoff?.time) }}
+                      </div>
+                      <mat-checkbox
+                        color="primary"
+                        [formControl]="signOffCheckbox"
+                      ></mat-checkbox>
+                    </div>
+                    <div>
+                      <mat-icon
+                        class="text-green-400"
+                        *ngIf="challenge?.signoff.accepted"
+                        >done</mat-icon
+                      >
+                    </div>
+                  </td>
+                  <td
+                    class="flex justify-center items-center w-[117px] p-3"
+                  ></td>
+                  <td
+                    class="flex flex-col justify-between items-center w-[110px] p-3"
+                  >
+                    <div class="flex items-center">
+                      <div class="mr-2">
+                        {{ getFormatStringTime(challenge?.break.duration) }}
+                      </div>
+                      <mat-checkbox
+                        color="primary"
+                        [formControl]="breakCheckbox"
+                      ></mat-checkbox>
+                    </div>
+                    <div>
+                      <mat-icon
+                        class="text-green-400"
+                        *ngIf="challenge?.break.accepted"
+                        >done</mat-icon
+                      >
+                    </div>
+                  </td>
+                  <td
+                    class="flex justify-center items-center w-[128px] p-3"
+                  ></td>
+                  <td class="w-[110px] p-3"></td>
+                  <td class="flex justify-center items-center w-[118px]"></td>
+                  <td class="w-[107px]"></td>
+                  <td
+                    class="flex justify-center items-center w-[157px] border-b p-3"
+                  ></td>
+                  <td
+                    class="flex items-center justify-center w-[150px] border-b p-3"
+                  >
+                    <button
+                      mat-flat-button
+                      color="primary"
+                      (click)="acceptChallenge(shift, task, challenge)"
+                      class="py-2 px-4 rounded-full flex items-center"
+                    >
+                      Accept
+                    </button>
+                  </td>
+                </div>
+              </tr>
+              <!-- <tr *ngIf="(task?.resource?.release_status == 2 && task?.timesheet?.splits?.length > 0 && (shift?.client_uuid === client?.uuid && shift?.venue?.uuid === venue?.uuid)&& splitTimeEdit==false) || (task?.timesheet?.splits?.length > 0 && task?.resource?.release_status == 2 && splitTimeEdit==true && (currentTaskUUID !== task.uuid && shift?.client_uuid === client?.uuid && shift?.venue?.uuid === venue?.uuid))" class="w-[1740px]">
+                <div class="flex">
+                <td  class="text-center w-[156px] border-r"></td>
+                <td class="text-center flex justify-center items-center w-[225px] border-r">
+                  <div *ngIf="(task?.resource?.release_status == 2 && task?.timesheet?.splits?.length > 0 && (shift?.client_uuid === client?.uuid && shift?.venue?.uuid === venue?.uuid)&& splitTimeEdit==false)  || (task?.timesheet?.splits?.length > 0 && task?.resource?.release_status == 2 && splitTimeEdit==true && (currentTaskUUID !== task.uuid && shift?.client_uuid === client?.uuid && shift?.venue?.uuid === venue?.uuid))" class=" pt-2 pb-2">
+                    Options
+                  <mat-icon
+                class="text-sm cursor-pointer"
+                (click)="getResult('Edit',task, shift)">
+                edit
+              </mat-icon>
+              <mat-icon
+              class="text-sm cursor-pointer"
+              (click)="deleteTime(shift, task, split, i, 'all')">
+              delete_outline
+            </mat-icon>
+            </div>
+                </td>
+                <td class="border-r w-[162px] p-3"></td>
+                <td class="border-r w-[100px] p-3"></td>
+                <td class="border-r w-[100px] p-3"></td>
+                <td class="border-r flex justify-center items-center w-[117px] p-3 border-b"></td>
+                <td class="border-r flex justify-center items-center w-[110px] p-3 border-b"></td>
+                  <td class="border-r flex justify-center items-center w-[128px] p-3 border-b"></td>
+                  <td class="border-r w-[110px] p-3 border-b"></td>
+                  <td class="flex justify-center items-center border-r w-[118px] border-b"></td>
+                  <td class="w-[107px] border-r border-b"></td>
+                  <td class="flex justify-center items-center border-r w-[157px] border-b p-3"></td>
+                  <td class="border-r  w-[150px] p-3"></td>
+              </div>
+              </tr> -->
+              <tr
+                *ngIf="
+                  (shift?.client_uuid === client?.uuid &&
+                    shift?.venue?.uuid === venue?.uuid &&
+                    this.splitTimeEdit == false) ||
+                  (splitTimeEdit == true &&
+                    currentTaskUUID !== task.uuid &&
+                      shift?.client_uuid === client?.uuid &&
+                      shift?.venue?.uuid === venue?.uuid)
+                "
+                class="w-[1740px] border-b"
+              >
+                <div
+                  class="flex"
+                  *ngFor="let split of task?.timesheet?.splits; let i = index"
+                >
+                  <td class="text-center w-[156px] border-r border-t"></td>
+                  <td
+                    class="text-center flex justify-center items-center w-[225px] border-r"
+                  >
+                    <div
+                      class="flex items-center justify-center m-auto"
+                      *ngIf="!split?.editing"
+                    >
+                      <div>Split time {{ i + 1 }}</div>
+                      <mat-icon
+                        *ngIf="i === 0"
+                        class="text-sm cursor-pointer"
+                        (click)="getResult('Edit', task, shift)"
+                      >
+                        edit
+                      </mat-icon>
+                    </div>
+
+                    <div
+                      class="flex flex-col justify-center text-primary"
+                      *ngIf="split?.editing"
+                    >
+                      <div class="flex">
+                        <div
+                          class="button underline cursor-pointer"
+                          (click)="saveNewTime(shift, 'split', task, split)"
+                        >
+                          Save
+                        </div>
+                        <div
+                          class="button underline cursor-pointer ml-2"
+                          (click)="cancelSplitTime(split)"
+                        >
+                          Cancel
+                        </div>
+                      </div>
+                      <p class="text-red-400" *ngIf="errorTotalSplit">
+                        enter correct data(you cannot enter more than Sub-total)
+                      </p>
+                      <p class="text-red-400" *ngIf="errorRequiredSplit">
+                        fields must not be empty
+                      </p>
+                    </div>
+                  </td>
+                  <td class="border-r w-[162px] p-3"></td>
+                  <td class="border-r w-[100px] p-3"></td>
+                  <td class="border-r w-[100px] p-3"></td>
+                  <td
+                    class="border-r flex justify-center items-center w-[117px] p-3"
+                  >
+                    <div *ngIf="!split?.editing">
+                      {{
+                        getFormatStringTime(split?.subtotal) | number: "1.0-1"
+                      }}
+                    </div>
+                    <div
+                      *ngIf="split?.editing"
+                      class="ngx-timepicker-field-example"
+                    >
+                      <input
+                        data-cy="sub-total-input"
+                        type="number"
+                        class="w-full text-center"
+                        [ngClass]="{
+                          'text-red-400 placeholder:text-red-400':
+                            errorRequiredSplit && !subTotalSplitControl.value
+                        }"
+                        min="0"
+                        step="0.10"
+                        placeholder="0.0"
+                        value="0.00"
+                        name="appt"
+                        [formControl]="subTotalSplitControl"
+                        (change)="changeTime($event, 'subTotalSplit', task)"
+                      />
+                    </div>
+                  </td>
+                  <td
+                    class="border-r flex justify-center items-center w-[110px] p-3"
+                  >
+                    <div *ngIf="!split?.editing">
+                      {{ getFormatStringTime(split?.break) | number: "1.0-1" }}
+                    </div>
+                    <div
+                      *ngIf="split?.editing"
+                      class="ngx-timepicker-field-example"
+                    >
+                      <input
+                        type="number"
+                        class="w-full text-center"
+                        min="0"
+                        step="0.10"
+                        placeholder="0.0"
+                        value="0.00"
+                        name="appt"
+                        (change)="changeTime($event, 'breakSplit', task)"
+                      />
+                    </div>
+                  </td>
+                  <td
+                    class="border-r flex justify-center items-center w-[128px] p-3"
+                  >
+                    <div *ngIf="!split?.editing">
+                      {{
+                        getFormatStringTime(split?.subtotal - split?.break)
+                          | number: "1.0-1"
+                      }}
+                    </div>
+                    <div
+                      *ngIf="split?.editing"
+                      class="ngx-timepicker-field-example"
+                    >
+                      <div [ngClass]="{ 'text-red-400': errorTotalSplit }">
+                        {{ editingSplit }}
+                      </div>
+                    </div>
+                  </td>
+                  <td class="border-r w-[110px] p-3">
+                    <div class="flex h-full items-center justify-center">
+                      <span>{{ split?.item_code }}</span>
+                    </div>
+                  </td>
+                  <td
+                    class="flex justify-center items-center border-r w-[118px]"
+                  >
+                    {{ split?.charge_rate | number: "1.0-1" }}
+                  </td>
+                  <td
+                    class="w-[107px] border-r flex justify-center items-center"
+                  >
+                    {{
+                      getFormatStringTime(split?.subtotal - split?.break) *
+                        split?.charge_rate | number: "1.0-1"
+                    }}
+                  </td>
+                  <td
+                    class="flex justify-center items-center border-r w-[157px] border-b p-3"
+                  >
+                    <div class="whitespace-nowrap" *ngIf="!split?.editing">
+                      {{ getStatus(split?.result) }}
+                    </div>
+                    <div *ngIf="split?.editing">
+                      <div
+                        class="flex items-center justify-center p-3 h-full"
+                        [matMenuTriggerFor]="getResultMenu"
+                      >
+                        <div>{{ newFieldResult }}</div>
+                        <mat-icon class="ml-2">arrow_drop_down</mat-icon>
+                      </div>
+                    </div>
+                  </td>
+                  <td class="border-r w-[150px] p-3"></td>
+                </div>
+              </tr>
+              <!-- table for split time -->
+              <ng-container
+                *ngIf="
+                  newField &&
+                  currentTaskUUID === task.uuid &&
+                  shift?.client_uuid === client?.uuid &&
+                  shift?.venue?.uuid === venue?.uuid &&
+                  splitTimeEdit == true
+                "
+              >
+                <tr
+                  class="new-field-split flex w-[1740px]"
+                  data-cy="new-field-split"
+                  *ngFor="let split of newSplits; let i = index"
+                >
+                  <td
+                    class="text-center w-[156px] border-r border-t bg-gray-100 flex flex-col items-center justify-center"
+                  >
+                    <div
+                      [ngClass]="{
+                        'text-gray-400': newSplits.length == 1,
+                        'cursor-pointer': newSplits.length !== 1,
+                        underline: newSplits.length !== 1
+                      }"
+                      class="button text-primary"
+                      (click)="
+                        newSplits.length !== 1 && cancelTable($event, i, 'edit')
+                      "
+                    >
+                      Delete
+                    </div>
+                  </td>
+                  <td
+                    class="text-center flex items-center w-[225px] bg-gray-100 border-r"
+                  >
+                    <div
+                      class="flex items-center flex-col w-full justify-center group relative h-full"
+                    >
+                      <div class="flex">
+                        <div class="text-base">Split time {{ i + 1 }}</div>
+                      </div>
+                    </div>
+                  </td>
+                  <td class="border-r w-[162px] p-3 bg-gray-100"></td>
+                  <td class="border-r w-[100px] p-3 bg-gray-100"></td>
+                  <td class="border-r w-[100px] p-3 bg-gray-100"></td>
+                  <td
+                    class="border-r flex flex-col justify-center items-center w-[117px] p-3 bg-gray-100"
+                  >
+                    <div class="ngx-timepicker-field-example">
+                      <input
+                        data-cy="sub-total-input"
+                        type="number"
+                        class="w-full text-center"
+                        [(ngModel)]="newSplits[i].subtotal"
+                        min="0"
+                        step="0.1"
+                        placeholder="0.0"
+                        name="appt"
+                        [ngClass]="{ 'text-red-400': errorTotalSplit }"
+                        (change)="
+                          changeTime($event, 'edit', task, undefined, i)
+                        "
+                      />
+                    </div>
+                  </td>
+                  <td
+                    class="border-r flex flex-col justify-center items-center w-[110px] bg-gray-100 p-3"
+                  >
+                    <div class="ngx-timepicker-field-example">
+                      <input
+                        type="number"
+                        class="w-full text-center"
+                        [(ngModel)]="newSplits[i].break"
+                        min="0"
+                        step="0.1"
+                        placeholder="0.0"
+                        name="appt"
+                        [ngClass]="{ 'text-red-400': errorTotalBreak }"
+                        (change)="
+                          changeTime($event, 'edit', task, undefined, i)
+                        "
+                      />
+                    </div>
+                  </td>
+
+                  <td
+                    class="border-r flex justify-center items-center w-[128px] bg-gray-100 p-3"
+                  >
+                    <div
+                      class="ngx-timepicker-field-example"
+                      [ngClass]="{
+                        'text-red-400': errorTotalBreak || errorTotalSplit
+                      }"
+                    >
+                      {{ split.subtotal - split.break | number: "1.0-1" }}
+                    </div>
+                  </td>
+                  <td
+                    class="border-r w-[110px] p-3 bg-gray-100 flex justify-center items-center"
+                  >
+                    <div class="ngx-timepicker-field-example">
+                      <input
+                        type="number"
+                        class="w-full text-center"
+                        [(ngModel)]="newSplits[i].item_code"
+                        min="0"
+                        step="1"
+                        placeholder="0"
+                        (change)="
+                          changeTime($event, 'edit', task, undefined, i)
+                        "
+                      />
+                      <!-- <div class="input-group-append">
+                        <button class="btn btn-outline-secondary" (click)="incrementValue(i)">+</button>
+                        <button class="btn btn-outline-secondary" (click)="decrementValue(i)">-</button>
+                      </div> -->
+                    </div>
+                    <!-- <div
+                      class="flex items-center justify-center p-3 h-full"
+                      *ngIf="newField"
+                      [matMenuTriggerFor]="getResultEditMenu">
+                      <div>{{newSplits[i].item_code}}</div>
+                      <mat-icon class="ml-2">arrow_drop_down</mat-icon>
+                      <mat-menu
+                      #getResultEditMenu="matMenu"
+                      xPosition="before">
+                      <div *ngFor="let resource of venue.resource_rates; let x = index">
+                      <button
+                      [matMenuTriggerFor]="resourceRateDetails"
+                        class="cursor-pointer flex justify-between"
+                        mat-menu-item>
+                        {{resource.name}}
+                      </button>
+                      <mat-menu #resourceRateDetails="matMenu">
+                        <button
+                            class="cursor-pointer"
+                            mat-menu-item
+                            (click)="selectResult(x, i,'itemCodeFirst',venue)">
+                            {{venue.resource_rates[x].rates[0]
+                              .item_code}}: {{venue.resource_rates[x].rates[0]
+                              .name}} - {{venue.resource_rates[x].rates[0]
+                                .value}}$/h
+                          </button>
+                          <button
+                            class="cursor-pointer"
+                            mat-menu-item
+                            (click)="selectResult(x, i,'itemCodeSecond',venue)">
+                            {{venue.resource_rates[x].rates[1]
+                              .item_code}}: {{venue.resource_rates[x].rates[1]
+                              .name}} - {{venue.resource_rates[x].rates[1]
+                                .value}}$/h
+                          </button>
+                          <button
+                            class="cursor-pointer"
+                            mat-menu-item
+                            (click)="selectResult(x, i,'itemCodeThird',venue)">
+                            {{venue.resource_rates[x].rates[2]
+                              .item_code}}: {{venue.resource_rates[x].rates[2]
+                              .name}} - {{venue.resource_rates[x].rates[2]
+                                .value}}$/h
+                          </button>
+                        </mat-menu>
+                    </div>
+                    </mat-menu>
+
+                    </div> -->
+                  </td>
+                  <td
+                    class="border-r w-[118px] bg-gray-100 flex justify-center items-center flex justify-center items-center"
+                  >
+                    <!-- {{newSplits[i].charge_rate | number: '1.0-1'}} -->
+                    <div class="ngx-timepicker-field-example">
+                      <input
+                        type="number"
+                        class="w-full text-center"
+                        [(ngModel)]="newSplits[i].charge_rate"
+                        min="0"
+                        step="1"
+                        placeholder="0"
+                        (change)="
+                          changeTime($event, 'edit', task, undefined, i)
+                        "
+                      />
+                    </div>
+                  </td>
+                  <td
+                    class="bg-gray-100 w-[107px] flex justify-center items-center"
+                  >
+                    {{
+                      (split.subtotal - split.break) * newSplits[i].charge_rate
+                        | number: "1.0-1"
+                    }}
+                  </td>
+                  <td class="border-r w-[157px] p-3 bg-gray-100">
+                    <div
+                      class="flex items-center justify-center p-3 h-full"
+                      *ngIf="newField"
+                      [matMenuTriggerFor]="getResultEditMenu"
+                    >
+                      <div class="whitespace-nowrap">
+                        {{ getStatus(newSplits[i].result) || getStatus(1) }}
+                      </div>
+                      <mat-icon class="ml-2">arrow_drop_down</mat-icon>
+                      <mat-menu #getResultEditMenu="matMenu" xPosition="before">
+                        <button
+                          class="cursor-pointer"
+                          mat-menu-item
+                          (click)="selectResult('Billable', i, 'edit')"
+                        >
+                          Billable
+                        </button>
+                        <button
+                          class="cursor-pointer"
+                          mat-menu-item
+                          (click)="selectResult('Non billable', i, 'edit')"
+                        >
+                          Non billable
+                        </button>
+                        <button
+                          class="cursor-pointer"
+                          mat-menu-item
+                          (click)="selectResult('Unresolved', i, 'edit')"
+                        >
+                          Unresolved
+                        </button>
+                      </mat-menu>
+                    </div>
+                  </td>
+                  <td class="bg-gray-100 w-[150px]"></td>
+                </tr>
+                <!-- row for remainder inside the edit table -->
+                <tr
+                  class="new-field-split flex w-[1740px]"
+                  data-cy="new-field-split"
+                  *ngIf="
+                    newField &&
+                    currentTaskUUID === task.uuid &&
+                    shift?.client_uuid === client?.uuid &&
+                    shift?.venue?.uuid === venue?.uuid &&
+                    splitTimeEdit == true
+                  "
+                >
+                  <td
+                    class="text-center w-[156px] border-r border-t bg-gray-100"
+                  >
+                    <div class="flex h-full items-center"></div>
+                  </td>
+                  <td
+                    class="text-center flex items-center w-[225px] bg-gray-100 border-r"
+                  >
+                    <div
+                      *ngIf="!savedSplitTimes"
+                      class="flex items-center flex-col w-full justify-center group relative h-full mt-2 mb-2"
+                    >
+                      <div class="flex items-center justify-center">
+                        <div class="text-base mb-2">Remainder</div>
+                      </div>
+                    </div>
+
+                    <div
+                      *ngIf="savedSplitTimes"
+                      class="flex items-center justify-center text-primary h-full"
+                    ></div>
+                  </td>
+                  <td class="border-r w-[162px] p-3 bg-gray-100"></td>
+                  <td class="border-r w-[100px] p-3 bg-gray-100"></td>
+                  <td class="border-r w-[100px] p-3 bg-gray-100"></td>
+                  <td
+                    class="border-r w-[117px] p-3 bg-gray-100 flex flex-col justify-center items-center"
+                  >
+                    {{ isNaN(remainderSubTime) ? -1 : remainderSubTime }}
+                  </td>
+                  <td
+                    class="border-r w-[110px] p-3 bg-gray-100 flex flex-col justify-center items-center"
+                  >
+                    {{ isNaN(remainderBreakTime) ? -1 : remainderBreakTime }}
+                  </td>
+                  <td
+                    class="border-r w-[128px] p-3 bg-gray-100 flex flex-col justify-center items-center"
+                  >
+                    {{ isNaN(remainderTotalTime) ? -1 : remainderTotalTime }}
+                  </td>
+                  <td
+                    class="border-r w-[110px] p-3 bg-gray-100 flex justify-center items-center"
+                  >
+                    <div class="ngx-timepicker-field-example">
+                      <input
+                        type="number"
+                        class="w-full text-center"
+                        [(ngModel)]="remainderItemCode"
+                        min="0"
+                        step="1"
+                        placeholder="0"
+                      />
+                    </div>
+                    <!-- <div
+                  class="flex items-center justify-center p-3 h-full"
+                  *ngIf="newField"
+                  [matMenuTriggerFor]="getRemainderResultEditMenu">
+                  <div>{{remainderItemCode}}</div>
+                  <mat-icon class="ml-2">arrow_drop_down</mat-icon>
+                  <mat-menu
+                  #getRemainderResultEditMenu="matMenu"
+                  xPosition="before">
+                  <div *ngFor="let resource of venue.resource_rates; let x = index">
+                  <button
+                  [matMenuTriggerFor]="remainderResourceRateDetails"
+                    class="cursor-pointer flex justify-between"
+                    mat-menu-item>
+                    {{resource.name}}
+                  </button>
+                  <mat-menu #remainderResourceRateDetails="matMenu">
+                    <button
+                        class="cursor-pointer"
+                        mat-menu-item
+                        (click)="selectResult(x, i,'remainderItemCodeFirst',venue)">
+                        {{venue.resource_rates[x].rates[0]
+                          .item_code}}: {{venue.resource_rates[x].rates[0]
+                          .name}} - {{venue.resource_rates[x].rates[0]
+                            .value}}$/h
+                      </button>
+                      <button
+                        class="cursor-pointer"
+                        mat-menu-item
+                        (click)="selectResult(x, i,'remainderItemCodeSecond',venue)">
+                        {{venue.resource_rates[x].rates[1]
+                          .item_code}}: {{venue.resource_rates[x].rates[1]
+                          .name}} - {{venue.resource_rates[x].rates[1]
+                            .value}}$/h
+                      </button>
+                      <button
+                        class="cursor-pointer"
+                        mat-menu-item
+                        (click)="selectResult(x, i,'remainderItemCodeThird',venue)">
+                        {{venue.resource_rates[x].rates[2]
+                          .item_code}}: {{venue.resource_rates[x].rates[2]
+                          .name}} - {{venue.resource_rates[x].rates[2]
+                            .value}}$/h
+                      </button>
+                    </mat-menu>
+                </div>
+                </mat-menu>
+
+                </div> -->
+                  </td>
+                  <td
+                    class="border-r w-[118px] bg-gray-100 flex justify-center items-center"
+                  >
+                    <!-- {{remainderChargeRate | number: '1.0-1'}} -->
+                    <div class="ngx-timepicker-field-example">
+                      <input
+                        type="number"
+                        class="w-full text-center"
+                        [(ngModel)]="remainderChargeRate"
+                        min="0"
+                        step="1"
+                        placeholder="0"
+                      />
+                    </div>
+                  </td>
+                  <td
+                    class="bg-gray-100 w-[107px] flex justify-center items-center"
+                  >
+                    {{
+                      remainderTotalTime * remainderChargeRate | number: "1.0-1"
+                    }}
+                  </td>
+                  <td class="border-r w-[157px] p-3 bg-gray-100">
+                    <div
+                      class="flex items-center justify-center p-3 h-full"
+                      *ngIf="newField"
+                      [matMenuTriggerFor]="getEditRemainderResultMenu"
+                    >
+                      <div class="whitespace-nowrap">
+                        {{ getStatus(remainderResult) }}
+                      </div>
+                      <mat-icon class="ml-2">arrow_drop_down</mat-icon>
+                      <mat-menu
+                        #getEditRemainderResultMenu="matMenu"
+                        xPosition="before"
+                      >
+                        <button
+                          class="cursor-pointer"
+                          mat-menu-item
+                          (click)="
+                            selectResult('Billable', undefined, 'remainder')
+                          "
+                        >
+                          Billable
+                        </button>
+                        <button
+                          class="cursor-pointer"
+                          mat-menu-item
+                          (click)="
+                            selectResult('Non billable', undefined, 'remainder')
+                          "
+                        >
+                          Non billable
+                        </button>
+                        <button
+                          class="cursor-pointer"
+                          mat-menu-item
+                          (click)="
+                            selectResult('Unresolved', undefined, 'remainder')
+                          "
+                        >
+                          Unresolved
+                        </button>
+                      </mat-menu>
+                    </div>
+                  </td>
+                  <td class="bg-gray-100 w-[150px]"></td>
+                </tr>
+                <!-- split option table row inside the edit table -->
+                <tr
+                  class="new-field-split flex w-[1740px]"
+                  data-cy="new-field-split"
+                  *ngIf="
+                    newField &&
+                    currentTaskUUID === task.uuid &&
+                    shift?.client_uuid === client?.uuid &&
+                    shift?.venue?.uuid === venue?.uuid &&
+                    splitTimeEdit == true
+                  "
+                >
+                  <td
+                    class="text-center w-[156px] border-r border-t bg-gray-100"
+                  >
+                    <div class="flex h-full items-center justify-center"></div>
+                  </td>
+                  <td
+                    class="text-center flex items-center w-[225px] bg-gray-100 border-r"
+                  >
+                    <div
+                      *ngIf="!savedSplitTimes"
+                      class="flex items-center flex-col w-full justify-center group relative h-full mt-2 mb-2"
+                    >
+                      <div class="flex items-center justify-center">
+                        <div class="text-base mb-2">Split time options</div>
+                      </div>
+                      <div class="flex flex-col text-primary">
+                        <div class="flex items-center justify-between">
+                          <div
+                            class="button underline cursor-pointer"
+                            (click)="createTable('edit')"
+                          >
+                            Add
+                          </div>
+                          <div
+                            class="ml-4 button"
+                            (click)="
+                              errorTotalBreak || errorTotalSplit
+                                ? null
+                                : saveNewTime(shift, 'edit', task)
+                            "
+                            [ngClass]="{
+                              'text-gray-400':
+                                errorTotalBreak || errorTotalSplit,
+                              'cursor-pointer': !(
+                                errorTotalBreak || errorTotalSplit
+                              ),
+                              underline: !(errorTotalBreak || errorTotalSplit)
+                            }"
+                          >
+                            Save
+                          </div>
+                          <div
+                            class="button underline cursor-pointer ml-4"
+                            (click)="cancelSplitTime(task)"
+                          >
+                            Cancel
+                          </div>
+                          <div
+                            *ngIf="task?.timesheet?.splits?.length !== 0"
+                            class="button underline cursor-pointer ml-4"
+                            (click)="deleteTime(shift, task, split, i, 'all')"
+                          >
+                            Delete
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div
+                      *ngIf="savedSplitTimes"
+                      class="flex items-center justify-center text-primary h-full"
+                    ></div>
+                  </td>
+                  <td class="border-r w-[162px] p-3 bg-gray-100"></td>
+                  <td class="border-r w-[100px] p-3 bg-gray-100"></td>
+                  <td class="border-r w-[100px] p-3 bg-gray-100"></td>
+                  <td
+                    class="border-r w-[227px] p-3 bg-gray-100 flex flex-col justify-center items-center"
+                  ></td>
+                  <td class="border-r w-[128px] p-3 bg-gray-100"></td>
+                  <td class="border-r w-[110px] p-3 bg-gray-100"></td>
+                  <td class="border-r w-[118px] bg-gray-100"></td>
+                  <td class="bg-gray-100 w-[107px]"></td>
+                  <td class="border-r w-[157px] p-3 bg-gray-100"></td>
+                  <td class="bg-gray-100 w-[150px]"></td>
+                </tr>
+              </ng-container>
+
+              <tr
+                *ngIf="
+                  shift?.client_uuid === client?.uuid &&
+                  shift?.venue?.uuid === venue?.uuid
+                "
+              >
+                <div
+                  class="flex w-[1740px]"
+                  *ngFor="
+                    let additional of task?.timesheet?.additional_times;
+                    let i = index
+                  "
+                >
+                  <td
+                    class="text-center border-r border-b flex justify-center items-center w-[156px]"
+                    [ngClass]="{
+                      'bg-gray-100':
+                        selectedAdditionalTime === i &&
+                        currentTaskUUID === task.uuid
+                    }"
+                  >
+                    <div class="w-full flex h-full items-center"></div>
+                  </td>
+                  <td
+                    class="p-4 w-[225px] border-r"
+                    [ngClass]="{
+                      'bg-gray-100':
+                        selectedAdditionalTime === i &&
+                        currentTaskUUID === task.uuid
+                    }"
+                  >
+                    <div
+                      *ngIf="
+                        selectedAdditionalTime === i &&
+                        currentTaskUUID === task.uuid
+                      "
+                      class="flex flex-col justify-center relative group h-full"
+                    >
+                      <div class="flex justify-center items-center">
+                        <div class="text-base">Additional time</div>
+                      </div>
+                      <div>
+                        <div
+                          *ngIf="
+                            selectedAdditionalTime === i &&
+                            currentTaskUUID === task.uuid
+                          "
+                          class="flex flex-col items-center text-primary"
+                        >
+                          <div class="flex justify-center">
+                            <div
+                              class="button underline cursor-pointer"
+                              (click)="
+                                saveNewTime(
+                                  shift,
+                                  'additional',
+                                  task,
+                                  null,
+                                  additional
+                                )
+                              "
+                            >
+                              Save
+                            </div>
+                            <div
+                              class="button underline cursor-pointer ml-2"
+                              (click)="cancelAdditionalField(additional)"
+                            >
+                              Cancel
+                            </div>
+                          </div>
+                          <p
+                            class="text-red-400"
+                            *ngIf="errorRequiredAdditional"
+                          >
+                            fields must not be empty
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div
+                      *ngIf="
+                        selectedAdditionalTime !== i ||
+                        (selectedAdditionalTime === i &&
+                          currentTaskUUID !== task.uuid)
+                      "
+                      class="flex h-full items-center justify-center"
+                    >
+                      <div class="flex justify-center items-center">
+                        <div>Additional time</div>
+                        <div class="flex">
+                          <!-- this needs to be disabled when isEditing is true -->
+                          <div [hidden]="isEditing">
+                            <mat-icon
+                              class="text-sm cursor-pointer"
+                              (click)="
+                                isEditing
+                                  ? null
+                                  : editAdditionalTime(
+                                      additional,
+                                      'additional',
+                                      task,
+                                      i,
+                                      shift
+                                    )
+                              "
+                              >edit</mat-icon
+                            >
+                          </div>
+                          <mat-icon
+                            class="text-sm cursor-pointer"
+                            (click)="
+                              deleteTime(
+                                shift,
+                                task,
+                                additional,
+                                i,
+                                'additional'
+                              )
+                            "
+                            >delete_outline</mat-icon
+                          >
+                        </div>
+                      </div>
+                    </div>
+                  </td>
+                  <td
+                    class="border-r w-[162px] p-3"
+                    [ngClass]="{
+                      'bg-gray-100':
+                        selectedAdditionalTime === i &&
+                        currentTaskUUID === task.uuid
+                    }"
+                  ></td>
+                  <td
+                    class="border-r w-[100px] p-3"
+                    [ngClass]="{
+                      'bg-gray-100':
+                        selectedAdditionalTime === i &&
+                        currentTaskUUID === task.uuid
+                    }"
+                  ></td>
+                  <td
+                    class="border-r w-[100px] p-3"
+                    [ngClass]="{
+                      'bg-gray-100':
+                        selectedAdditionalTime === i &&
+                        currentTaskUUID === task.uuid
+                    }"
+                  ></td>
+                  <td
+                    class="border-r flex items-center justify-center w-[117px] p-3"
+                    [ngClass]="{
+                      'bg-gray-100':
+                        selectedAdditionalTime === i &&
+                        currentTaskUUID === task.uuid
+                    }"
+                  >
+                    <div
+                      *ngIf="
+                        selectedAdditionalTime === i &&
+                        currentTaskUUID === task.uuid
+                      "
+                      class="ngx-timepicker-field-example"
+                    >
+                      <input
+                        type="number"
+                        class="w-full text-center"
+                        [ngClass]="{
+                          'text-red-400 placeholder:text-red-400':
+                            errorRequiredAdditional &&
+                            !additionalSubTotalControl.value
+                        }"
+                        min="0"
+                        step="0.10"
+                        placeholder="0.0"
+                        value="0.00"
+                        id="appt1"
+                        name="appt"
+                        [formControl]="additionalSubTotalControl"
+                        (change)="
+                          changeTime(
+                            $event,
+                            'additionalSubTotal',
+                            task,
+                            'edit',
+                            i
+                          )
+                        "
+                      />
+                    </div>
+
+                    <div
+                      *ngIf="
+                        selectedAdditionalTime !== i ||
+                        (selectedAdditionalTime === i &&
+                          currentTaskUUID !== task.uuid)
+                      "
+                    >
+                      {{ getFormatStringTime(additional?.subtotal) }}
+                    </div>
+                  </td>
+                  <td
+                    class="border-r flex items-center justify-center w-[110px] p-5"
+                    [ngClass]="{
+                      'bg-gray-100':
+                        selectedAdditionalTime === i &&
+                        currentTaskUUID === task.uuid
+                    }"
+                  >
+                    <div
+                      *ngIf="
+                        selectedAdditionalTime === i &&
+                        currentTaskUUID === task.uuid
+                      "
+                      class="ngx-timepicker-field-example"
+                    >
+                      <input
+                        type="number"
+                        class="w-full text-center"
+                        min="0"
+                        step="0.10"
+                        placeholder="0.0"
+                        value="0.00"
+                        name="appt"
+                        [formControl]="additionalBreakControl"
+                        (change)="
+                          changeTime($event, 'additionalBreak', task, 'edit', i)
+                        "
+                      />
+                    </div>
+                    <div
+                      *ngIf="
+                        selectedAdditionalTime !== i ||
+                        (selectedAdditionalTime === i &&
+                          currentTaskUUID !== task.uuid)
+                      "
+                    >
+                      {{ getFormatStringTime(additional?.break) }}
+                    </div>
+                  </td>
+                  <td
+                    class="border-r flex items-center justify-center w-[128px] p-5"
+                    [ngClass]="{
+                      'bg-gray-100':
+                        selectedAdditionalTime === i &&
+                        currentTaskUUID === task.uuid
+                    }"
+                  >
+                    <div
+                      *ngIf="
+                        selectedAdditionalTime === i &&
+                        currentTaskUUID === task.uuid
+                      "
+                      class="ngx-timepicker-field-example"
+                    ></div>
+                    <div>
+                      <div
+                        class=""
+                        *ngIf="
+                          selectedAdditionalTime === i &&
+                          currentTaskUUID === task.uuid
+                        "
+                      >
+                        {{ editingAdditional | roundUp | number: "1.0-1" }}
+                      </div>
+                      <div
+                        *ngIf="
+                          selectedAdditionalTime !== i ||
+                          (selectedAdditionalTime === i &&
+                            currentTaskUUID !== task.uuid)
+                        "
+                      >
+                        {{
+                          this.getFormatStringTime(
+                            additional?.subtotal - additional?.break
+                          )
+                        }}
+                      </div>
+                    </div>
+                  </td>
+                  <td
+                    class="border-r w-[110px] p-3 flex justify-center items-center"
+                    [ngClass]="{
+                      'bg-gray-100':
+                        selectedAdditionalTime === i &&
+                        currentTaskUUID === task.uuid
+                    }"
+                  >
+                    <div
+                      *ngIf="
+                        selectedAdditionalTime === i &&
+                        currentTaskUUID === task.uuid
+                      "
+                      class="ngx-timepicker-field-example"
+                    >
+                      <input
+                        type="number"
+                        class="w-full text-center"
+                        [(ngModel)]="remainderItemCode"
+                        min="0"
+                        step="1"
+                        placeholder="0"
+                        (change)="
+                          changeTime($event, 'edit', task, undefined, i)
+                        "
+                      />
+                    </div>
+
+                    <!-- <div
+                  class="flex items-center justify-center p-3 h-full"
+                  *ngIf="additional?.editing"
+
+                  [matMenuTriggerFor]="getAdditionalResultEditMenu">
+                  <div>{{remainderItemCode}}</div>
+                  <mat-icon class="ml-2">arrow_drop_down</mat-icon>
+                  <mat-menu
+                  #getAdditionalResultEditMenu="matMenu"
+                  xPosition="before">
+                  <div *ngFor="let resource of venue.resource_rates; let x = index">
+                  <button
+                  [matMenuTriggerFor]="additionalResourceRateDetails"
+                    class="cursor-pointer flex justify-between"
+                    mat-menu-item>
+                    {{resource.name}}
+                  </button>
+                  <mat-menu #additionalResourceRateDetails="matMenu">
+                    <button
+                        class="cursor-pointer"
+                        mat-menu-item
+                        (click)="selectResult(x, i,'remainderItemCodeFirst',venue)">
+                        {{venue.resource_rates[x].rates[0]
+                          .item_code}}: {{venue.resource_rates[x].rates[0]
+                          .name}} - {{venue.resource_rates[x].rates[0]
+                            .value}}$/h
+                      </button>
+                      <button
+                        class="cursor-pointer"
+                        mat-menu-item
+                        (click)="selectResult(x, i,'remainderItemCodeSecond',venue)">
+                        {{venue.resource_rates[x].rates[1]
+                          .item_code}}: {{venue.resource_rates[x].rates[1]
+                          .name}} - {{venue.resource_rates[x].rates[1]
+                            .value}}$/h
+                      </button>
+                      <button
+                        class="cursor-pointer"
+                        mat-menu-item
+                        (click)="selectResult(x, i,'remainderItemCodeThird',venue)">
+                        {{venue.resource_rates[x].rates[2]
+                          .item_code}}: {{venue.resource_rates[x].rates[2]
+                          .name}} - {{venue.resource_rates[x].rates[2]
+                            .value}}$/h
+                      </button>
+                    </mat-menu>
+                </div>
+                </mat-menu>
+
+                </div> -->
+                    <div
+                      class="flex h-full items-center justify-center"
+                      *ngIf="
+                        selectedAdditionalTime !== i ||
+                        (selectedAdditionalTime === i &&
+                          currentTaskUUID !== task.uuid)
+                      "
+                    >
+                      <span class="flex">{{
+                        task?.timesheet?.additional_times[i]?.item_code
+                      }}</span>
+                    </div>
+                    <!-- <div class="flex h-full items-center">
+                    <span class="text-gray-400">{{task?.role?.item_code}}</span>
+                    <mat-icon>arrow_drop_down</mat-icon>
+                  </div> -->
+                  </td>
+                  <!-- <td class="border-r w-[110px] p-3">
+
+
+                  <div class="flex h-full items-center justify-center"
+                  *ngIf="!additional?.editing">
+                    <span class="flex">{{task?.timesheet?.additional_times[i]?.item_code}}</span>
+
+                  </div>
+                </td> -->
+                  <td
+                    class="w-[118px] flex items-center justify-center border-r p-3"
+                    [ngClass]="{
+                      'bg-gray-100':
+                        selectedAdditionalTime === i &&
+                        currentTaskUUID === task.uuid
+                    }"
+                  >
+                    <div
+                      class="flex h-full items-center justify-center"
+                      *ngIf="
+                        selectedAdditionalTime !== i ||
+                        (selectedAdditionalTime === i &&
+                          currentTaskUUID !== task.uuid)
+                      "
+                    >
+                      <span class="flex">{{
+                        task?.timesheet?.additional_times[i]?.charge_rate
+                      }}</span>
+                    </div>
+                    <!-- <div class="flex h-full items-center justify-center"
+                *ngIf="additional?.editing">
+                  <span class="flex">{{remainderChargeRate}}</span>
+                </div> -->
+                    <div
+                      *ngIf="
+                        selectedAdditionalTime === i &&
+                        currentTaskUUID === task.uuid
+                      "
+                      class="ngx-timepicker-field-example"
+                    >
+                      <input
+                        type="number"
+                        class="w-full text-center"
+                        [(ngModel)]="remainderChargeRate"
+                        min="0"
+                        step="1"
+                        placeholder="0"
+                        (change)="
+                          changeTime($event, 'edit', task, undefined, i)
+                        "
+                      />
+                    </div>
+                  </td>
+                  <td
+                    class="border-r w-[107px] flex items-center justify-center"
+                    [ngClass]="{
+                      'bg-gray-100':
+                        selectedAdditionalTime === i &&
+                        currentTaskUUID === task.uuid
+                    }"
+                  >
+                    <div
+                      class="flex h-full items-center justify-center"
+                      *ngIf="
+                        selectedAdditionalTime !== i ||
+                        (selectedAdditionalTime === i &&
+                          currentTaskUUID !== task.uuid)
+                      "
+                    >
+                      <span class="flex">{{
+                        this.getFormatStringTime(
+                          additional?.subtotal - additional?.break
+                        ) * task?.timesheet?.additional_times[i]?.charge_rate
+                          | roundUp
+                          | number: "1.0-1"
+                      }}</span>
+                    </div>
+                    <div
+                      class="flex h-full items-center justify-center"
+                      *ngIf="
+                        selectedAdditionalTime === i &&
+                        currentTaskUUID === task.uuid
+                      "
+                    >
+                      <span class="flex">{{
+                        editingAdditional * remainderChargeRate
+                          | roundUp
+                          | number: "1.0-1"
+                      }}</span>
+                    </div>
+                  </td>
+                  <!-- <td class="flex items-center justify-center border-r w-[157px] p-3">
+                  <div
+                    *ngIf="additional?.editing"
+                    class="flex items-center justify-center p-3 h-full"
+                    [matMenuTriggerFor]="getResultMenu">
+                    <div>{{ newFieldResult }}</div>
+                    <mat-icon class="ml-2">arrow_drop_down</mat-icon>
+                  </div>
+                    <div *ngIf="!additional?.editing">
+                      {{getStatus(additional?.result)}}
+                    </div>
+                  </td> -->
+                  <!-- <mat-menu
+                    #getResultMenu="matMenu"
+                    xPosition="before">
+                    <button
+                      class="cursor-pointer"
+                      mat-menu-item
+                      (click)="getResult('Billable', inx)">
+                      Billable
+                    </button>
+                    <button
+                      class="cursor-pointer"
+                      mat-menu-item
+                      (click)="getResult('Non billable', inx)">
+                      Non billable
+                    </button>
+                    <button
+                      class="cursor-pointer"
+                      mat-menu-item
+                      (click)="getResult('Unresolved', inx)">
+                      Unresolved
+                    </button>
+                  </mat-menu> -->
+                  <td
+                    class="border-r w-[157px] p-3 flex items-center justify-center"
+                    [ngClass]="{
+                      'bg-gray-100':
+                        selectedAdditionalTime === i &&
+                        currentTaskUUID === task.uuid
+                    }"
+                  >
+                    <div
+                      class="whitespace-nowrap"
+                      *ngIf="
+                        selectedAdditionalTime !== i ||
+                        (selectedAdditionalTime === i &&
+                          currentTaskUUID !== task.uuid)
+                      "
+                    >
+                      {{
+                        getStatus(task?.timesheet?.additional_times[i]?.result)
+                      }}
+                    </div>
+
+                    <div
+                      class="p-3 h-full flex"
+                      *ngIf="
+                        selectedAdditionalTime === i &&
+                        currentTaskUUID === task.uuid
+                      "
+                      [matMenuTriggerFor]="getEditRemainderResultMenu"
+                    >
+                      <div class="whitespace-nowrap">
+                        {{ getStatus(remainderResult) }}
+                      </div>
+                      <mat-icon class="ml-2">arrow_drop_down</mat-icon>
+                      <mat-menu
+                        #getEditRemainderResultMenu="matMenu"
+                        xPosition="before"
+                      >
+                        <button
+                          class="cursor-pointer"
+                          mat-menu-item
+                          (click)="
+                            selectResult('Billable', undefined, 'remainder')
+                          "
+                        >
+                          Billable
+                        </button>
+                        <button
+                          class="cursor-pointer"
+                          mat-menu-item
+                          (click)="
+                            selectResult('Non billable', undefined, 'remainder')
+                          "
+                        >
+                          Non billable
+                        </button>
+                        <button
+                          class="cursor-pointer"
+                          mat-menu-item
+                          (click)="
+                            selectResult('Unresolved', undefined, 'remainder')
+                          "
+                        >
+                          Unresolved
+                        </button>
+                      </mat-menu>
+                    </div>
+                  </td>
+                  <td
+                    class="w-[150px] border-r flex justify-center items-center"
+                    [ngClass]="{
+                      'bg-gray-100':
+                        selectedAdditionalTime === i &&
+                        currentTaskUUID === task.uuid
+                    }"
+                  ></td>
+                </div>
+              </tr>
+              <ng-container
+                *ngFor="let row of rows; let i = index"
+                [formGroup]="tableForms[i]"
+              >
+                <tr
+                  class="new-field-split flex w-[1740px]"
+                  data-cy="new-field-split"
+                  *ngIf="
+                    newField &&
+                    currentTaskUUID === task.uuid &&
+                    shift?.client_uuid === client?.uuid &&
+                    shift?.venue?.uuid === venue?.uuid &&
+                    splitTimeEdit == false
+                  "
+                >
+                  <td
+                    class="text-center w-[156px] border-r border-t bg-gray-100 flex flex-col items-center justify-center"
+                  >
+                    <div
+                      [ngClass]="{
+                        'text-gray-400': rows.length == 1,
+                        'cursor-pointer': rows.length !== 1,
+                        underline: rows.length !== 1
+                      }"
+                      class="button text-primary"
+                      (click)="
+                        rows.length !== 1 && cancelTable($event, i, 'split')
+                      "
+                    >
+                      Delete
+                    </div>
+                  </td>
+                  <td
+                    class="text-center flex items-center w-[225px] bg-gray-100 border-r"
+                  >
+                    <div
+                      *ngIf="!savedSplitTimes"
+                      class="flex items-center flex-col w-full justify-center group relative h-full"
+                    >
+                      <div class="flex">
+                        <div class="text-base">Split time {{ i + 1 }}</div>
+                      </div>
+                    </div>
+
+                    <div
+                      *ngIf="savedSplitTimes"
+                      class="flex items-center justify-center text-primary h-full"
+                    ></div>
+                  </td>
+                  <td class="border-r w-[162px] p-3 bg-gray-100"></td>
+                  <td class="border-r w-[100px] p-3 bg-gray-100"></td>
+                  <td class="border-r w-[100px] p-3 bg-gray-100"></td>
+
+                  <td
+                    class="border-r flex flex-col justify-center items-center w-[117px] p-3 bg-gray-100"
+                  >
+                    <div
+                      *ngIf="!savedSplitTimes"
+                      class="ngx-timepicker-field-example"
+                      [formGroup]="tableForms[i]"
+                    >
+                      <input
+                        formControlName="splitTimeForm"
+                        data-cy="sub-total-input"
+                        type="number"
+                        class="w-full text-center"
+                        min="0"
+                        step="0.10"
+                        placeholder="0.0"
+                        value="0.00"
+                        name="appt"
+                        [ngClass]="{ 'text-red-400': errorTotalSplit }"
+                        (change)="changeTime($event, 'subTotalSplit', task)"
+                      />
+                    </div>
+                  </td>
+                  <td
+                    class="border-r flex flex-col justify-center items-center w-[110px] bg-gray-100 p-3"
+                  >
+                    <div
+                      *ngIf="!savedSplitTimes"
+                      class="ngx-timepicker-field-example"
+                      [formGroup]="tableForms[i]"
+                    >
+                      <input
+                        formControlName="breakTimeForm"
+                        type="number"
+                        class="w-full text-center"
+                        min="0"
+                        step="0.10"
+                        placeholder="0.0"
+                        value="0.00"
+                        name="appt"
+                        [ngClass]="{ 'text-red-400': errorTotalBreak }"
+                        (change)="changeTime($event, 'breakSplit', task)"
+                      />
+                    </div>
+                  </td>
+                  <td
+                    class="border-r flex justify-center items-center w-[128px] bg-gray-100 p-3"
+                  >
+                    <div
+                      *ngIf="!savedSplitTimes"
+                      class="ngx-timepicker-field-example"
+                      [formGroup]="tableForms[i]"
+                      [ngClass]="{
+                        'text-red-400': errorTotalBreak || errorTotalSplit
+                      }"
+                    >
+                      {{ calculateTotalTime(tableForms[i]) }}
+                    </div>
+                  </td>
+                  <td class="border-r w-[110px] p-3 bg-gray-100"></td>
+                  <td
+                    class="border-r w-[118px] bg-gray-100 flex items-center justify-center"
+                  >
+                    {{ getSplitTimeChargeRate(venue) | number: "1.0-1" }}
+                  </td>
+                  <td
+                    class="bg-gray-100 w-[107px] flex items-center justify-center"
+                  >
+                    {{
+                      getSplitTimeChargeRate(venue) *
+                        calculateTotalTime(tableForms[i]) | number: "1.0-1"
+                    }}
+                  </td>
+                  <td class="border-r w-[157px] p-3 bg-gray-100">
+                    <div
+                      class="flex items-center justify-center p-3 h-full"
+                      *ngIf="newField"
+                      [matMenuTriggerFor]="getResultMenuSplit"
+                      [formGroup]="tableForms[i]"
+                    >
+                      <div class="whitespace-nowrap">
+                        {{ getStatus(tableForms[i].get("resultForm").value) }}
+                      </div>
+                      <mat-icon class="ml-2">arrow_drop_down</mat-icon>
+                      <mat-menu
+                        #getResultMenuSplit="matMenu"
+                        xPosition="before"
+                      >
+                        <button
+                          class="cursor-pointer"
+                          mat-menu-item
+                          (click)="selectResult('Billable', i, 'split')"
+                        >
+                          Billable
+                        </button>
+                        <button
+                          class="cursor-pointer"
+                          mat-menu-item
+                          (click)="selectResult('Non billable', i, 'split')"
+                        >
+                          Non billable
+                        </button>
+                        <button
+                          class="cursor-pointer"
+                          mat-menu-item
+                          (click)="selectResult('Unresolved', i, 'split')"
+                        >
+                          Unresolved
+                        </button>
+                      </mat-menu>
+                    </div>
+                  </td>
+                  <td class="bg-gray-100 w-[150px]"></td>
+                </tr>
+              </ng-container>
+              <tr
+                class="new-field-split flex w-[1740px]"
+                data-cy="new-field-split"
+                *ngIf="
+                  newField &&
+                  currentTaskUUID === task.uuid &&
+                  shift?.client_uuid === client?.uuid &&
+                  shift?.venue?.uuid === venue?.uuid &&
+                  splitTimeEdit == false
+                "
+              >
+                <td
+                  class="text-center w-[156px] border-r border-t bg-gray-100"
+                ></td>
+                <td
+                  class="text-center flex items-center w-[225px] bg-gray-100 border-r"
+                >
+                  <div
+                    *ngIf="!savedSplitTimes"
+                    class="flex items-center flex-col w-full justify-center group relative h-full mt-2 mb-2"
+                  >
+                    <div class="flex items-center justify-center">
+                      <div class="text-base mb-2">Remainder</div>
+                    </div>
+                  </div>
+                  <div
+                    *ngIf="savedSplitTimes"
+                    class="flex items-center justify-center text-primary h-full"
+                  ></div>
+                </td>
+                <td class="border-r w-[162px] p-3 bg-gray-100"></td>
+                <td class="border-r w-[100px] p-3 bg-gray-100"></td>
+                <td class="border-r w-[100px] p-3 bg-gray-100"></td>
+                <td
+                  class="border-r w-[117px] p-3 bg-gray-100 flex flex-col justify-center items-center"
+                >
+                  {{ remainderSubTime }}
+                </td>
+                <td
+                  class="border-r w-[110px] p-3 bg-gray-100 flex flex-col justify-center items-center"
+                >
+                  {{ remainderBreakTime }}
+                </td>
+                <td
+                  class="border-r w-[128px] p-3 bg-gray-100 flex flex-col justify-center items-center"
+                >
+                  {{ remainderTotalTime }}
+                </td>
+                <td class="border-r w-[110px] p-3 bg-gray-100"></td>
+                <td
+                  class="border-r w-[118px] bg-gray-100 flex flex-col justify-center items-center"
+                >
+                  {{ getSplitTimeChargeRate(venue) | number: "1.0-1" }}
+                </td>
+                <td
+                  class="bg-gray-100 w-[107px] flex flex-col justify-center items-center"
+                >
+                  {{
+                    getSplitTimeChargeRate(venue) * remainderTotalTime
+                      | number: "1.0-1"
+                  }}
+                </td>
+                <td class="border-r w-[157px] p-3 bg-gray-100">
+                  <div
+                    class="flex items-center justify-center p-3 h-full"
+                    *ngIf="newField"
+                    [matMenuTriggerFor]="getEditRemainderResultMenu"
+                  >
+                    <div class="whitespace-nowrap">
+                      {{ getStatus(remainderResult) }}
+                    </div>
+                    <mat-icon class="ml-2">arrow_drop_down</mat-icon>
+                    <mat-menu
+                      #getEditRemainderResultMenu="matMenu"
+                      xPosition="before"
+                    >
+                      <button
+                        class="cursor-pointer"
+                        mat-menu-item
+                        (click)="
+                          selectResult('Billable', undefined, 'remainder')
+                        "
+                      >
+                        Billable
+                      </button>
+                      <button
+                        class="cursor-pointer"
+                        mat-menu-item
+                        (click)="
+                          selectResult('Non billable', undefined, 'remainder')
+                        "
+                      >
+                        Non billable
+                      </button>
+                      <button
+                        class="cursor-pointer"
+                        mat-menu-item
+                        (click)="
+                          selectResult('Unresolved', undefined, 'remainder')
+                        "
+                      >
+                        Unresolved
+                      </button>
+                    </mat-menu>
+                  </div>
+                </td>
+                <td class="bg-gray-100 w-[150px]"></td>
+              </tr>
+              <tr
+                class="new-field-split flex w-[1740px]"
+                data-cy="new-field-split"
+                *ngIf="
+                  newField &&
+                  currentTaskUUID === task.uuid &&
+                  shift?.client_uuid === client?.uuid &&
+                  shift?.venue?.uuid === venue?.uuid &&
+                  splitTimeEdit == false
+                "
+              >
+                <td
+                  class="text-center w-[156px] border-r border-t bg-gray-100"
+                ></td>
+                <td
+                  class="text-center flex items-center w-[225px] bg-gray-100 border-r"
+                >
+                  <div
+                    *ngIf="!savedSplitTimes"
+                    class="flex items-center flex-col w-full justify-center group relative h-full mt-2 mb-2"
+                  >
+                    <div class="flex items-center justify-center">
+                      <div class="text-base mb-2">Split time options</div>
+                    </div>
+                    <div class="flex flex-col text-primary">
+                      <div class="flex items-center justify-between">
+                        <div
+                          class="button underline cursor-pointer"
+                          (click)="createTable('split')"
+                        >
+                          Add
+                        </div>
+                        <div
+                          class="ml-4 button"
+                          (click)="
+                            errorTotalBreak || errorTotalSplit
+                              ? null
+                              : saveNewTime(shift, 'split', task)
+                          "
+                          [ngClass]="{
+                            'text-gray-400': errorTotalBreak || errorTotalSplit,
+                            'cursor-pointer': !(
+                              errorTotalBreak || errorTotalSplit
+                            ),
+                            underline: !(errorTotalBreak || errorTotalSplit)
+                          }"
+                        >
+                          Save
+                        </div>
+                        <div
+                          class="button underline cursor-pointer ml-4"
+                          (click)="cancelSplitTime(task)"
+                        >
+                          Cancel
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div
+                    *ngIf="savedSplitTimes"
+                    class="flex items-center justify-center text-primary h-full"
+                  ></div>
+                </td>
+                <td class="border-r w-[162px] p-3 bg-gray-100"></td>
+                <td class="border-r w-[100px] p-3 bg-gray-100"></td>
+                <td class="border-r w-[100px] p-3 bg-gray-100"></td>
+                <td
+                  class="border-r w-[227px] p-3 bg-gray-100 flex flex-col justify-center items-center"
+                ></td>
+                <td class="border-r w-[128px] p-3 bg-gray-100"></td>
+                <td class="border-r w-[110px] p-3 bg-gray-100"></td>
+                <td class="border-r w-[118px] bg-gray-100"></td>
+                <td class="bg-gray-100 w-[107px]"></td>
+                <td class="border-r w-[157px] p-3 bg-gray-100"></td>
+                <td class="bg-gray-100 w-[150px]"></td>
+              </tr>
+              <mat-menu #getResultMenu="matMenu" xPosition="before">
+                <button
+                  class="cursor-pointer"
+                  mat-menu-item
+                  (click)="getResult('Billable', task, shift)"
+                >
+                  Billable
+                </button>
+                <button
+                  class="cursor-pointer"
+                  mat-menu-item
+                  (click)="getResult('Non billable', task, shift)"
+                >
+                  Non billable
+                </button>
+                <button
+                  class="cursor-pointer"
+                  mat-menu-item
+                  (click)="getResult('Unresolved', task, shift)"
+                >
+                  Unresolved
+                </button>
+              </mat-menu>
+              <!--              <tr-->
+              <!--                class="split flex w-[1740px]"-->
+              <!--                *ngIf="newField && currentTaskUUID === task?.uuid && shift?.client_uuid === client?.uuid && shift?.venue?.uuid === venue?.uuid">-->
+              <!--                <td-->
+              <!--                  class="text-center border-r border-b flex justify-center items-center w-[156px] bg-gray-100">-->
+              <!--                  <div class="w-full flex h-full items-center"></div>-->
+              <!--                </td>-->
+              <!--                <td class="border-r w-[225px] border-b p-3 bg-gray-100"></td>-->
+              <!--                <td class="border-r w-[162px] border-b p-3 bg-gray-100"></td>-->
+              <!--                <td class="border-r w-[100px] border-b p-3 bg-gray-100"></td>-->
+              <!--                <td class="border-r w-[100px] border-b p-3 bg-gray-100"></td>-->
+              <!--                <td-->
+              <!--                  class="border-r flex items-center justify-center w-[117px] border-b p-3 bg-gray-100">-->
+              <!--                  <div-->
+              <!--                    *ngIf="!savedAdditionalTimes"-->
+              <!--                    class="ngx-timepicker-field-example"-->
+              <!--                    [ngClass]="{-->
+              <!--                  'text-red-500':-->
+              <!--                    additionalSubTotal.hasError('additionalError') ||-->
+              <!--                    additionalSubTotal.hasError('conflict')-->
+              <!--                }">-->
+              <!--                    <input-->
+              <!--                      type="number"-->
+              <!--                      class="w-full text-center"-->
+              <!--                      min="0"-->
+              <!--                      step='0.10'-->
+              <!--                      placeholder='0.00'-->
+              <!--                      value='0.00'-->
+              <!--                      name="appt"-->
+              <!--                      [formControl]="additionalSubTotal"-->
+              <!--                      (change)="changeTime($event, 'additionalSplitSubTotal', task)" />-->
+              <!--                  </div>-->
+              <!--                  <div *ngIf="savedAdditionalTimes">-->
+              <!--                    {{ additionalSubTotal.value }}-->
+              <!--                  </div>-->
+              <!--                </td>-->
+              <!--                <td-->
+              <!--                  class="border-r flex items-center justify-center w-[110px] border-b p-3 bg-gray-100">-->
+              <!--                  <div-->
+              <!--                    *ngIf="!savedAdditionalTimes"-->
+              <!--                    class="ngx-timepicker-field-example">-->
+              <!--                    <input-->
+              <!--                      type="number"-->
+              <!--                      class="w-full text-center"-->
+              <!--                      min="0"-->
+              <!--                      step='0.10'-->
+              <!--                      placeholder='0.00'-->
+              <!--                      value='0.00'-->
+              <!--                      name="break"-->
+              <!--                      [formControl]="additionalBreakControl"-->
+              <!--                      (change)="changeTime($event, 'splitBreak', task)" />-->
+              <!--                  </div>-->
+
+              <!--                  <div *ngIf="savedAdditionalTimes">-->
+              <!--                    {{ additionalBreakControl.value }}-->
+              <!--                  </div>-->
+              <!--                </td>-->
+              <!--                <td-->
+              <!--                  class="border-r flex items-center justify-center w-[128px] border-b p-3 bg-gray-100">-->
+              <!--                  <div-->
+              <!--                    *ngIf="!savedAdditionalTimes && currentSplit"-->
+              <!--                    class="ngx-timepicker-field-example">-->
+              <!--                    {{currentSplit}}-->
+              <!--                  </div>-->
+              <!--&lt;!&ndash;                  <div *ngIf="savedSplitTimes">&ndash;&gt;-->
+              <!--&lt;!&ndash;                    {{ splitTotalHours.value }}&ndash;&gt;-->
+              <!--&lt;!&ndash;                  </div>&ndash;&gt;-->
+              <!--                </td>-->
+              <!--                <td class="border-r w-[110px] border-b p-3 bg-gray-100">-->
+              <!--                  <div class="flex h-full items-center">-->
+              <!--                    <span class="text-gray-400">#Item code</span>-->
+              <!--                    <mat-icon>arrow_drop_down</mat-icon>-->
+              <!--                  </div>-->
+              <!--                </td>-->
+              <!--                <td class="border-r w-[118px] border-b p-3 bg-gray-100"></td>-->
+              <!--                <td class="border-r w-[107px] border-b p-3 bg-gray-100"></td>-->
+              <!--                <td class="border-r w-[157px] border-b p-3 bg-gray-100">-->
+              <!--                  <div-->
+              <!--                    class="flex items-center justify-center p-3 h-full"-->
+              <!--                    *ngIf="newField"-->
+              <!--                    [matMenuTriggerFor]="getResultMenu">-->
+              <!--                    <div>{{ newFieldResult }}</div>-->
+              <!--                    <mat-icon class="ml-2">arrow_drop_down</mat-icon>-->
+              <!--                  </div>-->
+              <!--                </td>-->
+              <!--                <mat-menu-->
+              <!--                  #getResultMenu="matMenu"-->
+              <!--                  xPosition="before">-->
+              <!--                  <button-->
+              <!--                    class="cursor-pointer"-->
+              <!--                    mat-menu-item-->
+              <!--                    [disabled]="!viewResources"-->
+              <!--                    (click)="getResult('Billable', inx)">-->
+              <!--                    Billable-->
+              <!--                  </button>-->
+              <!--                  <button-->
+              <!--                    class="cursor-pointer"-->
+              <!--                    mat-menu-item-->
+              <!--                    [disabled]="!viewResources"-->
+              <!--                    (click)="getResult('Non billable', inx)">-->
+              <!--                    Non billable-->
+              <!--                  </button>-->
+              <!--                  <button-->
+              <!--                    class="cursor-pointer"-->
+              <!--                    mat-menu-item-->
+              <!--                    [disabled]="!viewResources"-->
+              <!--                    (click)="getResult('Unresolved', inx)">-->
+              <!--                    Unresolved-->
+              <!--                  </button>-->
+              <!--                </mat-menu>-->
+              <!--                <td class="border-r w-[150px] border-b p-3 bg-gray-100"></td>-->
+              <!--              </tr>-->
+              <tr
+                class="flex w-[1740px] new-additional-field"
+                *ngIf="
+                  additionalField &&
+                  currentTaskUUID === task?.uuid &&
+                  shift?.client_uuid === client?.uuid &&
+                  shift?.venue?.uuid === venue?.uuid
+                "
+              >
+                <td
+                  class="text-center border-r border-b flex justify-center items-center w-[156px] bg-gray-100"
+                >
+                  <div class="w-full flex h-full items-center"></div>
+                </td>
+                <td class="additional-field p-4 w-[225px] bg-gray-100 border-r">
+                  <div
+                    *ngIf="!savedSplitTimes"
+                    class="flex flex-col justify-center relative group h-full"
+                  >
+                    <div class="flex justify-center items-center">
+                      <div class="text-base">Additional time</div>
+                    </div>
+                    <div class="flex flex-col items-center text-primary">
+                      <div class="flex justify-center">
+                        <div
+                          class="button underline cursor-pointer"
+                          (click)="saveNewTime(shift, 'additional', task)"
+                        >
+                          Save
+                        </div>
+                        <div
+                          class="button underline cursor-pointer ml-2"
+                          (click)="cancelAdditionalField()"
+                        >
+                          Cancel
+                        </div>
+                      </div>
+                      <p class="text-red-400" *ngIf="errorRequiredAdditional">
+                        fields must not be empty
+                      </p>
+                    </div>
+                  </div>
+                </td>
+                <td
+                  class="status-field border-r w-[162px] p-3 bg-gray-100"
+                ></td>
+                <td
+                  class="sign-on-field border-r w-[100px] p-3 bg-gray-100"
+                ></td>
+                <td
+                  class="sign-off-field border-r w-[100px] p-3 bg-gray-100"
+                ></td>
+                <td
+                  class="border-r flex items-center justify-center w-[117px] p-3 bg-gray-100"
+                >
+                  <div
+                    *ngIf="!savedSplitTimes"
+                    class="ngx-timepicker-field-example w-full"
+                  >
+                    <input
+                      type="number"
+                      class="w-full text-center"
+                      [ngClass]="{
+                        'text-red-400 placeholder:text-red-400':
+                          errorRequiredAdditional &&
+                          !additionalSubTotalControl.value
+                      }"
+                      min="0"
+                      step="0.1"
+                      placeholder="0.0"
+                      value="0"
+                      id="appt"
+                      name="appt"
+                      [formControl]="additionalSubTotalControl"
+                      (change)="
+                        changeTime($event, 'additionalSubTotal', task, 'add')
+                      "
+                    />
+                  </div>
+                </td>
+
+                <td
+                  class="border-r flex items-center justify-center w-[110px] bg-gray-100 p-5"
+                >
+                  <div
+                    *ngIf="!savedSplitTimes"
+                    class="ngx-timepicker-field-example"
+                  >
+                    <input
+                      type="number"
+                      class="w-full text-center"
+                      min="0"
+                      step="0.1"
+                      placeholder="0.0"
+                      value="0"
+                      name="appt"
+                      [formControl]="additionalBreakControl"
+                      (change)="
+                        changeTime($event, 'additionalBreak', task, 'add')
+                      "
+                    />
+                  </div>
+                  <div *ngIf="savedSplitTimes">
+                    {{ additionalBreakControl.value }}
+                  </div>
+                </td>
+
+                <td
+                  class="border-r flex items-center justify-center w-[128px] bg-gray-100 p-5"
+                >
+                  <div
+                    *ngIf="!savedSplitTimes && currentAdditional"
+                    class="ngx-timepicker-field-example"
+                  >
+                    {{ currentAdditional | roundUp | number: "1.0-1" }}
+                  </div>
+                </td>
+
+                <td
+                  class="border-r w-[110px] p-3 bg-gray-100 flex justify-center items-center"
+                >
+                  <div class="ngx-timepicker-field-example">
+                    <input
+                      type="number"
+                      class="w-full text-center"
+                      [(ngModel)]="remainderItemCode"
+                      min="0"
+                      step="1"
+                      placeholder="0"
+                      (change)="changeTime($event, 'edit', task, undefined, i)"
+                    />
+                  </div>
+                  <!-- <div
+                  class="flex items-center justify-center p-3 h-full"
+
+                  [matMenuTriggerFor]="getAdditionalResultEditMenu">
+                  <div>{{remainderItemCode}}</div>
+                  <mat-icon class="ml-2">arrow_drop_down</mat-icon>
+                  <mat-menu
+                  #getAdditionalResultEditMenu="matMenu"
+                  xPosition="before">
+                  <div *ngFor="let resource of venue.resource_rates; let x = index">
+                  <button
+                  [matMenuTriggerFor]="additionalResourceRateDetails"
+                    class="cursor-pointer flex justify-between"
+                    mat-menu-item>
+                    {{resource.name}}
+                  </button>
+                  <mat-menu #additionalResourceRateDetails="matMenu">
+                    <button
+                        class="cursor-pointer"
+                        mat-menu-item
+                        (click)="selectResult(x, i,'remainderItemCodeFirst',venue)">
+                        {{venue.resource_rates[x].rates[0]
+                          .item_code}}: {{venue.resource_rates[x].rates[0]
+                          .name}} - {{venue.resource_rates[x].rates[0]
+                            .value}}$/h
+                      </button>
+                      <button
+                        class="cursor-pointer"
+                        mat-menu-item
+                        (click)="selectResult(x, i,'remainderItemCodeSecond',venue)">
+                        {{venue.resource_rates[x].rates[1]
+                          .item_code}}: {{venue.resource_rates[x].rates[1]
+                          .name}} - {{venue.resource_rates[x].rates[1]
+                            .value}}$/h
+                      </button>
+                      <button
+                        class="cursor-pointer"
+                        mat-menu-item
+                        (click)="selectResult(x, i,'remainderItemCodeThird',venue)">
+                        {{venue.resource_rates[x].rates[2]
+                          .item_code}}: {{venue.resource_rates[x].rates[2]
+                          .name}} - {{venue.resource_rates[x].rates[2]
+                            .value}}$/h
+                      </button>
+                    </mat-menu>
+                </div>
+                </mat-menu>
+
+                </div> -->
+
+                  <!-- <div class="flex h-full items-center">
+                    <span class="text-gray-400">{{task?.role?.item_code}}</span>
+                    <mat-icon>arrow_drop_down</mat-icon>
+                  </div> -->
+                </td>
+
+                <td
+                  class="w-[118px] border-r p-3 bg-gray-100 flex items-center justify-center"
+                >
+                  <!-- {{remainderChargeRate | number: '1.0-1'}} -->
+
+                  <div class="ngx-timepicker-field-example">
+                    <input
+                      type="number"
+                      class="w-full text-center"
+                      [(ngModel)]="remainderChargeRate"
+                      min="0"
+                      step="1"
+                      placeholder="0"
+                      (change)="changeTime($event, 'edit', task, undefined, i)"
+                    />
+                  </div>
+                </td>
+
+                <td
+                  class="border-r w-[107px] bg-gray-100 flex items-center justify-center"
+                >
+                  {{
+                    currentAdditional * remainderChargeRate | number: "1.0-1"
+                  }}
+                </td>
+
+                <td class="border-r w-[157px] p-3 bg-gray-100">
+                  <div
+                    class="flex items-center justify-center p-3 h-full"
+                    [matMenuTriggerFor]="getResultMenu"
+                  >
+                    <div class="whitespace-nowrap">
+                      {{ getStatus(remainderResult) }}
+                    </div>
+                    <mat-icon class="ml-2">arrow_drop_down</mat-icon>
+                  </div>
+                </td>
+
+                <mat-menu #getResultMenu="matMenu" xPosition="before">
+                  <button
+                    class="cursor-pointer"
+                    mat-menu-item
+                    (click)="selectResult('Billable', undefined, 'remainder')"
+                  >
+                    Billable
+                  </button>
+                  <button
+                    class="cursor-pointer"
+                    mat-menu-item
+                    (click)="
+                      selectResult('Non billable', undefined, 'remainder')
+                    "
+                  >
+                    Non billable
+                  </button>
+                  <button
+                    class="cursor-pointer"
+                    mat-menu-item
+                    (click)="selectResult('Unresolved', undefined, 'remainder')"
+                  >
+                    Unresolved
+                  </button>
+                </mat-menu>
+                <!-- <td class="border-r w-[157px] p-3 bg-gray-100"><div
+                  class="flex items-center justify-center p-3 h-full"
+                  *ngIf="newField"
+                  [matMenuTriggerFor]="getEditRemainderResultMenu">
+                  <div>{{getStatus(remainderResult)}}</div>
+                  <mat-icon class="ml-2">arrow_drop_down</mat-icon>
+                  <mat-menu
+                    #getEditRemainderResultMenu="matMenu"
+                    xPosition="before">
+                    <button
+                      class="cursor-pointer"
+                      mat-menu-item
+                      (click)="selectResult('Billable', undefined,'remainder')">
+                      Billable
+                    </button>
+                    <button
+                      class="cursor-pointer"
+                      mat-menu-item
+                      (click)="selectResult('Non billable', undefined,'remainder')">
+                      Non billable
+                    </button>
+                    <button
+                      class="cursor-pointer"
+                      mat-menu-item
+                      (click)="selectResult('Unresolved', undefined,'remainder')">
+                      Unresolved
+                    </button>
+                  </mat-menu>
+                </div></td> -->
+                <td class="bg-gray-100 w-[150px]"></td>
+              </tr>
+            </div>
+          </div>
+
+          <tr class="w-full border-gray-200" *ngIf="viewResources">
+            <td class="text-center p-3" *ngIf="status === 'clients'"></td>
+            <td class="text-center p-3"></td>
+            <td class="text-center p-3"></td>
+            <td class="text-center border p-3">
+              {{ openedshift?.resource?.profile_name }}
+            </td>
+            <td class="text-center border p-3">
+              <div class="flex items-center">
+                <div>
+                  {{ openedshift?.timesheet?.signon?.datetime | date: "HH:mm" }}
+                </div>
+                <div class="ml-1">
+                  <div
+                    class="checkbox w-4 h-4 border-2 border-gray-300 rounded relative"
+                    (click)="selectCheckbox('signon')"
+                  >
+                    <mat-icon
+                      *ngIf="checkedSignon"
+                      class="text-green-400 text-sm absolute -top-1.5 -left-1.5"
+                      >done</mat-icon
+                    >
+                  </div>
+                </div>
+              </div>
+            </td>
+            <td class="text-center border p-3">
+              <div class="flex items-center">
+                <div>
+                  {{
+                    openedshift?.timesheet?.signoff?.datetime | date: "HH:mm"
+                  }}
+                </div>
+                <div class="ml-1">
+                  <div
+                    class="checkbox w-4 h-4 border-2 border-gray-300 rounded relative"
+                    (click)="selectCheckbox('signoff')"
+                  >
+                    <mat-icon
+                      *ngIf="checkedSignoff"
+                      class="text-green-400 text-sm absolute -top-1.5 -left-1.5"
+                      >done</mat-icon
+                    >
+                  </div>
+                </div>
+              </div>
+            </td>
+            <td class="text-center border p-3">
+              <div class="flex items-center">
+                <div *ngIf="openedshift?.timesheet?.breaks">
+                  {{
+                    openedshift?.timesheet.breaks[0].datetime | date: "HH:mm"
+                  }}
+                </div>
+                <div class="ml-1">
+                  <div
+                    class="checkbox w-4 h-4 border-2 border-gray-300 rounded relative"
+                    (click)="selectCheckbox('break')"
+                  >
+                    <mat-icon
+                      *ngIf="checkedBreak"
+                      class="text-green-400 text-sm absolute -top-1.5 -left-1.5"
+                      >done</mat-icon
+                    >
+                  </div>
+                </div>
+              </div>
+            </td>
+          </tr>
+          <tr class="w-full border-gray-200" *ngIf="viewResources">
+            <td class="text-center p-3" *ngIf="status === 'clients'"></td>
+            <td class="text-center p-3"></td>
+            <td class="text-center p-3"></td>
+            <td class="text-center flex flex-col p-3 border">
+              <div>{{ openedshift?.resource?.profile_name }}</div>
+              <div class="text-gray-400">Supervising Resource</div>
+            </td>
+            <td class="text-center p-3 border">
+              <mat-icon class="text-green-600">done</mat-icon>
+            </td>
+            <td class="text-center p-3 border">
+              <mat-icon class="text-green-600">done</mat-icon>
+            </td>
+            <td class="text-center p-3 border">
+              <mat-icon class="text-green-600">done</mat-icon>
+            </td>
+          </tr>
+          <tr class="w-full border-gray-200" *ngIf="viewResources">
+            <td class="text-center p-3" *ngIf="status === 'clients'"></td>
+            <td class="text-center p-3"></td>
+            <td class="text-center p-3"></td>
+            <td class="text-center flex flex-col p-3 border">
+              <div>{{ openedshift?.resource?.profile_name }}</div>
+              <div class="text-gray-400">Venue manager</div>
+            </td>
+            <td class="text-center p-3 border">
+              <mat-icon class="text-green-600">done</mat-icon>
+            </td>
+            <td class="text-center p-3 border">
+              <mat-icon class="text-green-600">done</mat-icon>
+            </td>
+            <td class="text-center p-3 border">
+              <mat-icon class="text-green-600">done</mat-icon>
+            </td>
+          </tr>
+        </table>
+      </mat-expansion-panel>
+    </mat-accordion>
+  </mat-expansion-panel>
+</mat-accordion>

@@ -1,0 +1,170 @@
+<div class="inset-0 flex flex-col min-w-0 bottom-0 top-0 right-0 left-0">
+  <mat-drawer-container
+    class="absolute top-0 left-0 bottom-0 right-0"
+    [hasBackdrop]="true"
+  >
+    <mat-drawer-content class="flex-auto flex flex-col">
+      <div class="flex flex-col flex-auto min-w-0 h-full">
+        <!--Header-->
+        <div
+          class="header text-white p-10 p-sm-24 bg-primary flex flex-row justify-between"
+        >
+          <!-- APP TITLE -->
+          <div class="text-3xl flex items-center">
+            <div class="mr-16">
+              <img src="./assets/images/icons/supplier.svg" alt="icon" />
+            </div>
+            <span class="logo-text h1"> Suppliers </span>
+          </div>
+          <div class="flex w-2/3 justify-between items-center">
+            <app-search-header-for-users
+              class="w-3/4 mr-2"
+              [currentUser]="'supplier'"
+              [users]="allSuppliers"
+              (updateList)="updateListSuppliers($event)"
+            ></app-search-header-for-users>
+            <button
+              *ngIf="accountService.currentAccountIsSubscriber"
+              data-cy="create-supplier-button"
+              mat-stroked-button
+              (click)="createSupplier()"
+            >
+              <mat-icon class="text-white">add</mat-icon>Add New Supplier
+            </button>
+          </div>
+        </div>
+        <!--/Header-->
+
+        <!--Content-->
+        <div>
+          <div class="card">
+          <div class="relative flex w-full">
+          <fuse-drawer
+          [name]="'leftDrawer'"
+          [opened]="drawerOpened"
+          [position]="'left'"
+          [mode]="'side'"
+          >
+          <app-filter-client-supplier
+          [currentUser]="'supplier'"
+          (updateList)="updateListSuppliers($event)"
+          [selectedValue]="selectedValue"
+          class="w-full"
+          ></app-filter-client-supplier>
+        </fuse-drawer>
+          <div class="p-5 w-full h-full">
+            <mat-chip-list class="mb-4">
+              <mat-chip class="m-2 mb-4" *ngFor=" let selectedValueObject of selectedValuesObject; let i = index">
+                <div class="mat-elevation-z0 p-2">
+                  {{ selectedValueObject === 0 ? 'Pending' : selectedValueObject === 1 ? 'Active' : selectedValueObject === 2 ? 'Inactive' : selectedValueObject === 3 ? 'Banned' : selectedValueObject === 4 ? 'Waiting for Approval' : selectedValueObject === 5 ? 'Failed' : selectedValueObject === 6 ? 'Verified' : ''}}
+                </div>
+                <mat-icon  [attr.data-cy]="'status-cancel-' + i" class="hover:cursor-pointer" (click)="unTickSelectedValue(selectedValueObject)">
+                  cancel
+                </mat-icon>
+              </mat-chip>
+            </mat-chip-list>
+             <div class="flex flex-row mt-2">
+                  <button
+                  color="primary"
+                  data-cy="filters-icon"
+                  class="ml-2 mat-elevation-z0 mr-2"
+                  matTooltip="filters"
+                  mat-mini-fab
+                  *ngIf="!drawerOpened"
+                  (click)="toggleDrawerOpen()"
+                >
+                  <mat-icon >filter_alt</mat-icon>
+                </button>
+                <button
+                  color="primary"
+                  data-cy="filters-icon"
+                  class="ml-2 mat-elevation-z0 mr-2"
+                  matTooltip="close"
+                  mat-mini-fab
+                  *ngIf="drawerOpened"
+                  (click)="toggleDrawerOpen()"
+                >
+                  <mat-icon class="ml-2">arrow_back_ios</mat-icon>
+                </button>
+                <p *ngIf="!drawerOpened && !(selectedValuesObject.length || selectedValuesString.length)" class="mt-7 mb-7 font-[14px] font-bold">
+                  Total Suppliers: {{ suppliers?.length || "0" }}
+                </p>
+                <p data-cy="filtered-suppliers" *ngIf="drawerOpened || selectedValuesObject.length || selectedValuesString.length" class="mt-7 mb-7 font-[14px] font-bold">
+                  Filtered Suppliers: {{ suppliers | filterClientSupplier: selectedValuesManaged:selectedValuesObject:selectedValuesString:'totalNumber'}}
+                </p>
+            </div>
+
+            <div class="content-table w-full">
+              <table class="flex-flex-col w-full min-h-screen">
+                <tr
+                  data-cy="supplier"
+                  class="flex flex-row items-center justify-between w-full border-b-2 pt-2 pb-2 cursor-pointer hover:bg-gray-100"
+                  *ngFor="let supplier of suppliers| filterClientSupplier:selectedValuesManaged:selectedValuesObject:selectedValuesString"
+                  (click)="editSupplier(supplier)"
+                >
+                  <td class="flex w-fit logo">
+                    <div
+                      class="w-20 h-20 flex items-center border-2 rounded-full overflow-hidden"
+                    >
+                      <img
+                        [src]="supplier.detail?.logo || defaultAvatar"
+                        alt="logo"
+                      />
+                    </div>
+                  </td>
+                  <td
+                    class="flex flex-col items-start justify-center w-full pl-5 align-middle"
+                  >
+                    <div class="text-xl font-medium">
+                      {{ supplier.detail?.name }}
+                    </div>
+                    <div class="text-sm text-gray-500">
+                      {{ supplier.detail?.tradingname }}
+                    </div>
+                  </td>
+
+                  <td class="flex items-center status w-1/5">
+                    <div
+                      data-cy="status-element"
+                      class="w-24 ml-4 rounded-3xl text-center p-1"
+                      [ngClass]="
+                        utils.getStatusColour(
+                          supplier?.connection_status,
+                          true,
+                          false
+                        )
+                      "
+                    >
+                      <span>{{
+                        utils.getStatus(
+                          supplier?.connection_status,
+                          true,
+                          false
+                        )
+                      }}</span>
+                    </div>
+                  </td>
+                </tr>
+              </table>
+            </div>
+          </div>
+          </div>
+        </div>
+        </div>
+      </div>
+    </mat-drawer-content>
+
+    <mat-drawer
+      class="sm:w-full md:w-3/5 lg:w-3/5 xl:w-3/5 2xl:w-3/5 dark:bg-primary"
+      [autoFocus]="false"
+      [mode]="'over'"
+      [position]="'end'"
+      #matDrawerSupplier
+    >
+      <app-create-supplier
+        *ngIf="matDrawerSupplier.opened"
+        (closeCreate)="matDrawerSupplier.toggle()"
+      ></app-create-supplier>
+    </mat-drawer>
+  </mat-drawer-container>
+</div>

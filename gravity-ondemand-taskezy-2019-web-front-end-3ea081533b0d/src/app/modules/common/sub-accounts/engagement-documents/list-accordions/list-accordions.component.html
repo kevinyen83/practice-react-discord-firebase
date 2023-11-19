@@ -1,0 +1,138 @@
+<div class="mt-5">
+  <mat-accordion
+    [togglePosition]="'before'"
+    class="example-headers-align"
+    multi
+  >
+    <div class="flex justify-between mb-6 mt-10">
+      <div class="font-bold text-2xl" data-cy="resource-rates-header">
+        Resource Rates
+      </div>
+      <button
+        color="primary"
+        class="w-40 edit-button rounded-full"
+        (click)="addRate()"
+        data-cy="resource-rates-add-new-rate-button"
+        mat-flat-button
+      >
+        <mat-icon>add</mat-icon>
+        Add New Rate
+      </button>
+    </div>
+
+    <div *ngIf="venue && venue.roles">
+      <mat-expansion-panel
+        *ngFor="let role of venue.resource_rates; let i = index"
+        [expanded]="indexExpanded === i"
+        (opened)="setStep(i)"
+      >
+        <mat-expansion-panel-header>
+          <mat-panel-title>
+            <div
+              (click)="$event.stopPropagation()"
+              class="flex items-center font-medium text-lg"
+            >
+              <span class="mr-2">{{ role.name }}</span>
+            </div>
+            <!-- <div class="flex flex-row w-full justify-between"> -->
+            <!-- <div class="flex">{{role.role}}</div> -->
+            <!-- <div class="flex">
+                <mat-icon>edit</mat-icon>
+                <mat-icon class="ml-3" (click)="deleteRole(i)">delete_outline</mat-icon>
+              </div> -->
+            <!-- </div> -->
+          </mat-panel-title>
+        </mat-expansion-panel-header>
+        <div class="flex font-medium text-lg text-black mb-6">Rate Types</div>
+        <div class="flex justify-between w-full">
+          <div class="flex flex-col w-1/4">
+            <div class="flex flex-col" *ngFor="let rate of role.rates">
+              <div class="flex flex-row justify-between mb-4">
+                <div class="flex flex-col">
+                  <p class="text-gray-400 text-sm">{{ rate.name }}</p>
+                  <p class="text-black text-sm">{{ rate.value | currency }}</p>
+                </div>
+                <div class="flex flex-col" *ngIf="rate.item_code">
+                  <p class="text-gray-400 text-sm">Item Code</p>
+                  <p class="text-black text-sm">({{ rate.item_code }})</p>
+                </div>
+              </div>
+            </div>
+
+            <button
+              color="primary"
+              class="w-40 edit-button rounded-full"
+              (click)="editRate(role)"
+              mat-flat-button
+            >
+              Edit
+            </button>
+          </div>
+
+          <div class="flex flex-col ml-16 w-3/4">
+            <div *ngIf="role.item_code" class="flex flex-col">
+              <p class="text-gray-400 text-sm">Item Code</p>
+              <p class="text-sm">{{ role.item_code }}</p>
+            </div>
+            <div class="flex flex-col">
+              <p class="text-gray-400 text-sm">Description</p>
+              <p class="text-black text-sm">{{ role.description }}</p>
+            </div>
+          </div>
+        </div>
+      </mat-expansion-panel>
+    </div>
+
+    <div class="flex justify-between mb-6 mt-10">
+      <div class="font-bold text-2xl">Accreditation Requirements</div>
+      <button
+        color="primary"
+        class="w-40 edit-button rounded-full"
+        (click)="addAccreditation()"
+        data-cy="resource-rates-add-new-accreditation-button"
+        mat-flat-button
+      >
+        <mat-icon>add</mat-icon>
+        Add Accreditation
+      </button>
+    </div>
+    <div *ngIf="venue && venue?.accreditation_requirements">
+      <mat-expansion-panel
+        [expanded]="accreditation?.expanded"
+        (opened)="accreditation.expanded = true"
+        (closed)="accreditation.expanded = false"
+        *ngFor="
+          let accreditation of venue?.accreditation_requirements;
+          let i = index
+        "
+      >
+        <mat-expansion-panel-header>
+          <mat-panel-title>
+            {{ accreditation.name }}
+          </mat-panel-title>
+          <button
+            class="w-15 edit-button rounded-full mr-2"
+            (click)="editAccreditation(i, accreditation)"
+            mat-flat-button
+          >
+            Edit
+          </button>
+          <!-- <button
+        class="w-15 edit-button rounded-full"
+        (click)="deleteAccreditation(i)"
+        mat-flat-button>
+        Delete
+      </button> -->
+        </mat-expansion-panel-header>
+
+        <app-table-licence
+          [venue]="venue"
+          [venueClient]="venueClient"
+          [accountType]="accountType"
+          [accreditation]="accreditation"
+          (updateAccreditation)="updateAccreditation($event)"
+        ></app-table-licence>
+      </mat-expansion-panel>
+    </div>
+  </mat-accordion>
+</div>

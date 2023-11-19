@@ -1,0 +1,73 @@
+<app-auth-layout
+  class="w-full"
+  [name]="'You are almost there!'"
+  [status]="'id-check'"
+  [headerName]="'id-check-header'"
+>
+<div *ngIf="viewMode === 'VIEW_MODE_FORM'" class="flex justify-center items-center mb-8 [@media(max-width:380px)]:flex-col  [@media(max-width:380px)]:mt-[-32px]
+">
+    <div class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-4 px-8 border border-blue-700 rounded text-xl sm:text-lg md:py-3.5 md:px-7 sm:py-3 sm:px-6 whitespace-nowrap [@media(max-width:380px)]:mb-6" id="digitalid-verify"></div>
+
+      <div><img class="w-32 min-w-32 ml-8 md:ml-6 sm:ml-4 [@media(max-width:380px)]:ml-0" src="assets/icons/digitalLogo.svg"></div>
+  </div>
+
+  <div *ngIf="viewMode === 'VIEW_MODE_PREVIEW'">
+    <form
+      [formGroup]="registerForm"
+      class="flex w-full flex-col m-auto"
+      novalidate
+    >
+      <div class="grid grid-cols-2 text-left text-black my-8 gap-y-4">
+        <div class="">
+          <label class="text-sm my-2">First Name</label>
+          <p class="text-lg">{{ userInfor.given_name }}</p>
+        </div>
+        <div>
+          <label class="text-sm my-2">Last Name</label>
+          <p class="text-lg">{{ userInfor.family_name }}</p>
+        </div>
+        <div>
+          <label class="text-sm my-2">Birthday</label>
+          <p class="text-lg">{{ userInfor.birthdate }}</p>
+        </div>
+      </div>
+
+      <p class="text-left text-sm my-2 text-black">
+        Please verify your address
+      </p>
+      <mat-form-field class="w-full">
+        <mat-label>Address</mat-label>
+        <input
+          data-cy="address-input"
+          #address
+          matInput
+          formControlName="address"
+          autocomplete="address"
+        />
+        <mat-error
+          data-cy="address-required"
+          *ngIf="registerForm.get('address').hasError('required')"
+        >
+          Address is required
+        </mat-error>
+      </mat-form-field>
+
+      <button
+        mat-raised-button
+        data-cy="login-button"
+        id="login-button"
+        color="primary"
+        class="text-xl font-medium w-full m-auto rounded-full mt-8"
+        (click)="handleSave()"
+      >
+        Continue
+      </button>
+    </form>
+  </div>
+
+  <div class="flex flex-col mt-2">
+    <div class="self-center">
+      <button mat-button color="primary" (click)="signOut()">Sign Out</button>
+    </div>
+  </div>
+</app-auth-layout>

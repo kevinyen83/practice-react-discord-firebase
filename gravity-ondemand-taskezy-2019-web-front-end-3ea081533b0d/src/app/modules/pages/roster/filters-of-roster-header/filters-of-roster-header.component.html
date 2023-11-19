@@ -1,0 +1,70 @@
+<div class="filters-of-header-roster ml-3">
+  <form action="" class="flex items-center" [formGroup]="filtersForm">
+    <mat-form-field class="name-of-user w-1/3" appearance="fill">
+      <input
+        matInput
+        name="nameOfUser"
+        (input)="changeField()"
+        placeholder="find by name..."
+        formControlName="nameOfUser"
+        [matAutocomplete]="client"
+      />
+      <mat-autocomplete
+        #client="matAutocomplete"
+        (optionSelected)="selectedValueUser($event.option.value)"
+      >
+        <mat-option
+          *ngFor="let user of usersForTemplate | async"
+          [value]="user.name || user.detail.name"
+        >
+          {{ user.name || user.detail.name }}
+        </mat-option>
+      </mat-autocomplete>
+    </mat-form-field>
+
+    <section class="w-1/3 flex flex-wrap justify-center">
+      <mat-checkbox
+        color="primary"
+        class="ml-2"
+        data-cy="completed-checkbox"
+        formControlName="completed"
+        (change)="changeSelect('completed', $event)"
+        id="completed"
+        name="completed"
+        >Completed</mat-checkbox
+      >
+      <mat-checkbox
+        color="primary"
+        class="ml-2"
+        data-cy="in-progress-checkbox"
+        formControlName="inProgress"
+        (change)="changeSelect('inProgress', $event)"
+        id="inProgress"
+        name="inProgress"
+        >In Progress</mat-checkbox
+      >
+      <!--      <mat-checkbox color="primary" class="ml-2" data-cy="review-checkbox" formControlName="review" (change)="changeSelect('review', $event)" id="review" name="review">Return to Review</mat-checkbox>-->
+      <!--      <mat-checkbox color="primary" class="ml-2" data-cy="alert-checkbox" formControlName="alert" (change)="changeSelect('alert', $event)" id="alert" name="alert">Alert</mat-checkbox>-->
+      <mat-checkbox
+        color="primary"
+        class="ml-2"
+        data-cy="cancelled-checkbox"
+        formControlName="cancelled"
+        (change)="changeSelect('cancelled', $event)"
+        id="cancelled"
+        name="cancelled"
+        >Cancelled</mat-checkbox
+      >
+      <mat-checkbox
+        color="primary"
+        class="ml-2"
+        data-cy="draft-checkbox"
+        formControlName="draft"
+        (change)="changeSelect('draft', $event)"
+        id="draft"
+        name="draft"
+        >Draft</mat-checkbox
+      >
+    </section>
+  </form>
+</div>

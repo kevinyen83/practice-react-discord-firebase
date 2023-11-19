@@ -1,0 +1,110 @@
+<div class="add-role">
+  <div class="header-role bg-primary font-semibold text-white text-3xl p-6" data-cy="resource-rate-header">
+    {{ statusHeader }} Resource Rate
+  </div>
+
+  <div
+    class="content-add-role p-8"
+    *ngIf="addRateForm">
+    <form
+      class="flex flex-col"
+      [formGroup]="addRateForm"
+      action="">
+      <mat-form-field class="role ">
+        <mat-label>Name of Resource Rate</mat-label>
+        <input
+          matInput
+          name="name"
+          formControlName="name"
+          data-cy="resource-rate-name" />
+      </mat-form-field>
+      <!--      <mat-form-field class="role w-1/2">-->
+      <!--        <mat-label>Item Code</mat-label>-->
+      <!--        <input matInput-->
+      <!--               name="item_code"-->
+      <!--               formControlName="item_code">-->
+      <!--      </mat-form-field>-->
+      <mat-form-field class="role  fuse-mat-textarea">
+        <mat-label>Description</mat-label>
+        <textarea
+          matInput
+          cdkTextareaAutosize
+          name="description"
+          formControlName="description"
+          required
+          #autosize="cdkTextareaAutosize"
+          cdkAutosizeMinRows="1"
+          cdkAutosizeMaxRows="5"
+          data-cy="resource-rate-description"
+          ></textarea>
+      </mat-form-field>
+      <div class="font-medium text-2xl w-full">Rate Types</div>
+      <div class="text-lg">Set the amount for each Rate type</div>
+      <div
+        class="w-1/2"
+        formArrayName="rates"
+        *ngFor="
+          let item of addRateForm.get('rates')['controls'];
+          let i = index
+        "
+        [attr.data-cy]="'resource-rate-field-' + i">
+        <div
+          class="flex flex-row w-full justify-between"
+          [formGroupName]="i">
+          <div class="flex items-center mr-2">
+            <div class="flex self-center pr-3">
+              <!-- {{i.name}} -->
+              {{ addRateForm.get("rates")["controls"][i].get("name").value }}*
+            </div>
+
+            <mat-form-field class="role flex" data-cy="resource-rate-field">
+              <mat-label></mat-label>
+              <input
+                matInput
+                type="text"
+                name="value"
+                formControlName="value"
+                currencyMask
+                min="0"
+                allownegative="false"
+                (keypress)="toPositive($event, i)"
+                [attr.data-cy]="'resource-rate-input-' + i" />
+            </mat-form-field>
+          </div>
+
+          <div class="flex flex-row items-center">
+            <div class="label mr-2 whitespace-nowrap">Item code</div>
+            <mat-form-field class="role flex">
+              <mat-label></mat-label>
+              <input
+                matInput
+                name="item_code"
+                formControlName="item_code"
+                [attr.data-cy]="'resource-rate-item-code-' + i"/>
+            </mat-form-field>
+          </div>
+        </div>
+      </div>
+
+      <div class="buttons flex mt-8">
+        <button
+          mat-stroked-button
+          color="primary"
+          (click)="cancel()"
+          data-cy="cancel-button">
+          <span>Cancel</span>
+        </button>
+
+        <button
+          mat-flat-button
+          color="primary"
+          class="ml-4"
+          (click)="save()"
+          [disabled]="addRateForm.invalid"
+          data-cy="save-button">
+          <span>Save</span>
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

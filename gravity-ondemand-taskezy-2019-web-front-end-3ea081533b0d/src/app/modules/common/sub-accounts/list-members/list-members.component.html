@@ -1,0 +1,295 @@
+<div class="list-members bg-white rounded-2xl p-4">
+  <!-- <button mat-raised-button class="button-confirm ml-4 bg-primary text-base font-bold p-6 rounded-[50px] text-white"
+    (click)="toAddMemberForm()">
+    <mat-icon class="text-primary">add</mat-icon>
+    <a>ADD NEW MEMBER</a>
+  </button> -->
+
+  <div
+    class="adding-member bg-white p-8 rounded-2xl flex flex-col"
+    *ngIf="(typeOfManagedConnectionStatus !== 1 && typeOfManagedConnectionStatus !== 4)"
+  >
+  <div
+  *ngIf="accountType == 'client' && !typeOfManagedEmail"
+  class="flex items-center">
+    <p class="flex text-2xl text-primary font-bold mr-4">Invite Administrator</p>
+    <mat-form-field class="w-[290px]" appearance="fill">
+
+      <mat-select
+      placeholder="Internally Managed"
+        (selectionChange)="changeSelect($event, 'invite')"
+        name="managedChange"
+      >
+      <mat-option [value]="'internal'">Internally Managed</mat-option>
+  <mat-option [value]="'external'">Externally Managed</mat-option>
+      </mat-select>
+    </mat-form-field>
+  </div>
+  <p *ngIf="accountType == 'client' && !typeOfManagedEmail">If you want to grant the Client access to TaskEzy, then change your selection to 'Externally Managed' and complete the details so that the Client can be Externally Managed</p>
+    <div *ngIf="accountType == 'supplier' || inviteForm || typeOfManagedEmail" class="flex flex-row items-center justify-between">
+      <div class="flex">
+
+          <p *ngIf="accountType == 'supplier'|| typeOfManagedEmail" class="flex text-2xl text-primary font-bold mr-4">Invite Administrator</p>
+          <!-- As a Primary Account, you are only able to invite an Administrator
+          that will act as the owner of this -->
+          <!-- <span class="capitalize">{{ accountType }}</span> Sub Account. -->
+
+      </div>
+      <button
+        mat-raised-button
+        color="primary"
+        [disabled]="addMemberForm.invalid"
+        class="button-confirm flex-none mb-2"
+        (click)="sendInvite()"
+      >
+        <a>Send Invite</a>
+      </button>
+    </div>
+    <div *ngIf="accountType == 'supplier' || inviteForm || typeOfManagedEmail"
+      class="add-member flex flex-col rounded-2xl border-2 p-2 border-slate-300 border-dashed"
+    >
+      <form
+        action=""
+        [formGroup]="addMemberForm"
+        class="flex mt-4 w-full flex-col items-center"
+      >
+        <div class="flex flex-col w-full">
+          <div class="flex flex-row w-full">
+            <!-- <div class="w-1/3 ml-2"> -->
+            <mat-form-field class="name w-1/2 px-3">
+              <!-- <mat-label *ngIf="i==0">Department</mat-label> -->
+              <input
+                matInput
+                placeholder="Name"
+                name="name"
+                formControlName="name"
+              />
+              <mat-error *ngIf="addMemberForm.get('name').hasError('required')">
+                A name is required
+              </mat-error>
+            </mat-form-field>
+            <!-- </div> -->
+            <!-- <div class="w-1/3"> -->
+            <mat-form-field class="email w-1/2 px-3">
+              <!-- <mat-label *ngIf="i==0">Email</mat-label> -->
+              <input
+                matInput
+                placeholder="Email"
+                name="email"
+                formControlName="email"
+              />
+              <mat-error *ngIf="addMemberForm.get('email').hasError('email')">
+                Email address is Invalid
+              </mat-error>
+              <mat-error
+                *ngIf="addMemberForm.get('email').hasError('required')"
+              >
+                Email address is required
+              </mat-error>
+              <mat-error *ngIf="addMemberForm.get('email').hasError('exists')">
+                Email already invited
+              </mat-error>
+            </mat-form-field>
+            <!-- </div> -->
+
+            <!-- <div class="w-1/3 ml-2"> -->
+            <!-- <mat-form-field class="role w-1/3 px-3"> -->
+            <!-- <mat-select placeholder="Role" formControlName="role">
+                <mat-option *ngFor="let role of roles" [value]="role.value">{{role.label}}</mat-option>
+              </mat-select>
+              <mat-error *ngIf="addMemberForm.get('role').hasError('required')">
+                A Roll is required
+              </mat-error>
+            </mat-form-field> -->
+            <!-- </div> -->
+            <!-- <div class="w-1/3 ml-2"> -->
+            <!-- <mat-form-field class="department w-1/3 px-3"> -->
+            <!-- <mat-label *ngIf="i==0">Department</mat-label> -->
+            <!-- <input matInput placeholder="Department" name="department" formControlName="department"/> -->
+            <!-- </mat-form-field> -->
+            <!-- </div> -->
+            <!-- <div> -->
+            <!-- <button *ngIf="!addMemberForm.get('sending').value" mat-icon-button color="primary" class="button-remove-invite-line place-self-center"
+            (click)="removeInvite(i)">
+              <mat-icon>close</mat-icon>
+            </button> -->
+            <!-- <mat-spinner
+                class="place-self-center"
+                [diameter]="30"
+                *ngIf="addMemberForm.get('sending').value"
+                color="primary"></mat-spinner> -->
+            <!-- </div> -->
+          </div>
+        </div>
+      </form>
+      <!-- <button mat-icon-button color="primary" class="button-add-invite-line self-center"
+      (click)="addInvite()">
+        <mat-icon>add</mat-icon>
+      </button> -->
+    </div>
+  </div>
+
+  <!--Member Table-->
+  <mat-table
+    class="table-members bg-white"
+    [dataSource]="membersDataSource"
+    matSort
+    (matSortChange)="sortData($event)"
+    name="nameControl"
+  >
+    <!-- <ng-container matColumnDef="pic">
+      <mat-header-cell
+        *matHeaderCellDef
+        mat-sort-header="pic">
+      </mat-header-cell>
+      <mat-cell *matCellDef="let row; let index = index"> -->
+    <!--        <div *ngIf="onSelect">-->
+    <!--          <mat-checkbox (change)="changeCheckbox($event, index)"></mat-checkbox>-->
+    <!--        </div>-->
+    <!-- <div class="w-[45px] h-[45px]">
+          <div
+            style="width: 50px; height: 50px"
+            class="rounded-3xl flex border border-gray-200 justify-center items-center bg-white flex-initial">
+            <img
+              [src]="row?.avatar || defaultAvatar"
+              alt="logo" />
+          </div>
+        </div>
+      </mat-cell>
+    </ng-container> -->
+    <!-- Name Column -->
+    <ng-container matColumnDef="name">
+      <mat-header-cell *matHeaderCellDef mat-sort-header="name">
+        Name
+      </mat-header-cell>
+
+      <mat-cell *matCellDef="let row">
+        <div class="flex flex-row items-center">
+          <div
+            class="w-[45px] h-[45px] flex-none rounded-3xl border border-gray-200 justify-center items-center bg-white"
+          >
+            <img [src]="row?.avatar || defaultAvatar" alt="logo" />
+          </div>
+          <div *ngIf="row?.name">{{ row.name }}</div>
+          <div *ngIf="row?.invite_name">{{ row.invite_name }}</div>
+        </div>
+      </mat-cell>
+    </ng-container>
+
+    <!-- Email Column -->
+    <ng-container matColumnDef="email">
+      <mat-header-cell *matHeaderCellDef mat-sort-header="email">
+        Email</mat-header-cell
+      >
+      <mat-cell *matCellDef="let row">
+        {{ row?.email }}
+      </mat-cell>
+    </ng-container>
+
+    <!-- Phone Column -->
+    <ng-container matColumnDef="phone">
+      <mat-header-cell *matHeaderCellDef mat-sort-header="phone"
+        >Phone</mat-header-cell
+      >
+      <mat-cell *matCellDef="let row">
+        {{ row?.phone }}
+      </mat-cell>
+    </ng-container>
+
+    <!-- Role Column -->
+    <ng-container matColumnDef="role">
+      <mat-header-cell *matHeaderCellDef mat-sort-header="role">
+        Role</mat-header-cell
+      >
+      <mat-cell *matCellDef="let row">
+        {{ row?.invite_name ? "External Manager" : row?.role }}
+      </mat-cell>
+    </ng-container>
+
+    <!-- Department Column -->
+    <ng-container matColumnDef="department">
+      <mat-header-cell *matHeaderCellDef mat-sort-header="department">
+        Department</mat-header-cell
+      >
+      <mat-cell *matCellDef="let row">
+        {{ row?.department }}
+      </mat-cell>
+    </ng-container>
+
+    <!-- Status Column -->
+    <ng-container matColumnDef="status">
+      <mat-header-cell *matHeaderCellDef mat-sort-header="status"
+        >Status</mat-header-cell
+      >
+      <mat-cell *matCellDef="let row">
+        <div class="flex items-center">
+          <div
+            class="w-3 h-3 rounded-full mr-2"
+            [ngClass]="
+              utils.getStatusColour(
+                row?.status,
+                row.date_invited != undefined,
+                false
+              )
+            "
+          ></div>
+          <div>
+            {{
+              utils.getStatus(row?.status, row.date_invited != undefined, false)
+            }}
+          </div>
+        </div>
+        <div
+          class="flex ml-2"
+          *ngIf="row.date_invited != undefined && row.status == 0"
+        >
+          <button mat-icon-button (click)="resendInvite(row)">
+            <mat-icon class="text-gray-300">autorenew</mat-icon>
+          </button>
+          <button mat-icon-button (click)="deleteMember()">
+            <mat-icon class="text-gray-300">delete</mat-icon>
+          </button>
+        </div>
+      </mat-cell>
+    </ng-container>
+
+    <!-- Address Column -->
+    <!-- <ng-container matColumnDef="address">
+      <mat-header-cell *matHeaderCellDef mat-sort-header="address">
+        Address</mat-header-cell
+      >
+      <mat-cell *matCellDef="let row">
+        {{ row?.address }}
+      </mat-cell>
+    </ng-container> -->
+
+    <!-- <ng-container matColumnDef="activeLink">
+      <mat-header-cell
+        *matHeaderCellDef
+        mat-sort-header="activeLink"
+        class="link-container"
+      ></mat-header-cell>
+      <mat-cell
+        fxLayout="row"
+        fxLayoutAlign="space-between center"
+        *matCellDef="let row"
+        class="link-container flex justify-end"
+      >
+        <mat-icon [matMenuTriggerFor]="beforeMenu" class="menu text-zinc-400 cursor-pointer">more_vert</mat-icon>
+        <mat-menu #beforeMenu="matMenu" xPosition="before">
+          <button class="change" mat-menu-item (click)="editMember(row)">Edit</button> -->
+    <!-- <button mat-menu-item (click)="deleteMember(row)">Delete</button> -->
+    <!-- </mat-menu>
+      </mat-cell>
+    </ng-container> -->
+
+    <!--ADD CONTROLS COLUMN FOR RESEND/CANCEL/MENU-->
+
+    <mat-header-row *matHeaderRowDef="membersDisplayedColumns"></mat-header-row>
+    <mat-row
+      class="hover:bg-gray-100"
+      *matRowDef="let row; columns: membersDisplayedColumns; let index = index"
+    >
+    </mat-row>
+  </mat-table>
+</div>

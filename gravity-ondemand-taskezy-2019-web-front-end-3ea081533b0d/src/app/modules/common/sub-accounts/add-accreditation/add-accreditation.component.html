@@ -1,0 +1,182 @@
+<div class="add-accreditation">
+  <mat-toolbar class="mat-accent relative m-0 bg-primary p-4">
+    <mat-toolbar-row class="flex justify-between">
+      <div data-cy="header-drawer" class="header-drawer text-4xl">
+        {{ header }}
+      </div>
+
+      <div class="text-xs">
+        <div
+          class="close cursor-pointer absolute right-1.5 top-1"
+          data-cy="close-drawer"
+          (click)="close()"
+          aria-label="Close dialog"
+        >
+          <mat-icon>close</mat-icon>
+        </div>
+      </div>
+    </mat-toolbar-row>
+  </mat-toolbar>
+
+  <div class="content-accreditation p-4">
+<div class="flex justify-end">
+    <div class="buttons">
+      <button
+        mat-flat-button
+        color="primary"
+        type="reset"
+        (click)="close()"
+        class="close-button ml-2"
+        data-cy="cancel-button"
+      >
+        <span>Cancel</span>
+      </button>
+      <button
+        mat-flat-button
+        data-cy="save-button"
+        color="primary"
+        class="save-button ml-2"
+        [disabled]="addAccreditationForm.invalid"
+        (click)="handleSaveAccreditation()"
+      >
+        <span>Save</span>
+      </button>
+    </div>
+  </div>
+    <form action="" [formGroup]="addAccreditationForm"  data-cy="category-field-test">
+      <mat-form-field class="category w-full" data-cy="category-field">
+        <mat-label data-cy="category-field-label">Category</mat-label>
+        <mat-select
+          data-cy="select-category"
+          placeholder="Security"
+          formControlName="category"
+          (selectionChange)="handleChangeCategory()"
+        >
+          <mat-option *ngFor="let opt of categoryList" data-cy="select-dropdown" [value]="opt">{{
+            opt
+          }}</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field
+        data-cy="accreditation-field"
+        class="w-full"
+        *ngIf="addAccreditationForm.get('category').value"
+      >
+        <mat-label>Accreditation</mat-label>
+        <mat-select
+          data-cy="select-accreditation"
+          placeholder="Security"
+          formControlName="accreditation"
+          (selectionChange)="handleChangeAccreditation()"
+        >
+          <mat-option *ngFor="let opt of accreditationList" data-cy="select-option" [value]="opt">{{
+            opt
+          }}</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <div *ngIf="addAccreditationForm.get('accreditation').value">
+        <div>
+          <mat-form-field
+            *ngIf="viewFieldSubInput"
+            data-cy="licence-number"
+            class="w-full"
+          >
+            <mat-label>{{ subInputProp }}</mat-label>
+            <input
+              matInput
+              name="number"
+              [formControl]="createNewFormControl(subInputProp)"
+            />
+            <mat-spinner
+              matSuffix
+              diameter="20"
+              *ngIf="licenseSpinner"
+            ></mat-spinner>
+          </mat-form-field>
+          <div class="flex justify-between">
+            <p class="text-red-500">{{ notificationLicense }}</p>
+            <button
+              mat-flat-button
+              color="primary"
+              class="save-button ml-2"
+              (click)="handleVerify()"
+              data-cy="verify-button"
+            >
+              <span>Verify</span>
+            </button>
+          </div>
+        </div>
+
+        <mat-form-field *ngIf="viewFieldSubInputDate" class="expired-date w-full">
+          <mat-label class="font-bold">{{ subInputPropDate }}</mat-label>
+          <input
+            matInput
+            [matDatepicker]="expiredDate"
+            placeholder="Expired Date"
+            name="expireDate"
+            [formControlName]="subInputPropDate"
+            required
+            data-cy="expired-date-label"
+          />
+          <mat-datepicker-toggle
+            data-cy="expired-date-datepicker"
+            matSuffix
+            [for]="expiredDate"
+          ></mat-datepicker-toggle>
+          <mat-datepicker #expiredDate></mat-datepicker>
+          <mat-error
+            *ngIf="addAccreditationForm.get(subInputPropDate).hasError('required')"
+          >
+            Expired Date is required!
+          </mat-error>
+        </mat-form-field>
+
+        <div *ngIf="lisenseVerified">
+          <h4 class="mb-6" data-cy="header-label">
+            {{ addAccreditationForm.get("accreditation").value }}
+          </h4>
+
+          <div
+            *ngFor="
+              let outputItem of verificationValidation.outputs;
+              let indexItem = index
+            "
+          >
+            <div class="mb-6" *ngIf="outputItem.type === 'label'">
+              <div class="form-item-wrapper">
+                <div class="font-bold" [attr.data-cy]="'category-detail-form-label-'+replaceWhitespaceWithUnderscore(outputItem.label)">
+                  {{ outputItem.label }}
+                </div>
+                <div class="form-item-wrapper-value" [attr.data-cy]="'category-detail-form-input-'+replaceWhitespaceWithUnderscore(licenseInfor[outputItem.map])">
+                  {{ licenseInfor[outputItem.map] }}
+                </div>
+              </div>
+            </div>
+            <div *ngIf="outputItem.type === 'image'" class="mb-8">
+              <div class="font-bold mb-2">{{ outputItem.label }}</div>
+              <div>
+                <div data-cy="uploaded-files" *ngIf="docSource[indexItem]">
+                  <p>
+                    Document is ready to upload. File name is
+                    {{ docSource[indexItem].id }}
+                  </p>
+                </div>
+                <app-choose-files
+                  [accept]="'image/*,application/pdf'"
+                  [isDisable]="true"
+                  (saveFiles)="
+                    handleSaveFiles($event, outputItem.label, indexItem)
+                  "
+                ></app-choose-files>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+
+    </form>
+  </div>
+</div>

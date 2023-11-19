@@ -1,0 +1,98 @@
+<div>
+  <div class="flex justify-between bg-primary p-6 items-center">
+    <!-- <h1 class="text-white text-3xl">{{ header }}</h1> -->
+    <button mat-icon-button>
+      <mat-icon class="text-white" (click)="closeSideNav()">close</mat-icon>
+    </button>
+  </div>
+  <div class="px-9 py-5">
+    <form action="" [formGroup]="filterForm">
+      <mat-form-field class="venue w-full">
+        <mat-label>Venue</mat-label>
+        <mat-select
+          placeholder="Venue"
+          formControlName="venue"
+          (selectionChange)="changeFieldVenue($event)"
+        >
+          <mat-option #option *ngFor="let venue of venueList" [value]="venue">{{
+            venue
+          }}</mat-option>
+        </mat-select>
+      </mat-form-field>
+      <mat-form-field class="client w-full">
+        <mat-label>Client</mat-label>
+        <mat-select
+          placeholder="Client"
+          formControlName="client"
+          (selectionChange)="changeFieldClient($event)"
+        >
+          <mat-option
+            #option
+            *ngFor="let client of clientList"
+            [value]="client"
+            >{{ client }}</mat-option
+          >
+        </mat-select>
+      </mat-form-field>
+      <mat-form-field class="venue w-full">
+        <mat-label>Supplier</mat-label>
+        <mat-select
+          placeholder="Supplier"
+          formControlName="supplier"
+          (selectionChange)="changeFieldSupplier($event)"
+        >
+          <mat-option
+            #option
+            *ngFor="let supplier of supplierList"
+            [value]="supplier"
+            >{{ supplier }}</mat-option
+          >
+        </mat-select>
+      </mat-form-field>
+      <mat-form-field class="venue w-full">
+        <mat-label>Resource</mat-label>
+        <mat-select
+          placeholder="Resource"
+          formControlName="resource"
+          (selectionChange)="changeFieldResource($event)"
+        >
+          <mat-option
+            #option
+            *ngFor="let resource of resourceList"
+            [value]="resource"
+            >{{ resource }}</mat-option
+          >
+        </mat-select>
+      </mat-form-field>
+      <mat-form-field class="venue w-full">
+        <mat-label>Status</mat-label>
+        <mat-select
+          placeholder="Status"
+          formControlName="status"
+          (selectionChange)="changeFieldStatus($event)"
+        >
+          <mat-option
+            #option
+            *ngFor="let status of statusList"
+            [value]="status"
+            >{{ Status }}</mat-option
+          >
+        </mat-select>
+      </mat-form-field>
+    </form>
+  </div>
+  <div class="justify-around flex w-full">
+    <button
+      class="rounded py-3.5 px-14 text-white rounded-full"
+      style="background-color: #369be5"
+    >
+      Apply
+    </button>
+    <button
+      class="rounded py-3.5 px-14 text-white rounded-full"
+      style="background-color: #369be5"
+    >
+      Reset
+    </button>
+  </div>
+</div>

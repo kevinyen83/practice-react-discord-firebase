@@ -1,0 +1,155 @@
+<div class="rounded-xl p-4">
+  <h1 class="text-2xl font-bold mt-2">{{ header }}</h1>
+  <div class="filters mt-4">
+    <form action="" class="flex items-start" [formGroup]="filtersDocumentsForm">
+      <div class="w-10/12 flex-row items-start">
+        <mat-form-field
+          class="relative mr-4"
+          appearance="fill"
+          [floatLabel]="true"
+        >
+          <input
+            matInput
+            formControlName="searchDocuments"
+            placeholder="Search documents"
+          />
+          <mat-icon class="text-2xl left-0 top-0" matSuffix>search</mat-icon>
+        </mat-form-field>
+
+        <mat-form-field class="tag mr-4" appearance="fill">
+          <mat-select placeholder="Tag" formControlName="tag">
+            <mat-option *ngFor="let tag of tags" [value]="tag">{{
+              tag
+            }}</mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field
+          *ngIf="accountType === 'venue'"
+          class="venue"
+          appearance="fill"
+        >
+          <mat-select placeholder="Venue" formControlName="venue">
+            <mat-option [value]="_venue?.name">{{ _venue?.name }}</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+    </form>
+  </div>
+
+  <app-choose-files
+    [currentAccount]="currentAccount"
+    [subAccountUUID]="getSubAccountUUID()"
+    (saveFiles)="saveFiles($event)"
+  ></app-choose-files>
+
+  <div class="documents mt-4">
+    <div class="table w-full">
+      <mat-table
+        class="w-full"
+        [dataSource]="dataSource"
+        matSort
+        (matSortChange)="sortData($event)"
+      >
+        <!-- Name Column -->
+        <ng-container matColumnDef="name">
+          <mat-header-cell mat-header-cell *matHeaderCellDef mat-sort-header
+            >Name</mat-header-cell
+          >
+          <mat-cell mat-cell *matCellDef="let row">
+            <app-file-icon
+              [type]="metaCache[row.name]?.content_type"
+              [ext]="metaCache[row.name]?.original_name.split('.')[1]"
+            ></app-file-icon>
+            {{ metaCache[row.name]?.original_name }}
+          </mat-cell>
+        </ng-container>
+
+        <!--Tag Column -->
+        <ng-container matColumnDef="tag">
+          <mat-header-cell mat-header-cell *matHeaderCellDef mat-sort-header>
+            Tag
+          </mat-header-cell>
+          <mat-cell mat-cell *matCellDef="let row">{{ row?.tag }}</mat-cell>
+        </ng-container>
+
+        <!-- Type Column -->
+        <ng-container matColumnDef="type">
+          <mat-header-cell mat-header-cell *matHeaderCellDef mat-sort-header
+            >Type</mat-header-cell
+          >
+          <mat-cell mat-cell *matCellDef="let row">
+            {{ metaCache[row.name]?.content_type }}
+          </mat-cell>
+        </ng-container>
+
+        <!-- dateAdded Column -->
+        <ng-container matColumnDef="dateAdded">
+          <mat-header-cell mat-header-cell *matHeaderCellDef mat-sort-header>
+            Date added</mat-header-cell
+          >
+          <mat-cell mat-cell *matCellDef="let row">
+            {{ row.date_added | date: "dd/MM/yyyy, h:mm a" }}
+          </mat-cell>
+        </ng-container>
+
+        <!-- dateModified Column -->
+        <ng-container matColumnDef="dateModified">
+          <mat-header-cell mat-header-cell *matHeaderCellDef mat-sort-header>
+            Date modified</mat-header-cell
+          >
+          <mat-cell mat-cell *matCellDef="let row">
+            {{ row.date_modified | date: "dd/MM/yyyy, h:mm a" }}
+          </mat-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="activeLink">
+          <mat-header-cell
+            *matHeaderCellDef
+            mat-sort-header="activeLink"
+            class="link-container"
+          ></mat-header-cell>
+          <mat-cell
+            fxLayout="row"
+            fxLayoutAlign="space-between center"
+            *matCellDef="let row"
+            class="link-container flex justify-end"
+          >
+            <div class="flex justify-between">
+              <mat-icon class="text-zinc-400 cursor-pointer mr-4"
+                >insert_comment</mat-icon
+              >
+              <mat-icon
+                class="menu text-zinc-400 cursor-pointer"
+                [matMenuTriggerFor]="beforeMenu"
+                >more_vert</mat-icon
+              >
+            </div>
+            <mat-menu #beforeMenu="matMenu" xPosition="before">
+              <button mat-menu-item (click)="downloadFile(row)">
+                Download
+              </button>
+              <button mat-menu-item (click)="editFile(row)">Edit</button>
+              <button mat-menu-item (click)="deleteFile(row)">Delete</button>
+            </mat-menu>
+          </mat-cell>
+        </ng-container>
+
+        <mat-header-row
+          mat-header-row
+          *matHeaderRowDef="displayedColumns"
+        ></mat-header-row>
+        <mat-row
+          class="hover:bg-gray-100 bg-gray-200 mb-2 rounded-xl"
+          mat-row
+          *matRowDef="let row; columns: displayedColumns"
+        >
+        </mat-row>
+      </mat-table>
+      <mat-paginator
+        #paginator
+        [pageSizeOptions]="[5, 10, 25, 100]"
+      ></mat-paginator>
+    </div>
+  </div>
+</div>

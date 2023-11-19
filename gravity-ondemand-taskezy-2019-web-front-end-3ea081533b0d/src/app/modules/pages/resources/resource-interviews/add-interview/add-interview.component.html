@@ -1,0 +1,665 @@
+<div class="add-interview" [@animate]="{value:'*',params:{delay:'200ms',y:'50px'}}" #interview>
+  <div class="card">
+    <div class="h2 create-header">Interview Resource</div>
+
+    <form action="" [formGroup]="addInterviewForm" *ngIf="!viewContinueInterview">
+      <div class="block1">
+        <mat-form-field class="guard-type" appearance="fill">
+          <mat-label>Guard Type</mat-label>
+          <mat-select placeholder="Guard Type" formControlName="guardType" required>
+            <mat-option value="Security Guard">Security Guard</mat-option>
+            <mat-option value="RSA Marshall">RSA Marshall</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+
+      <div class="security-licence" *ngIf="viewSecurityLicence">
+        <div class="h2">Security Licence</div>
+        <div class="block2">
+          <mat-form-field class="type-licence" appearance="fill">
+            <mat-label>Type Licence</mat-label>
+            <mat-select placeholder="Guard Type" formControlName="typeLicence">
+              <mat-option *ngFor="let type of accreditationTypes" [value]="type">{{type}}</mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <div class="licence-number" *ngIf="viewNumberLicence">
+            <mat-form-field appearance="fill">
+              <mat-label>Accreditation/Licence Number</mat-label>
+              <input matInput placeholder="Accreditation/Licence Number" name="licenceNumber" formControlName="licenceNumber">
+            </mat-form-field>
+            <button *ngIf="statusForm !== 'view'" mat-raised-button color="accent"
+                    type="button"
+                    class="verify-button"
+                    aria-label="verify accreditation">
+              Verify
+            </button>
+          </div>
+
+          <div class="wa-security-licence" *ngIf="viewWANumberLicence">
+            <mat-form-field appearance="fill" class="licence-number-wa">
+              <mat-label>Accreditation/Licence Number</mat-label>
+              <input matInput placeholder="Accreditation/Licence Number" name="licenceNumberWA" formControlName="licenceNumberWA">
+            </mat-form-field>
+
+            <mat-form-field class="expires-at-wa" appearance="fill">
+              <input matInput [matDatepicker]="expiresAtWA" placeholder="Expires At" #expiresAtWA formControlName="expiresAtWA">
+              <mat-datepicker-toggle matSuffix [for]="expiresAtWA"></mat-datepicker-toggle>
+              <mat-datepicker #expiresAtWA></mat-datepicker>
+            </mat-form-field>
+
+            <div class="h4">Classes</div>
+
+            <mat-checkbox class="crowd-control-agent-wa" name="crowdControlAgentWA" aria-label="crowdControlAgentWA" formControlName="crowdControlAgentWA">
+              <span>Crowd Control Agent</span>
+            </mat-checkbox>
+
+            <mat-checkbox class="crowd-controller-wa" name="crowdControllerWA" aria-label="crowdControllerWA" formControlName="crowdControllerWA">
+              <span>Crowd Controller</span>
+            </mat-checkbox>
+
+            <mat-checkbox class="crowd-inquiry-agent-wa" name="crowdInquiryAgentWA" aria-label="crowdInquiryAgentWA" formControlName="crowdInquiryAgentWA">
+              <span>Inquiry Agent</span>
+            </mat-checkbox>
+
+            <mat-checkbox class="investigator-wa" name="investigatorWA" aria-label="investigatorWA" formControlName="investigatorWA">
+              <span>Investigator</span>
+            </mat-checkbox>
+
+            <mat-checkbox class="security-agent-wa" name="securityAgentWA" aria-label="securityAgentWA" formControlName="securityAgentWA">
+              <span>Security Agent</span>
+            </mat-checkbox>
+
+            <mat-checkbox class="security-bodyguard-wa" name="securityBodyguardWA" aria-label="securityBodyguardWA" formControlName="securityBodyguardWA">
+              <span>Security Bodyguard</span>
+            </mat-checkbox>
+
+            <mat-checkbox class="security-consultant-wa" name="securityConsultantWA" aria-label="securityConsultantWA" formControlName="securityConsultantWA">
+              <span>Security Consultant</span>
+            </mat-checkbox>
+
+            <mat-checkbox class="security-installer-wa" name="securityInstallerWA" aria-label="securityInstallerWA" formControlName="securityInstallerWA">
+              <span>Security Installer</span>
+            </mat-checkbox>
+
+            <mat-checkbox class="security-officer-wa" name="securityOfficerWA" aria-label="securityOfficerWA" formControlName="securityOfficerWA">
+              <span>Security Officer</span>
+            </mat-checkbox>
+
+            <mat-checkbox class="security-company-wa" name="securityCompanyWA" aria-label="securityCompanyWA" formControlName="securityCompanyWA">
+              <span>Security Company</span>
+            </mat-checkbox>
+          </div>
+        </div>
+      </div>
+
+      <div class="h2">RSA Licence</div>
+      <div class="block3">
+        <mat-form-field class="type-licence" appearance="fill">
+          <mat-label>Type Licence</mat-label>
+          <mat-select placeholder="Type Licence" formControlName="typeRSALicence">
+            <mat-option *ngFor="let type of typesRSALicence" [value]="type">{{type}}</mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <div class="block-invisible" *ngIf="viewNswResponsible">
+          <mat-form-field class="accreditation-number" appearance="fill">
+            <mat-label>Accreditation/Licence Number</mat-label>
+            <input matInput placeholder="Accreditation/Licence Number" name="accreditationNumber"
+                   formControlName="accreditationNumber">
+          </mat-form-field>
+
+          <mat-form-field class="expires-licence" appearance="fill">
+            <input matInput [matDatepicker]="date" placeholder="Expires At" #expiresAtLicence formControlName="expiresAtLicenceNsw">
+            <mat-datepicker-toggle matSuffix [for]="date"></mat-datepicker-toggle>
+            <mat-datepicker #date></mat-datepicker>
+          </mat-form-field>
+
+          <div class="h4">Classes</div>
+          <div class="licence-classes">
+
+            <mat-checkbox class="class-a" name="classA" aria-label="class A" formControlName="classA">
+              <span>Class-A Responsible Service Of Alcohol</span>
+            </mat-checkbox>
+
+            <mat-checkbox class="class-g" name="classG" aria-label="class G" formControlName="classG">
+              <span>Class-G Responsible Conduct Of Gambling</span>
+            </mat-checkbox>
+
+            <mat-checkbox class="class-h" name="classH" aria-label="class H" formControlName="classH">
+              <span>Class-H High Risk Venue Management</span>
+            </mat-checkbox>
+
+            <mat-checkbox class="class-p" name="classP" aria-label="class P" formControlName="classP">
+              <span>Class-P Privacy Training</span>
+            </mat-checkbox>
+          </div>
+
+          <mat-form-field class="type-of-licence" appearance="fill">
+            <mat-label>Type</mat-label>
+            <mat-select placeholder="Type" name="typeLicence" formControlName="typeLicenceNSW">
+              <mat-option value="Card">Card</mat-option>
+              <mat-option value="Interim">Interim</mat-option>
+              <mat-option value="Certificate">Certificate</mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+
+        <div class="block-invisible" *ngIf="viewVicResponsible">
+          <mat-form-field class="expires-licence-vic" appearance="fill">
+            <input matInput [matDatepicker]="dateVic" placeholder="Expires At" #expiresAtLicence formControlName="expiresAtLicenceVic">
+            <mat-datepicker-toggle matSuffix [for]="dateVic"></mat-datepicker-toggle>
+            <mat-datepicker #dateVic></mat-datepicker>
+          </mat-form-field>
+        </div>
+
+        <div class="block-invisible" *ngIf="viewQldResponsible">
+          <mat-form-field class="type-of-licence" appearance="fill">
+            <mat-label>Accreditation/Licence Status</mat-label>
+            <mat-select placeholder="Accreditation/Licence Status" name="accreditationStatus" formControlName="licenceStatusQld">
+              <mat-option value="Current">Current</mat-option>
+              <mat-option value="Expired">Expired</mat-option>
+              <mat-option value="Cancelled">Cancelled</mat-option>
+              <mat-option value="Withdrawn">Withdrawn</mat-option>
+              <mat-option value="Surrendered">Surrendered</mat-option>
+              <mat-option value="Suspended">Suspended</mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+
+        <div class="block-invisible" *ngIf="viewWAResponsible">
+          <mat-form-field class="type-of-licence" appearance="fill">
+            <mat-label>Accreditation/Licence Status</mat-label>
+            <mat-select placeholder="Accreditation/Licence Status" name="accreditationStatusWA" formControlName="licenceStatusWA">
+              <mat-option value="Current">Current</mat-option>
+              <mat-option value="Expired">Expired</mat-option>
+              <mat-option value="Cancelled">Cancelled</mat-option>
+              <mat-option value="Withdrawn">Withdrawn</mat-option>
+              <mat-option value="Surrendered">Surrendered</mat-option>
+              <mat-option value="Suspended">Suspended</mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+      </div>
+
+      <div class="h2">First Aid Certificate</div>
+      <div class="block-first-aid-certificate">
+        <mat-form-field class="expires-first-aid-certificate" appearance="fill">
+          <input matInput [matDatepicker]="dateCertificate" placeholder="Expires At" #expiresAtLicence formControlName="expiresFirstAidCertificate">
+          <mat-datepicker-toggle matSuffix [for]="dateCertificate"></mat-datepicker-toggle>
+          <mat-datepicker #dateCertificate></mat-datepicker>
+        </mat-form-field>
+      </div>
+
+      <div class="h2">Personal Details</div>
+      <div class="block4">
+        <mat-form-field class="first-name" appearance="fill">
+          <mat-label>Given Names</mat-label>
+          <input matInput placeholder="First Name" name="firstName" formControlName="firstName">
+        </mat-form-field>
+
+        <mat-form-field class="mobile-number" appearance="fill">
+          <mat-label>Mobile Number</mat-label>
+          <!-- <input matInput placeholder="Mobile Number" name="mobileNumber" formControlName="mobileNumber" required>
+          <mat-error *ngIf="addInterviewForm.get('mobileNumber').hasError('pattern')">
+            Field must contain only numbers
+          </mat-error> -->
+          <ngx-mat-intl-tel-input
+            [preferredCountries]="['au','us', 'gb']"
+            [enablePlaceholder]="true"
+            [enableSearch]="false"
+            formControlName="mobileNumber"
+            name="mobileNumber"
+            autocomplete="off"
+            format="national"
+            required
+            enableAutoCountrySelect="true">
+          </ngx-mat-intl-tel-input>
+          <mat-error *ngIf="registerForm.get('mobileNumber').hasError('required')">
+            Phone Number is required
+          </mat-error>
+          <mat-error *ngIf="registerForm.get('mobileNumber').hasError('validatePhoneNumber')">
+            Invalid Number
+          </mat-error>
+        </mat-form-field>
+
+        <mat-form-field class="last-name" appearance="fill">
+          <mat-label>Last Name</mat-label>
+          <input matInput placeholder="Last Name" name="lastName" formControlName="lastName" required>
+        </mat-form-field>
+
+        <mat-form-field class="phone-number" appearance="fill">
+          <mat-label>Phone Number</mat-label>
+          <!-- <input matInput placeholder="Phone Number" name="phoneNumber" formControlName="phoneNumber">
+          <mat-error *ngIf="addInterviewForm.get('phoneNumber').hasError('pattern')">
+            Field must contain only numbers
+          </mat-error> -->
+          <ngx-mat-intl-tel-input
+            [preferredCountries]="['au','us', 'gb']"
+            [enablePlaceholder]="true"
+            [enableSearch]="false"
+            formControlName="phoneNumber"
+            name="phoneNumber"
+            autocomplete="off"
+            format="national"
+            required
+            enableAutoCountrySelect="true">
+          </ngx-mat-intl-tel-input>
+          <mat-error *ngIf="registerForm.get('phoneNumber').hasError('required')">
+            Phone Number is required
+          </mat-error>
+          <mat-error *ngIf="registerForm.get('phoneNumber').hasError('validatePhoneNumber')">
+            Invalid Number
+          </mat-error>
+        </mat-form-field>
+
+        <mat-form-field class="preferred-name" appearance="fill">
+          <mat-label>Preferred Name</mat-label>
+          <input matInput placeholder="Preferred Name" name="preferredName" formControlName="preferredName">
+        </mat-form-field>
+
+        <mat-form-field class="email" appearance="fill">
+          <mat-label>Email</mat-label>
+          <input matInput placeholder="Email" name="email" formControlName="email" required>
+          <mat-error *ngIf="addInterviewForm.get('email').hasError('email')">
+            Enter valid email
+          </mat-error>
+        </mat-form-field>
+
+        <mat-form-field class="gender" appearance="fill">
+          <mat-label>Gender</mat-label>
+          <mat-select placeholder="Gender" formControlName="gender" required>
+            <mat-option value="Male">Male</mat-option>
+            <mat-option value="Female">Female</mat-option>
+            <mat-option value="Other">Other</mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field class="date-of-birth" appearance="fill">
+          <input matInput [matDatepicker]="picker1" placeholder="Date Of Birth*" formControlName="dateOfBirth" required>
+          <mat-datepicker-toggle matSuffix [for]="picker1"></mat-datepicker-toggle>
+          <mat-datepicker #picker1></mat-datepicker>
+
+          <mat-error *ngIf="addInterviewForm.get('dateOfBirth').hasError('dateOfBirthInterviewHasError')">
+            Enter valid Date Of Birth
+          </mat-error>
+        </mat-form-field>
+      </div>
+
+      <div class="h2">Emergency Contact Details</div>
+      <div class="block5">
+        <mat-form-field class="contact-name" appearance="fill">
+          <mat-label>Contact Name</mat-label>
+          <input matInput placeholder="Contact Name" name="contactName" formControlName="contactName">
+        </mat-form-field>
+
+        <mat-form-field class="contact-relationship" appearance="fill">
+          <mat-label>Contact Relationship</mat-label>
+          <input matInput placeholder="Contact Relationship" name="contactRelationship" formControlName="contactRelationship">
+        </mat-form-field>
+
+        <mat-form-field class="contact-number" appearance="fill">
+          <mat-label>Contact Number</mat-label>
+          <!-- <input matInput placeholder="Contact Number" name="contactNumber" formControlName="contactNumber">
+          <mat-error *ngIf="addInterviewForm.get('contactNumber').hasError('pattern')">
+            Field must contain only numbers
+          </mat-error> -->
+          <ngx-mat-intl-tel-input
+            [preferredCountries]="['au','us', 'gb']"
+            [enablePlaceholder]="true"
+            [enableSearch]="false"
+            formControlName="contactNumber"
+            name="contactNumber"
+            autocomplete="off"
+            format="national"
+            required
+            enableAutoCountrySelect="true">
+          </ngx-mat-intl-tel-input>
+          <mat-error *ngIf="registerForm.get('contactNumber').hasError('required')">
+            Phone Number is required
+          </mat-error>
+          <mat-error *ngIf="registerForm.get('contactNumber').hasError('validatePhoneNumber')">
+            Invalid Number
+          </mat-error>
+        </mat-form-field>
+      </div>
+
+      <div class="h2">Address</div>
+      <div class="block-address">
+        <mat-form-field class="address" appearance="fill">
+          <mat-label>Address</mat-label>
+          <input matInput placeholder="Address" #address name="address" formControlName="address" required>
+        </mat-form-field>
+
+        <!-- <div class="map" *ngIf="statusForm !== 'view'">
+          <google-map height="400px" width="100%" [center]="mapCenter" *ngIf="mapVisible" [zoom]="zoom" [options]="mapOptions">
+            <map-marker [position]="mapCenter" [options]="markerOptions"></map-marker>
+          </google-map>
+          <p *ngIf="!mapIsVisible">Enter the address and the map will automatically appear</p>
+        </div> -->
+      </div>
+
+      <div class="h2">Drivers Licence</div>
+      <div class="block-drivers">
+        <mat-form-field class="licence-number" appearance="fill">
+          <mat-label>Accreditation/Licence Number</mat-label>
+          <input matInput placeholder="Accreditation/Licence Number" name="driversLicenceNumber" formControlName="driversLicenceNumber">
+        </mat-form-field>
+
+        <mat-form-field class="expires-at" appearance="fill">
+          <input matInput [matDatepicker]="picker2" placeholder="Expires At" formControlName="expiresAt">
+          <mat-datepicker-toggle matSuffix [for]="picker2"></mat-datepicker-toggle>
+          <mat-datepicker #picker2></mat-datepicker>
+        </mat-form-field>
+
+        <mat-form-field class="type-drivers-licence" appearance="fill">
+          <mat-label>Type</mat-label>
+          <mat-select placeholder="Type" formControlName="typeDriversLicence">
+            <mat-option value="Provisional">Full</mat-option>
+            <mat-option value="Provisional">Learners</mat-option>
+            <mat-option value="Provisional">Provisional</mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field class="state" appearance="fill">
+          <mat-label>State</mat-label>
+          <mat-select placeholder="State" formControlName="state">
+            <mat-option *ngFor="let state of states" [value]="state">{{state}}</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+
+      <div class="h4">Classes</div>
+      <div class="block-classes">
+        <mat-checkbox class="c-car" name="cCar" aria-label="cCar" formControlName="cCar">
+          <span>C-Car</span>
+        </mat-checkbox>
+
+        <mat-checkbox class="r-rider" name="rRider" aria-label="rRider" formControlName="rRider">
+          <span>R-Rider</span>
+        </mat-checkbox>
+
+        <mat-checkbox class="hc-combination" name="hcHeavyCombination" aria-label="hcHeavyCombination" formControlName="hcHeavyCombination">
+          <span>HC-Heavy Combination</span>
+        </mat-checkbox>
+
+        <mat-checkbox class="hr-heavyRigid" name="hrHeavyRigid" aria-label="hrHeavyRigid" formControlName="hrHeavyRigid">
+          <span>HR-Heavy Rigid</span>
+        </mat-checkbox>
+
+        <mat-checkbox class="lr-lightRigid" name="lrLightRigid" aria-label="lrLightRigid" formControlName="lrLightRigid">
+          <span>LR-Light Rigid</span>
+        </mat-checkbox>
+
+        <mat-checkbox class="mc-multiCombination" name="mcMultiCombination" aria-label="mcMultiCombination" formControlName="mcMultiCombination">
+          <span>MC-Multi Combination</span>
+        </mat-checkbox>
+
+        <mat-checkbox class="mr-medium-rigid" name="mrMediumRigid" aria-label="mrMediumRigid" formControlName="mrMediumRigid">
+          <span>MR-Medium Rigid</span>
+        </mat-checkbox>
+      </div>
+
+      <div class="h2" [ngClass]="{'color-error': addInterviewForm.get('speakAnswer').hasError('error')}">Do you speak other languages?*</div>
+      <div class="block-speak">
+        <mat-radio-group formControlName="speakAnswer">
+          <mat-radio-button value="Yes">Yes</mat-radio-button>
+          <mat-radio-button value="No">No</mat-radio-button>
+        </mat-radio-group>
+
+        <br>
+        <mat-form-field class="details-speak fuse-mat-textarea" appearance="fill" *ngIf="viewDetailsSpeak">
+          <mat-label>If yes, please provide details</mat-label>
+          <textarea matInput placeholder="" name="detailsSpeak" formControlName="detailsSpeak"></textarea>
+        </mat-form-field>
+      </div>
+
+
+      <div class="h2">Personal History</div>
+      <div class="block-personal-history">
+        <div class="question">
+          <p [ngClass]="{'color-error': addInterviewForm.get('criminalOffenceAnswer').hasError('error')}">
+            1.Have you ever been charged or convicted of any criminal offence?*
+          </p>
+          <mat-radio-group formControlName="criminalOffenceAnswer">
+            <mat-radio-button value="Yes">Yes</mat-radio-button>
+            <mat-radio-button value="No">No</mat-radio-button>
+          </mat-radio-group>
+          <br>
+          <mat-form-field class="details-criminal-offence fuse-mat-textarea" appearance="fill" *ngIf="viewDetailsCriminalOffence">
+            <mat-label>If yes, please provide details</mat-label>
+            <textarea matInput placeholder="" name="detailsCriminalOffence" formControlName="detailsCriminalOffence"></textarea>
+          </mat-form-field>
+        </div>
+
+        <div class="question">
+          <p [ngClass]="{'color-error': addInterviewForm.get('avoAnswer').hasError('error')}">
+            2.Have you ever been issued an Apprehended Violence Order(AVO)?*
+          </p>
+          <mat-radio-group formControlName="avoAnswer">
+            <mat-radio-button value="Yes">Yes</mat-radio-button>
+            <mat-radio-button value="No">No</mat-radio-button>
+          </mat-radio-group>
+          <br>
+          <mat-form-field class="details-avo fuse-mat-textarea" appearance="fill" *ngIf="viewDetailsAvo">
+            <mat-label>If yes, please provide details</mat-label>
+            <textarea matInput placeholder="" name="detailsAvo" formControlName="detailsAvo"></textarea>
+          </mat-form-field>
+        </div>
+
+        <div class="question">
+          <p [ngClass]="{'color-error': addInterviewForm.get('licenceRevokedAnswer').hasError('error')}">
+            3.Have you ever been refused a security licence or had a security licence revoked or cancelled?*
+          </p>
+          <mat-radio-group formControlName="licenceRevokedAnswer">
+            <mat-radio-button value="Yes">Yes</mat-radio-button>
+            <mat-radio-button value="No">No</mat-radio-button>
+          </mat-radio-group>
+          <br>
+          <mat-form-field class="details-licence-revoked fuse-mat-textarea" appearance="fill" *ngIf="viewDetailsLicenceRevoked">
+            <mat-label>If yes, please provide details</mat-label>
+            <textarea matInput placeholder="" name="detailsLicenceRevoked" formControlName="detailsLicenceRevoked"></textarea>
+          </mat-form-field>
+        </div>
+
+        <div class="question">
+          <p [ngClass]="{'color-error': addInterviewForm.get('injuriesAnswer').hasError('error')}">
+            4.Do you have any injuries/disabilities that will affect or restrict your performance at work?*
+          </p>
+          <mat-radio-group formControlName="injuriesAnswer">
+            <mat-radio-button value="Yes">Yes</mat-radio-button>
+            <mat-radio-button value="No">No</mat-radio-button>
+          </mat-radio-group>
+          <br>
+          <mat-form-field class="details-injuries fuse-mat-textarea" appearance="fill" *ngIf="viewInjuries">
+            <mat-label>If yes, please provide details</mat-label>
+            <textarea matInput placeholder="" name="detailsInjuries" formControlName="detailsInjuries"></textarea>
+          </mat-form-field>
+        </div>
+      </div>
+
+      <div class="h2">Employment History</div>
+      <div class="block-employment-history">
+        <div class="question">
+          <p [ngClass]="{'color-error': addInterviewForm.get('anotherCompanyAnswer').hasError('error')}">
+            1.Are you currently employed by another security company?*
+          </p>
+          <mat-radio-group formControlName="anotherCompanyAnswer">
+            <mat-radio-button value="Yes">Yes</mat-radio-button>
+            <mat-radio-button value="No">No</mat-radio-button>
+          </mat-radio-group>
+          <br>
+          <mat-form-field class="details-another-company fuse-mat-textarea" appearance="fill" *ngIf="viewAnotherCompanyDetails">
+            <mat-label>If yes, please provide details</mat-label>
+            <textarea matInput placeholder="" name="detailsAnotherCompany" formControlName="detailsAnotherCompany"></textarea>
+          </mat-form-field>
+        </div>
+
+        <div class="question">
+          <p [ngClass]="{'color-error': addInterviewForm.get('inClubAnswer').hasError('error')}">
+            2.Have you worked in Pubs and Clubs?*
+          </p>
+          <mat-radio-group formControlName="inClubAnswer">
+            <mat-radio-button value="Yes">Yes</mat-radio-button>
+            <mat-radio-button value="No">No</mat-radio-button>
+          </mat-radio-group>
+          <br>
+          <mat-form-field class="details-another-company fuse-mat-textarea" appearance="fill" *ngIf="viewInClubDetails">
+            <mat-label>If yes, please provide details</mat-label>
+            <textarea matInput placeholder="" name="detailsInClub" formControlName="detailsInClub"></textarea>
+          </mat-form-field>
+        </div>
+
+        <div class="question">
+          <p [ngClass]="{'color-error': addInterviewForm.get('inRSLAnswer').hasError('error')}">
+            3.Have you worked in RSL/Leagues?*
+          </p>
+          <mat-radio-group formControlName="inRSLAnswer">
+            <mat-radio-button value="Yes">Yes</mat-radio-button>
+            <mat-radio-button value="No">No</mat-radio-button>
+          </mat-radio-group>
+          <br>
+          <mat-form-field class="details-another-company fuse-mat-textarea" appearance="fill" *ngIf="viewRSLDetails">
+            <mat-label>If yes, please provide details</mat-label>
+            <textarea matInput placeholder="" name="detailsRSL" formControlName="detailsRSL"></textarea>
+          </mat-form-field>
+        </div>
+      </div>
+
+      <div class="h2" [ngClass]="{'color-error': colorErrorAvailability}">Availability*</div>
+      <div class="block-availability">
+        <mat-checkbox class="monday" name="monday" aria-label="monday" formControlName="monday">
+          <span>Monday</span>
+        </mat-checkbox>
+
+        <mat-checkbox class="tuesday" name="tuesday" aria-label="tuesday" formControlName="tuesday">
+          <span>Tuesday</span>
+        </mat-checkbox>
+
+        <mat-checkbox class="wednesday" name="wednesday" aria-label="wednesday" formControlName="wednesday">
+          <span>Wednesday</span>
+        </mat-checkbox>
+
+        <mat-checkbox class="thursday" name="thursday" aria-label="thursday" formControlName="thursday">
+          <span>Thursday</span>
+        </mat-checkbox>
+
+        <mat-checkbox class="friday" name="friday" aria-label="friday" formControlName="friday">
+          <span>Friday</span>
+        </mat-checkbox>
+
+        <mat-checkbox class="saturday" name="saturday" aria-label="saturday" formControlName="saturday">
+          <span>Saturday</span>
+        </mat-checkbox>
+
+        <mat-checkbox class="sunday" name="sunday" aria-label="sunday" formControlName="sunday">
+          <span>Sunday</span>
+        </mat-checkbox>
+      </div>
+
+      <div class="signature" [ngClass]="{'has-error': this.addInterviewForm.get('signature').hasError('error')}" (dataSignature)="setDataSignature($event)">
+        <img *ngIf="statusForm === 'view' && currentInterview.signature !== ''" [src]="currentInterview.signature" alt="signature">
+        <app-signature-field *ngIf="statusForm !== 'view'" formControlName="signature" required></app-signature-field>
+        <mat-error *ngIf="this.addInterviewForm.get('signature').hasError('error')">
+          Please draw your signature first
+        </mat-error>
+      </div>
+
+      <div class="buttons" *ngIf="statusForm !== 'view'">
+        <button mat-raised-button
+                type="button"
+                (click)="cancelInterview()"
+                class="cancel-button"
+                aria-label="Cancel">
+          Cancel
+        </button>
+
+        <button mat-raised-button color="accent"
+                type="submit"
+                class="save-button"
+                (click)="continueInterview(interview)"
+                aria-label="saver">
+          Continue Interview Form
+        </button>
+      </div>
+    </form>
+
+    <div class="form-viewing" *ngIf="statusForm === 'view'">
+      <form action="" [formGroup]="formViewing">
+        <div class="h2">Rating Answers of the Interviewed Resource</div>
+        <div class="block-rate">
+          <div class="question">
+            <app-star-rating-control formControlName="question1"></app-star-rating-control>
+            <p>1. What are the key tasks for a security guard?</p>
+          </div>
+          <div class="question">
+            <app-star-rating-control formControlName="question2"></app-star-rating-control>
+            <p>2. Can you give me one example of a difficult situation you have dealt with?</p>
+          </div>
+          <div class="question">
+            <app-star-rating-control formControlName="question3"></app-star-rating-control>
+            <p>3. You`re one a building or worksite and see something or someone suspicious.How do you respond?</p>
+          </div>
+          <div class="question">
+            <app-star-rating-control formControlName="question4"></app-star-rating-control>
+            <p>4. In your opinion, what are the main roles of a concierge and building/office security guard?</p>
+          </div>
+          <div class="question">
+            <app-star-rating-control formControlName="question5"></app-star-rating-control>
+            <p>5. Tell me about a time you had to defuse a potentially violent situation</p>
+          </div>
+          <div class="question">
+            <app-star-rating-control formControlName="question6"></app-star-rating-control>
+            <p>6. Tell me about a time you had to remove a person from the premises(role play)</p>
+          </div>
+          <div class="question">
+            <app-star-rating-control formControlName="question7"></app-star-rating-control>
+            <p>7. Tell me about a situation which required you to apply first aid</p>
+          </div>
+          <div class="question">
+            <app-star-rating-control formControlName="question8"></app-star-rating-control>
+            <p>8. What powers allow you to refuse a person entry?</p>
+          </div>
+          <div class="question">
+            <app-star-rating-control formControlName="question9"></app-star-rating-control>
+            <p>9. How would you explain fail to quit legislation to a person?</p>
+          </div>
+        </div>
+
+        <div class="h2">Additional Notes</div>
+        <mat-form-field class="additional-notes fuse-mat-textarea" appearance="fill">
+          <mat-label>Additional Notes</mat-label>
+          <textarea matInput placeholder="Additional Notes" name="additionalNotes" formControlName="additionalNotes"></textarea>
+        </mat-form-field>
+
+        <div class="h2">Document for Accreditation: RSA Licence</div>
+        <mat-checkbox class="rsa-licence" name="rsaLicence" aria-label="rsaLicence" formControlName="rsaLicence">
+          <span>I have confirmed that this document is valid</span>
+        </mat-checkbox>
+
+        <div class="h2">Document for Accreditation: First Aid Certificate</div>
+        <mat-checkbox class="aid-certificate" name="aidCertificate" aria-label="aidCertificate" formControlName="aidCertificate">
+          <span>I have confirmed that this document is valid</span>
+        </mat-checkbox>
+
+        <div class="h2">Document for Accreditation: Drivers Licence</div>
+        <div><b>Licence/Accreditation Number</b></div>
+        <mat-checkbox class="drivers-licence" name="driversLicence" aria-label="driversLicence" formControlName="driversLicence">
+          <span>I have confirmed that this document is valid</span>
+        </mat-checkbox>
+      </form>
+
+      <div class="buttons">
+        <button mat-raised-button
+                type="button"
+                (click)="cancelInterview()"
+                class="cancel-button-viewing"
+                aria-label="Cancel">
+          Cancel
+        </button>
+      </div>
+    </div>
+
+    <app-continue-interview (changeViewAddInterview)="changeViewAddInterview($event)" *ngIf="viewContinueInterview" [currentId]="currentId"></app-continue-interview>
+  </div>
+</div>

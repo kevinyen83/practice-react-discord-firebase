@@ -1,0 +1,42 @@
+<div class="tabs-venues flex flex-col items-start bg-gray-200 h-full">
+  <div *ngFor="let button of buttons; let i = index">
+    <button
+      [attr.data-cy]="'button-menu-' + button.name"
+      [color]="activeIndex == i ? 'primary' : 'gray'"
+      [disabled]="
+        !(
+          !selectedAccount ||
+          button.name === 'Details' ||
+          button.name === 'Members' ||
+          selectedAccount.connection_status == 1 ||
+          (selectedAccount?.invitation?.uuid === '' &&
+            selectedAccount?.connection_request?.invited_account_uuid === '')
+        )
+      "
+      class="mr-2 mt-2 text-account-inform-text"
+      mat-button
+      (click)="selectedTab(i)"
+    >
+      {{ button.name }}
+    </button>
+    <div
+      class="ml-4 flex flex-col justify-start"
+      @expandCollapse
+      *ngIf="
+        (currentResource && button.name === 'Resources') ||
+        (currentVenue && button.name === 'Venues')
+      "
+    >
+      <div *ngFor="let tab of subTabs; let idx = index">
+        <button
+          [attr.data-cy]="'button-menu-' + tab"
+          class="mr-2 mt-2 text-account-inform-text"
+          mat-button
+          (click)="selectSubTab(idx)"
+        >
+          {{ tab }}
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

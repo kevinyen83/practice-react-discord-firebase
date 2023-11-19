@@ -1,0 +1,35 @@
+<form
+  [formGroup]="resourceForm"
+  class="resource-form"
+  fxLayout="column"
+  fxLayoutAlign="space-between center"
+>
+  <mat-form-field class="name" appearance="fill">
+    <mat-label>Name</mat-label>
+    <input matInput name="name" formControlName="name" />
+  </mat-form-field>
+
+  <mat-form-field class="email" appearance="fill">
+    <mat-label>Email</mat-label>
+    <input matInput name="email" formControlName="email" />
+  </mat-form-field>
+
+  <mat-form-field class="licence" appearance="fill">
+    <mat-label>Licence Number</mat-label>
+    <input matInput name="licenceNumber" formControlName="licenceNumber" />
+  </mat-form-field>
+
+  <div class="buttons" fxLayout="row" fxLayoutAlign="space-between center">
+    <button color="primary" mat-stroked-button (click)="cancel()">
+      Cancel
+    </button>
+    <button
+      [disabled]="resourceForm.invalid"
+      mat-raised-button
+      color="primary"
+      (click)="save()"
+    >
+      Save
+    </button>
+  </div>
+</form>

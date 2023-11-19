@@ -1,0 +1,29 @@
+<div
+  class="flex flex-col justify-between items-center bg-white p-6 rounded-[10px]"
+>
+  <div>
+    <div class="flex overflow-hidden w-[150px] h-[150px] border-2 rounded-full">
+      <img class="photo avatar" [src]="currentAvatar || defaultAvatar" />
+    </div>
+  </div>
+  <div class="flex flex-col leading-10 text-center">
+    <div class="flex flex-row text-2xl font-medium flex items-center">
+      <div>{{ _currentUser?.fullName }}</div>
+      <mat-icon class="ml-auto cursor-pointer" (click)="editProfile()"
+        >edit</mat-icon
+      >
+    </div>
+    <div class="flex text-lg items-center break-words">
+      <mat-icon class="text-primary mr-2">location_on</mat-icon>
+      <div>{{ _currentUser?.data?.address }}</div>
+    </div>
+    <div class="flex text-lg items-center break-words">
+      <mat-icon class="text-primary mr-2">email</mat-icon>
+      <div>{{ _currentUser?.email }}</div>
+    </div>
+    <div class="flex text-lg items-center break-words">
+      <mat-icon class="text-primary mr-2">call</mat-icon>
+      <div>{{ _currentUser?.mobilePhone }}</div>
+    </div>
+  </div>
+</div>

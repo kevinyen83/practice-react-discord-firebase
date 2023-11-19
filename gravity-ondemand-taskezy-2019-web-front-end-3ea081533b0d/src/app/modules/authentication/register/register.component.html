@@ -1,0 +1,240 @@
+<app-auth-layout class="w-full" [name]="nameOfHeader" [status]="'register'" [headerName]="'register-header'">
+  <!-- Alert -->
+  <fuse-alert
+    class="mt-4 mb-1"
+    *ngIf="showAlert"
+    [appearance]="'outline'"
+    [showIcon]="false"
+    [type]="alert.type"
+    [dismissible]="false"
+    [@shake]="alert.type === 'error'"
+  >
+    {{ alert.message }}
+  </fuse-alert>
+  <form
+    *ngIf="!hideForm"
+    [formGroup]="registerForm"
+    class="flex w-full flex-col m-auto"
+    novalidate
+  >
+    <mat-form-field class="w-full">
+      <mat-label>First Name</mat-label>
+      <input
+        data-cy="firstname-input"
+        matInput
+        formControlName="firstName"
+        autocomplete="given-name"
+      />
+      <mat-error
+        data-cy="firstname-required"
+        *ngIf="registerForm.get('firstName').hasError('required')"
+      >
+        First Name is required
+      </mat-error>
+    </mat-form-field>
+
+    <mat-form-field class="w-full">
+      <mat-label>Last Name</mat-label>
+      <input
+        data-cy="lastname-input"
+        matInput
+        formControlName="lastName"
+        autocomplete="family-name"
+      />
+      <mat-error
+        data-cy="lastname-required"
+        *ngIf="registerForm.get('lastName').hasError('required')"
+      >
+        Last Name is required
+      </mat-error>
+    </mat-form-field>
+
+    <mat-form-field class="w-full">
+      <mat-label>Email</mat-label>
+      <input
+        data-cy="email-input"
+        matInput
+        formControlName="email"
+        autocomplete="email"
+      />
+      <mat-error
+        data-cy="email-required"
+        *ngIf="registerForm.get('email').hasError('required')"
+      >
+        Email is required
+      </mat-error>
+      <mat-error
+        data-cy="invalid-email"
+        *ngIf="registerForm.get('email').hasError('email')"
+      >
+        Please enter a valid email address
+      </mat-error>
+    </mat-form-field>
+
+    <!-- <mat-form-field class="w-full">
+      <mat-label>Birth Date</mat-label>
+      <input
+        data-cy="dob-input"
+        formControlName="birth"
+        matInput
+        [matDatepicker]="picker"
+        [max]="maxDate"
+      />
+      <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+      <mat-datepicker #picker startView="multi-year"></mat-datepicker>
+      <mat-error
+        data-cy="dob-required"
+        *ngIf="registerForm.get('birth').hasError('required')"
+      >
+        Date of Birth is required
+      </mat-error>
+    </mat-form-field> -->
+
+    <mat-form-field class="w-full">
+      <mat-label>Mobile Number</mat-label>
+      <!-- <input matInput formControlName="mobile"> -->
+      <ngx-mat-intl-tel-input
+        [preferredCountries]="['au', 'us', 'gb']"
+        [enablePlaceholder]="true"
+        [enableSearch]="false"
+        formControlName="mobilePhone"
+        name="mobile"
+        autocomplete="tel"
+        format="national"
+        enableAutoCountrySelect="true"
+        data-cy="mobile-input"
+        required
+      >
+      </ngx-mat-intl-tel-input>
+      <mat-error
+        data-cy="mobile-required"
+        *ngIf="registerForm.get('mobilePhone').hasError('required')"
+      >
+        Mobile is required
+      </mat-error>
+      <mat-error
+        data-cy="invalid-mobile"
+        *ngIf="registerForm.get('mobilePhone').hasError('validatePhoneNumber')"
+      >
+        Invalid Number
+      </mat-error>
+    </mat-form-field>
+
+    <mat-form-field class="w-full">
+      <mat-label>Password</mat-label>
+      <input
+        data-cy="password-input"
+        matInput
+        type="password"
+        formControlName="password"
+        #passwordField
+        autocomplete="current-password"
+      />
+      <button
+        mat-icon-button
+        type="button"
+        (click)="
+          passwordField.type === 'password'
+            ? (passwordField.type = 'text')
+            : (passwordField.type = 'password')
+        "
+        matSuffix
+      >
+        <mat-icon class="icon-size-5" *ngIf="passwordField.type === 'password'"
+          >visibility</mat-icon
+        >
+        <mat-icon class="icon-size-5" *ngIf="passwordField.type === 'text'"
+          >visibility_off</mat-icon
+        >
+      </button>
+      <mat-error
+        data-cy="password-required"
+        *ngIf="registerForm.get('password').hasError('required')"
+      >
+        Password is required
+      </mat-error>
+      <mat-error
+        data-cy="error-characters"
+        *ngIf="registerForm.get('password').hasError('minlength')"
+      >
+        Password must be 8 characters
+      </mat-error>
+    </mat-form-field>
+    <!--
+    <mat-form-field class="w-full" >
+      <mat-label>Password (Confirm)</mat-label>
+      <input matInput type="password" formControlName="passwordConfirm">
+      <mat-icon matSuffix class="secondary-text">vpn_key</mat-icon>
+      <mat-error *ngIf="registerForm.get('passwordConfirm').hasError('required')">
+        Password confirmation is required
+      </mat-error>
+      <mat-error *ngIf="!registerForm.get('passwordConfirm').hasError('required') &&
+                                        registerForm.get('passwordConfirm').hasError('passwordsNotMatching')">
+        Passwords must match
+      </mat-error>
+    </mat-form-field> -->
+
+    <mat-checkbox
+      color="primary"
+      data-cy="tnc-input"
+      id="terms-and-conditions-chk"
+      class="w-full o-87 black"
+      (change)="changeCheckbox()"
+      formControlName="accept"
+      required
+    >
+      I Accept the
+      <a
+        class="ml-1 text-primary hover:underline cursor-pointer"
+        (click)="
+          openModal('terms_conditions', $event); $event.stopPropagation()
+        "
+        >Terms & Conditions</a
+      >
+      and
+      <a
+        class="ml-1 text-primary hover:underline cursor-pointer"
+        (click)="openModal('privacy_policy', $event); $event.stopPropagation()"
+        >Privacy Policy</a
+      >*
+    </mat-checkbox>
+
+    <button
+      class="text-xl w-full m-auto rounded-full mt-8"
+      data-cy="register-button"
+      color="primary"
+      mat-raised-button
+      [disabled]="
+        registerForm.invalid ||
+        registerForm.get('accept').hasError('required') ||
+        registerForm.disabled
+      "
+      (click)="registerUser()"
+      id="register-button"
+    >
+      Register
+      <mat-progress-spinner
+        *ngIf="registerForm.disabled"
+        [diameter]="24"
+        [mode]="'indeterminate'"
+      ></mat-progress-spinner>
+    </button>
+  </form>
+  <div *ngIf="!hideForm" class="flex flex-col mt-2 text-base font-medium">
+    <div class="self-center">
+      Already have an account?
+      <a class="text-primary hover:underline" [routerLink]="['/auth/login']"
+        >Log In</a
+      >
+    </div>
+  </div>
+  <button
+    class="mt-5"
+    *ngIf="hideForm"
+    mat-raised-button
+    color="primary"
+    [routerLink]="['/auth/login']"
+  >
+    Return to Log In
+  </button>
+</app-auth-layout>

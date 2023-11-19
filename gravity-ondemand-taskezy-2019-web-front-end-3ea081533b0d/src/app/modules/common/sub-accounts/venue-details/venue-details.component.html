@@ -1,0 +1,301 @@
+<div class="venue-details mt-10">
+  <div class="flex justify-between">
+    <div class="font-bold text-3xl">Venue details</div>
+    <!-- <div class="resource-buttons">
+    <button
+      mat-flat-button
+      type="button"
+      color="warn"
+      (click)="delete()"
+      class="delete-button"
+      aria-label="Cancel"
+      data-cy="venue-details-delete"
+    >
+      Delete
+    </button>
+
+    <button
+      class="mt-6 ml-2"
+      color="primary"
+      (click)="toModeEdit()"
+      *ngIf="venueClient?.uuid == currentAccount?.uuid"
+      mat-flat-button
+      data-cy="venue-details-edit"
+    >
+      Edit
+    </button>
+  </div> -->
+  </div>
+  <div *ngIf="viewMode === 'view'">
+    <div
+      class="content-venue-details w-full flex justify-between"
+      *ngIf="venue"
+    >
+      <div class="column1 flex flex-col w-1/2">
+        <div class="client mb-7 font-medium">
+          <div class="text-gray-400 text-base">Client</div>
+          <div class="text-lg" data-cy="client-name">
+            {{ venueClient?.name || venueClient?.detail?.name }}
+          </div>
+        </div>
+
+        <div class="venue-name mb-7 font-medium">
+          <div class="text-gray-400 text-base">Venue name</div>
+          <div class="text-lg" data-cy="venue-name">{{ venue?.name }}</div>
+        </div>
+        <!--
+        <div
+          class="licence-name font-medium mb-7"
+          *ngIf="venue && venue?.licence_name"
+        >
+          <div class="text-gray-400 text-base">Licence name</div>
+          <div class="text-lg">{{ venue?.licence_name }}</div>
+        </div> -->
+
+        <div class="venue-type font-medium mb-7">
+          <div class="text-gray-400 text-base">Venue type</div>
+          <div class="text-lg" data-cy="venue-type">{{ venue?.type }}</div>
+        </div>
+
+        <div class="licence-number font-medium">
+          <div class="text-gray-400 text-base">Licence number</div>
+          <div class="text-lg" data-cy="licence-number">{{ venue?.licence_number }}</div>
+        </div>
+      </div>
+
+      <div class="column2 flex flex-col w-1/2">
+        <div class="venue-address font-medium mb-7">
+          <div class="text-gray-400 text-base">Venue address</div>
+          <div class="text-lg" data-cy="venue-address">{{ venue?.address?.street_location }}</div>
+        </div>
+
+        <div class="venue-station font-medium mb-7">
+          <div class="text-gray-400 text-base">Station</div>
+          <div class="text-lg" *ngFor="let station of venue?.stations"  data-cy="station-name">
+            {{ station?.name }}
+          </div>
+        </div>
+
+        <div class="sign-on-distance font-medium">
+          <div class="text-gray-400 text-base">Sign On Distance</div>
+          <div class="text-lg" data-cy="sign-on-distance">{{ venue?.sign_on_distance }}</div>
+        </div>
+      </div>
+    </div>
+
+    <div *ngIf="licenceDetail">
+      <h1 class="font-bold my-4">Licence Detail</h1>
+      <div class="grid grid-cols-2">
+        <div class="venue-name mb-7 font-medium">
+          <div class="text-gray-400 text-base">Address Type</div>
+          <div class="text-lg"  data-cy="licence-detail-address-type">
+            {{ licenceDetail?.licenceDetail?.addressType }}
+          </div>
+        </div>
+        <div class="venue-name mb-7 font-medium">
+          <div class="text-gray-400 text-base">Address</div>
+          <div class="text-lg" data-cy="licence-detail-address">{{ licenceDetail?.licenceDetail?.address }}</div>
+        </div>
+        <div class="venue-name mb-7 font-medium">
+          <div class="text-gray-400 text-base">Licence Name</div>
+          <div class="text-lg" data-cy="licence-detail-licence-name">
+            {{ licenceDetail?.licenceDetail?.licenceName }}
+          </div>
+        </div>
+        <div class="venue-name mb-7 font-medium">
+          <div class="text-gray-400 text-base">Licence Number</div>
+          <div class="text-lg" data-cy="licence-detail-licence-number">
+            {{ licenceDetail?.licenceDetail?.licenceNumber }}
+          </div>
+        </div>
+        <div class="venue-name mb-7 font-medium">
+          <div class="text-gray-400 text-base">Licensee</div>
+          <div class="text-lg" data-cy="licence-detail-licensee">
+            {{ licenceDetail?.licenceDetail?.licensee }}
+          </div>
+        </div>
+        <div class="venue-name mb-7 font-medium">
+          <div class="text-gray-400 text-base">Licence Type</div>
+          <div class="text-lg" data-cy="licence-detail-licence-type">
+            {{ licenceDetail?.licenceDetail?.licenceType }}
+          </div>
+        </div>
+        <div class="venue-name mb-7 font-medium">
+          <div class="text-gray-400 text-base">Licensee Birthdate</div>
+          <div class="text-lg" data-cy="licence-detail-licence-birth-date">
+            {{ licenceDetail?.licenceDetail?.licenseeBirthdate }}
+          </div>
+        </div>
+        <div class="venue-name mb-7 font-medium">
+          <div class="text-gray-400 text-base">Status</div>
+          <div class="text-lg" data-cy="licence-detail-licence-status">{{ licenceDetail?.licenceDetail?.status }}</div>
+        </div>
+        <div class="venue-name mb-7 font-medium">
+          <div class="text-gray-400 text-base">Licence Type Name</div>
+          <div class="text-lg" data-cy="licence-detail-licence-type-name">
+            {{ licenceDetail?.licenceDetail?.licenceTypeName }}
+          </div>
+        </div>
+        <div class="venue-name mb-7 font-medium">
+          <div class="text-gray-400 text-base">Refused Date</div>
+          <div class="text-lg" data-cy="licence-detail-refused-date">
+            {{ licenceDetail?.licenceDetail?.refusedDate }}
+          </div>
+        </div>
+        <div class="venue-name mb-7 font-medium">
+          <div class="text-gray-400 text-base">Start Date</div>
+          <div class="text-lg" data-cy="licence-detail-start-date">
+            {{ licenceDetail?.licenceDetail?.startDate }}
+          </div>
+        </div>
+        <div class="venue-name mb-7 font-medium">
+          <div class="text-gray-400 text-base">Expiry Date</div>
+          <div class="text-lg" data-cy="licence-detail-expiry-date">
+            {{ licenceDetail?.licenceDetail?.expiryDate }}
+          </div>
+        </div>
+        <div class="venue-name mb-7 font-medium">
+          <div class="text-gray-400 text-base">Licencee ABN</div>
+          <div class="text-lg" data-cy="licence-detail-licencee-ABN">
+            {{ licenceDetail?.licenceDetail?.licenceeABN }}
+          </div>
+        </div>
+        <div class="venue-name mb-7 font-medium">
+          <div class="text-gray-400 text-base">Licencee ACN</div>
+          <div class="text-lg" data-cy="licence-detail-licencee-ACN">
+            {{ licenceDetail?.licenceDetail?.licenceeACN }}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="viewMode === 'edit'">
+    <form
+      class="w-full flex justify-between"
+      action=""
+      [formGroup]="editVenueForm"
+    >
+      <div class="column-fields w-1/2 mr-2">
+        <mat-form-field class="client w-full" data-cy="edit-client-name">
+          <mat-label>Client</mat-label>
+          <mat-select placeholder="Security" formControlName="client" required>
+            <mat-option *ngFor="let client of clients" [value]="client?.uuid">{{
+              client?.detail?.name
+            }}</mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field class="address-venue w-full" data-cy="edit-venue-address">
+          <mat-label>Venue Address</mat-label>
+          <input matInput name="address" formControlName="address" #address />
+        </mat-form-field>
+
+        <mat-form-field class="venue-type w-full" data-cy="edit-venue-type">
+          <mat-label>Venue Type</mat-label>
+          <mat-select
+            formControlName="type"
+            (selectionChange)="changeType($event)"
+            required
+          >
+            <mat-option *ngFor="let type of types" [value]="type">{{
+              type
+            }}</mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field class="licence-number w-full" data-cy="edit-licence-number">
+          <mat-label>Licence Number</mat-label>
+          <input
+            matInput
+            name="licenceNumber"
+            formControlName="licenceNumber"
+            (change)="handleLicenceChange($event)"
+          />
+          <mat-error *ngIf="this.editVenueForm.get('licenceNumber').invalid">
+            Licence Number is invalid
+          </mat-error>
+        </mat-form-field>
+      </div>
+      <div class="column-fields w-1/2">
+        <mat-form-field class="venue-name w-full" data-cy="edit-venue-name">
+          <mat-label>Venue name</mat-label>
+          <input matInput name="venueName" formControlName="venueName" />
+        </mat-form-field>
+
+        <mat-form-field class="station w-full" data-cy="edit-station-type">
+          <mat-label>Station</mat-label>
+          <mat-select formControlName="station" multiple>
+            <mat-option
+              *ngFor="let station of stationList"
+              [value]="station.value || station"
+              >{{ station?.value || station }}</mat-option
+            >
+            <div class="w-full relative" *ngIf="isNewStationField">
+              <input
+                class="bg-gray-200 p-3"
+                matInput
+                placeholder="Enter station name"
+                name="station"
+                [formControl]="station"
+              />
+
+              <div class="flex absolute right-0 top-0">
+                <button mat-button color="primary" (click)="saveNewStation()">
+                  Save
+                </button>
+                <button
+                  mat-button
+                  color="warn"
+                  (click)="isNewStationField = false"
+                >
+                  Cancel
+                </button>
+              </div>
+            </div>
+            <div
+              class="flex p-3 items-center text-primary cursor-pointer"
+              (click)="addNewStation()"
+            >
+              <mat-icon class="text-primary">add</mat-icon>Add new station
+            </div>
+          </mat-select>
+        </mat-form-field>
+        <!--
+        <mat-form-field class="licence-name w-full" *ngIf="viewLicence">
+          <mat-label>Licence name</mat-label>
+          <input matInput name="licenceName" formControlName="licenceName" />
+        </mat-form-field> -->
+
+        <mat-form-field class="sign-on-distance w-full" data-cy="edit-sign-on-distance">
+          <mat-label>Sign On Distance</mat-label>
+          <input
+            matInput
+            name="signOnDistance"
+            formControlName="signOnDistance"
+          />
+        </mat-form-field>
+      </div>
+    </form>
+
+    <!-- <div class="buttons mt-6 flex">
+      <button
+        mat-stroked-button
+        class="w-[200px]"
+        color="primary"
+        (click)="cancel()"
+      >
+        Cancel
+      </button>
+
+      <button
+        mat-raised-button
+        class="w-[200px] ml-2"
+        color="primary"
+        (click)="save()"
+      >
+        Save
+      </button>
+    </div> -->
+  </div>
+</div>

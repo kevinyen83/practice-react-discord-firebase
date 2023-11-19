@@ -1,0 +1,134 @@
+<div id="flex flex-col flex-auto min-w-0">
+  <!--Header-->
+  <div
+    class="header accent p-20 p-sm-24"
+    fxLayout="column"
+    fxLayoutAlign="start"
+    fxLayout.gt-xs="row"
+    fxLayoutAlign.gt-xs="space-between center"
+  >
+    <!-- APP TITLE -->
+    <div fxLayout="row" fxLayoutAlign="start center">
+      <div class="logo" fxLayout="row" fxLayoutAlign="start center">
+        <div class="logo-icon">
+          <div class="logo-icon mr-16">
+            <mat-icon>library_books</mat-icon>
+          </div>
+        </div>
+        <span class="logo-text h1"> Resources </span>
+      </div>
+    </div>
+    <!-- / APP TITLE -->
+  </div>
+  <!--/Header-->
+
+  <!--Content-->
+  <div class="content">
+    <div class="header-content">
+      <button
+        mat-raised-button
+        color="accent"
+        type="button"
+        (click)="addInterview()"
+        class="interview-button"
+        aria-label="interview resource"
+      >
+        Interview Resource
+      </button>
+    </div>
+
+    <div class="table">
+      <table
+        mat-table
+        [dataSource]="dataSource"
+        matSort
+        (matSortChange)="sortData($event)"
+      >
+        <!-- Number Column -->
+        <ng-container matColumnDef="number">
+          <th mat-header-cell *matHeaderCellDef>№</th>
+          <td mat-cell *matCellDef="let row; let index = index">
+            {{ index + 1 }}
+          </td>
+        </ng-container>
+
+        <!-- Name Column -->
+        <ng-container matColumnDef="name">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Name</th>
+          <td mat-cell *matCellDef="let row">
+            {{ row.firstName }} {{ row.lastName }}
+          </td>
+        </ng-container>
+
+        <!-- Preferred Name Column -->
+        <ng-container matColumnDef="preferredName">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>
+            Preferred Name
+          </th>
+          <td mat-cell *matCellDef="let row">{{ row.preferredName }}</td>
+        </ng-container>
+
+        <!-- CreatedAt Column -->
+        <ng-container matColumnDef="createdAt">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Created At</th>
+          <td mat-cell *matCellDef="let row">
+            {{ row.createdAt | date: "long" }}
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="updatedAt">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Updated At</th>
+          <td mat-cell *matCellDef="let row">
+            {{ row.updatedAt | date: "long" }}
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="buttons">
+          <th mat-header-cell *matHeaderCellDef></th>
+          <td mat-cell *matCellDef="let row">
+            <div class="buttons">
+              <button
+                mat-raised-button
+                color="accent"
+                type="button"
+                (click)="deleteInterview(row)"
+                class="delete-button"
+                aria-label="Delete"
+              >
+                Remove
+              </button>
+
+              <button
+                mat-raised-button
+                color="accent"
+                type="button"
+                (click)="viewInterview(row)"
+                class="edit-button"
+                aria-label="Edit"
+              >
+                View
+              </button>
+            </div>
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr
+          mat-row
+          class="hover:bg-gray-100"
+          *matRowDef="let row; columns: displayedColumns"
+        ></tr>
+      </table>
+
+      <mat-paginator [pageSizeOptions]="[5, 10, 25, 100]"></mat-paginator>
+    </div>
+  </div>
+
+  <app-add-interview
+    (viewAddInterview)="hideViewAddInterview($event)"
+    [currentInterview]="currentInterview"
+    [statusForm]="statusForm"
+    *ngIf="viewAddInterview"
+  ></app-add-interview>
+  <!--Content-->
+</div>

@@ -1,0 +1,99 @@
+<div class="information overflow-hidden rounded-2xl">
+  <div class="header-information bg-primary p-4 text-white">
+    <h1 (click)="nextStep.emit('payment_plane')" class="flex items-center text-4xl text-bold">
+      <mat-icon class="text-white cursor-pointer">arrow_back</mat-icon>
+      <span class="ml-3">Add new Payment method</span>
+    </h1>
+  </div>
+
+  <div class="content-add p-10 bg-white">
+
+    <form class="add-payment-form flex flex-col" action="" [formGroup]="addPaymentForm">
+
+      <h4 class="font-semibold text-3xl">You are buying:</h4>
+
+      <mat-form-field class="w-1/2 select-plane" appearance="fill">
+        <mat-select class="text-2xl" formControlName="type" (selectionChange)="changePlan($event)">
+          <mat-option *ngFor="let item of typesOfPlanes" [value]="item.type">
+            <span *ngIf="currentPlane === 'month'">Monthly</span>
+            <span *ngIf="currentPlane === 'year'">Yearly</span>
+            {{item.type}}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <div class="method bg-white p-4 text-2xl border-2 border-gray-200 rounded-b-xl w-1/2 font-medium flex justify-between">
+        <div>
+          <span *ngIf="currentPlane === 'month'">Monthly</span>
+          <span *ngIf="currentPlane === 'year'">Yearly</span>
+          <span> Payment</span>
+        </div>
+        <div>{{currentEvent?.newPrice}}</div>
+      </div>
+
+      <div *ngIf="isSelectedPlane" class="notification-plane text-lg w-1/2 mt-4">*After three month your payment plane will be automatically upgraded to Business Tier One</div>
+
+      <div class="prompt mt-10 text-lg">
+        <p>Please Add payment detail to setup on organisation of TaskEzy</p>
+        <p>You may see a temporary autorization for 1$ to verify your card</p>
+      </div>
+
+      <div class="money-type mb-8 w-1/3 mt-8 flex justify-between">
+        <div class="type-purse hover:border-blue-300 mr-3 w-[200px] h-[55px] cursor-pointer border-2 border-gray-400 rounded-[8px] p-4">
+<!--          <img src="assets/images/logo/card.svg" alt="card">-->
+        </div>
+
+        <div class="type-card hover:border-blue-300 cursor-pointer w-[200px] h-[55px] border-2 border-gray-400 rounded-[8px] p-4">
+<!--          <img src="assets/images/logo/card1.svg" alt="card">-->
+        </div>
+      </div>
+
+<!--      <mat-form-field class="w-2/4 mt-4">-->
+<!--        <mat-label>Card Number</mat-label>-->
+<!--        <input-->
+<!--          matInput-->
+<!--          formControlName="cardNumber">-->
+<!--      </mat-form-field>-->
+
+<!--      <ngx-stripe-card-->
+<!--        [options]="cardOptions"-->
+<!--        [elementsOptions]="elementsOptions"-->
+<!--      ></ngx-stripe-card>-->
+
+      <mat-form-field class="w-2/4 mr-2">
+        <mat-label>Cardholder Name</mat-label>
+        <input
+          matInput
+          formControlName="cardholderName">
+      </mat-form-field>
+
+      <div class="flex w-2/4">
+
+        <mat-form-field class="w-1/2 mr-2">
+          <mat-label>Valid Through</mat-label>
+          <input
+            matInput
+            formControlName="validThrough">
+        </mat-form-field>
+
+        <mat-form-field class="w-1/2 mr-2">
+          <mat-label>CVV</mat-label>
+          <input
+            type="password"
+            matInput
+            formControlName="cvv">
+        </mat-form-field>
+
+      </div>
+
+      <mat-checkbox class="mt-2" formControlName="isSavedPayment">Save my payment details for future purchases</mat-checkbox>
+
+      <div (click)="buy(currentEvent?.newPrice)"
+              class="p-5 text-center text-lg font-semibold cursor-pointer mt-8 w-[295px] rounded-[50px] bg-primary text-white">
+        Add card
+      </div>
+
+    </form>
+
+  </div>
+</div>

@@ -1,0 +1,21 @@
+<div
+class="login-footer flex justify-center items-center flex-col pt-8 text-gray-400"
+>
+  <h4 class="text-lg">© TaskEzy</h4>
+  <div>
+    <a
+      class="ml-1 text-primary hover:underline cursor-pointer"
+      (click)="openModal('terms_conditions', $event)"
+      >Terms & Conditions</a
+    >
+    and
+    <a
+      class="ml-1 text-primary hover:underline cursor-pointer"
+      (click)="openModal('privacy_policy', $event)"
+      >Privacy Policy</a
+    >
+  </div>
+  <div class="flex items-center mt-0.5">
+    <p class="font-medium">Version: {{version}}</p>
+  </div>
+</div>

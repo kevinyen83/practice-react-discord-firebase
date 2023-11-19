@@ -1,0 +1,27 @@
+<div class="edit-document">
+  <mat-toolbar class="mat-accent bg-primary m-0 p-4">
+    <mat-toolbar-row class="w-full flex justify-between">
+      <div>
+        <span class="title dialog-title text-3xl">Edit document</span>
+      </div>
+      <div
+        class="close cursor-pointer mb-6"
+        title="close"
+        (click)="close()"
+        aria-label="Close dialog"
+      >
+        <mat-icon>close</mat-icon>
+      </div>
+    </mat-toolbar-row>
+  </mat-toolbar>
+
+  <div class="content-document p-6">
+    <app-adding-documents
+      [accountType]="accountType"
+      [status]="status"
+      [existFiles]="data?.file"
+      (savedDocument)="save($event)"
+      (cancelDocument)="close()"
+    ></app-adding-documents>
+  </div>
+</div>

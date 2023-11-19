@@ -1,0 +1,24 @@
+<div
+  class="flex flex-col w-full border-2 border-blue-400 border-dotted p-10 text-center"
+  fileDrop
+  (fileDropped)="onFileDrop($event)">
+  <button
+    color="primary"
+    class="w-[241px] save-button m-auto rounded-xl"
+    mat-flat-button
+    (click)="file.click()"
+    data-cy="choose-file-button">
+    Choose file
+  </button>
+
+  <span class="text-gray-400 mt-4">or drag files here</span>
+  <input
+    data-cy="upload-file"
+    type="file"
+    [accept]="accept"
+    #file
+    [multiple]="false"
+    (change)="onFileChange($event)"
+    hidden
+  />
+</div>

@@ -1,0 +1,241 @@
+# This is a sample build configuration for JavaScript.
+# Check our guides at https://confluence.atlassian.com/x/14UWN for more examples.
+# Only use spaces to indent your .yml configuration.
+# -----
+# You can specify a custom docker image from Docker Hub as your build environment.
+image: cypress/browsers:node16.16.0-chrome107-ff107
+clone:
+  depth: full
+options:
+  size: 2x
+pipelines:
+  default:
+    - step: &tag
+        name: Tag version
+        image: atlassian/default-image:2
+        script:
+          - git remote set-url origin ${BITBUCKET_GIT_HTTP_ORIGIN}
+          - dty=$(date '+%Y');
+          - dtm=$(date '+%m');
+          - branch=$(git rev-parse --abbrev-ref HEAD)
+          - echo $dty $dtm
+          - echo 'branch' $branch
+          - tagExists=$(git describe --exact-match HEAD) || true
+          - >
+            if [ "$tagExists" == "" ]
+              then
+                if [ "$branch" == "master" ]
+                  then
+                    oldVer=$(git describe --tags --abbrev=0)
+                    IFS='.' read -r -a version <<< "$oldVer"
+                    echo 'Old ver:' $oldVer
+                    if [ ${version[0]} == $dty ]
+                      then
+                        if [ ${version[1]} == $dtm ]
+                          then
+                            echo ${version[2]}
+                            (( version[2]+=1 ))
+                            echo ${version[2]}
+                          else
+                            version[1]=$dtm
+                            version[2]=0
+                        fi
+                      else
+                        version[0]=$dty
+                        version[1]=$dtm
+                        version[2]=0
+                    fi
+                    newVer=(${version[0]}.${version[1]}.${version[2]})
+                    echo 'New ver:' $newVer
+                    git tag -a $newVer ${BITBUCKET_COMMIT} -m "Automated versioning by CI"
+                    git push origin --tags
+                fi
+              else
+                echo 'Already Tagged:' $tagExists
+            fi
+          - checkVer=$(git describe --tags --abbrev=0)
+          - echo 'Check ver:' $checkVer
+    - step:
+        name: Build Default
+        size: 2x
+        caches:
+          - node
+          - npm-cache
+          - cypress
+        script:
+          - apt-get update && apt-get upgrade -y
+          # - apt-get install -y default-jre-headless locales
+          - node -v
+          - npm -v
+          # Just build so we know the code is ready for deploying
+          # - npm rebuild node-sass
+          - npm ci --unsafe-perm
+          # - npm run postinstall
+          - npm run git-version
+          - npm run build -- --configuration production
+
+          # Now build Chromium to run the tests
+
+          # - echo 'deb http://dl.google.com/linux/chrome/deb/ stable main' > /etc/apt/sources.list.d/chrome.list
+          # - wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add -
+          # - set -x && apt-get update && apt-get install -y xvfb google-chrome-stable
+          # - wget -q -O /usr/bin/xvfb-chrome https://bitbucket.org/atlassian/docker-node-chrome-firefox/raw/ff180e2f16ea8639d4ca4a3abb0017ee23c2836c/scripts/xvfb-chrome
+          # - ln -sf /usr/bin/xvfb-chrome /usr/bin/google-chrome
+          # - chmod 755 /usr/bin/google-chrome
+          # - npm run webdriver-update
+
+          # Now the tests
+          - npm run test:ci
+          # - npm run cypress:install
+          # - npm run e2e:run
+          - npm run e2e:ci
+          - npm run e2e:coverage
+
+          - bash <(curl -Ls https://coverage.codacy.com/get.sh) report -l TypeScript -r coverage/cypress/lcov.info -r coverage/karma/lcov.info
+  pull-requests:
+    "**": #this runs as default for any branch not elsewhere defined
+      - step:
+          name: Build PR
+          size: 2x
+          caches:
+            - node
+            - npm-cache
+            - cypress
+          script:
+            - apt-get update && apt-get upgrade -y
+            # - apt-get install -y default-jre-headless locales
+            - node -v
+            - npm -v
+            # Just build so we know the code is ready for deploying
+            # - npm rebuild node-sass
+            - npm ci --unsafe-perm
+            # - npm run postinstall
+            - npm run git-version
+            - npm run build -- --configuration production
+            # Now build Chromium to run the tests
+
+            # - echo 'deb http://dl.google.com/linux/chrome/deb/ stable main' > /etc/apt/sources.list.d/chrome.list
+            # - wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add -
+            # - set -x && apt-get update && apt-get install -y xvfb google-chrome-stable
+            # - wget -q -O /usr/bin/xvfb-chrome https://bitbucket.org/atlassian/docker-node-chrome-firefox/raw/ff180e2f16ea8639d4ca4a3abb0017ee23c2836c/scripts/xvfb-chrome
+            # - ln -sf /usr/bin/xvfb-chrome /usr/bin/google-chrome
+            # - chmod 755 /usr/bin/google-chrome
+            # - npm run webdriver-update
+
+            # Now the tests
+            - npm run test:ci
+            # - npm run cypress:install
+            # - npm run e2e:run
+            - npm run e2e:ci
+            - npm run e2e:coverage
+
+            - bash <(curl -Ls https://coverage.codacy.com/get.sh) report -l TypeScript -r coverage/cypress/lcov.info -r coverage/karma/lcov.info
+  branches:
+    master:
+      - step: *tag
+      - step:
+          name: Build Master
+          size: 2x
+          caches:
+            - node
+            - npm-cache
+            - cypress
+          script:
+            - apt-get update && apt-get upgrade -y
+            # - apt-get install -y default-jre-headless locales
+            - node -v
+            - npm -v
+            # Just build so we know the code is ready for deploying
+            # - npm rebuild node-sass
+            - npm ci --unsafe-perm
+            - npm run git-version
+            - npm run build
+            # Now build Chromium to run the tests
+            # - echo 'deb http://dl.google.com/linux/chrome/deb/ stable main' > /etc/apt/sources.list.d/chrome.list
+            # - wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add -
+            # - set -x && apt-get update && apt-get install -y xvfb google-chrome-stable
+            # - wget -q -O /usr/bin/xvfb-chrome https://bitbucket.org/atlassian/docker-node-chrome-firefox/raw/ff180e2f16ea8639d4ca4a3abb0017ee23c2836c/scripts/xvfb-chrome
+            # - ln -sf /usr/bin/xvfb-chrome /usr/bin/google-chrome
+            # - chmod 755 /usr/bin/google-chrome
+
+            # Now the tests
+            - npm run test:ci
+            # - npm run cypress:install
+            - npm run e2e:ci
+            - npm run e2e:coverage
+
+            - bash <(curl -Ls https://coverage.codacy.com/get.sh) report -l TypeScript -r coverage/cypress/lcov.info -r coverage/karma/lcov.info
+
+      - step:
+          # set HEROKU_API_KEY and HEROKU_APP_NAME environment variables
+          # set clone `depth: full' as described here: https://confluence.atlassian.com/x/Y9-5Mw
+          caches:
+            - node
+            - npm-cache
+          name: Deploy to Heroku Development
+          size: 2x
+          deployment: Development # set to test, staging or production
+          # trigger: manual  # uncomment to have a manual step
+          script:
+            # - npm install
+            # - npm i git-repo-info
+            - npm run git-version
+            # - npm run build -- --configuration dev
+            # - grep -A1 'const environment = {' dist/main.js
+            # - echo "Deploying to Dev environment"
+            # - echo $HEROKU_APP_NAME
+            - wget -O - https://raw.githubusercontent.com/Funkygeek/angular-heroku/master/heroku_prep.js | node
+            - mv package.json_2 package.json
+            - sed -i 's/%config%/-c dev/g' package.json
+            - git config --global user.email "robert.leidl@namadgi.com"
+            - git config --global user.name "Robert Leidl"
+            - git add .
+            - git commit -am "deploy to dev"
+            - git push -f https://heroku:$HEROKU_API_KEY@git.heroku.com/$HEROKU_APP_NAME.git HEAD:master
+      - step:
+          # set HEROKU_API_KEY and HEROKU_APP_NAME environment variables
+          # set clone `depth: full' as described here: https://confluence.atlassian.com/x/Y9-5Mw
+          caches:
+            - node
+            - npm-cache
+          name: Deploy to Heroku Test
+          size: 2x
+          deployment: Test # set to test, staging or production
+          trigger: manual # uncomment to have a manual step
+          script:
+            # - npm install
+            # - npm i git-repo-info
+            - npm run git-version
+            # - npm run build -- --configuration test
+            # - grep -A1 'const environment = (' dist/main.js
+            # - echo "Deploying to Test environment"
+            # - echo $HEROKU_APP_NAME
+            - wget -O - https://raw.githubusercontent.com/Funkygeek/angular-heroku/master/heroku_prep.js | node
+            - mv package.json_2 package.json
+            - sed -i 's/%config%/-c test/g' package.json
+            - git config --global user.email "robert.leidl@namadgi.com"
+            - git config --global user.name "Robert Leidl"
+            - git add .
+            - git commit -am "deploy to test"
+            - git push -f https://heroku:$HEROKU_API_KEY@git.heroku.com/$HEROKU_APP_NAME.git HEAD:master
+      - step:
+          caches:
+            - node
+            - npm-cache
+          name: Deploy to Production
+          deployment: production # can be test, staging or production.
+          trigger: manual # Uncomment to make this a manual deployment.
+          script:
+            - npm install
+            - npm run git-version
+            - npm run build -- --configuration production
+            - echo "Deploying to Production environment"
+            # - firebase deploy --token $FIREBASE_TOKEN --only hosting:production
+            - pipe: atlassian/firebase-deploy:3.1.1
+              variables:
+                FIREBASE_TOKEN: $FIREBASE_TOKEN
+                EXTRA_ARGS: "--only hosting:production"
+definitions:
+  caches:
+    npm-cache: ~/.npm
+    cypress: ~/.cache/Cypress

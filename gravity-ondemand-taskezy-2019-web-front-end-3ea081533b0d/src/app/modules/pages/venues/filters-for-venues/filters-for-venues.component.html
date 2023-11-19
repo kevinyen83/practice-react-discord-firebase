@@ -1,0 +1,25 @@
+<div class="w-full flex flex-wrap justify-between">
+
+  <form [formGroup]="filtersForm" class="flex flex-row w-full md:justify-center sm:justify-center sm:flex-wrap items-center">
+
+      <mat-form-field class="fuse-mat-no-subscript w-1/2" appearance="fill">
+        <mat-select placeholder="Search By" formControlName="searchBy" (selectionChange)="changeSorting($event)">
+          <mat-option value="Venue type">Venue type</mat-option>
+          <mat-option value="Venue name">Venue name</mat-option>
+          <mat-option value="Client">Client</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field class="pl-3 fuse-mat-no-subscript w-1/2" appearance="fill">
+        <mat-select placeholder="Select" formControlName="select" multiple (selectionChange)="changeSelect($event)">
+          <mat-option *ngFor="let select of selects" [value]="select">{{select}}</mat-option>
+        </mat-select>
+      </mat-form-field>
+<!--    <div class="flex pl-3">-->
+<!--      <button mat-raised-button color="primary" (click)="searchVenue()">-->
+<!--        Search-->
+<!--      </button>-->
+<!--    </div>-->
+
+  </form>
+</div>

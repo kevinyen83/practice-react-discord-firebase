@@ -1,0 +1,78 @@
+<!-- Alert -->
+<fuse-alert
+  class="mb-5"
+  *ngIf="showAlert"
+  [appearance]="'outline'"
+  [showIcon]="false"
+  [type]="alert.type"
+  [dismissible]="true"
+  [@shake]="alert.type === 'error'">
+  {{alert.message}}
+</fuse-alert>
+
+<div class="card" *ngIf="!viewSpinner">
+  <div class="h2">{{statusDocuments | titlecase}} Document or Note</div>
+
+  <form [formGroup]="documentsForm">
+
+    <mat-form-field class="type w-full" required>
+      <mat-label>Type</mat-label>
+      <mat-select placeholder="Security" formControlName="type">
+        <mat-option *ngFor="let type of types" [value]="type">{{type}}</mat-option>
+      </mat-select>
+      <mat-error *ngIf="documentsForm.get('type').hasError('required')">
+        Type is required
+      </mat-error>
+    </mat-form-field>
+
+    <mat-form-field class="title w-full">
+      <mat-label>Title</mat-label>
+      <input matInput
+             name="title"
+             formControlName="title">
+      <mat-error *ngIf="documentsForm.get('title').hasError('required')">
+        Title is required
+      </mat-error>
+    </mat-form-field>
+
+    <mat-form-field class="description w-full fuse-mat-textarea">
+      <textarea matInput placeholder="Description*" formControlName="description"></textarea>
+      <mat-error *ngIf="documentsForm.get('description').hasError('required')">
+        Description is required
+      </mat-error>
+    </mat-form-field>
+
+
+    <div class="preview-document" *ngIf="currentImage.file" #previewCurrentDocument>
+        <img [src]="currentImage.file" alt="">
+    </div>
+    <div class="preview-file" *ngIf="currentImage.name">
+        <span>{{currentImage.name}}</span>
+    </div>
+    <span style="color: #37aae7; cursor: pointer;margin-top: 20px;" (click)="file.click()">+ Add File <input type="file" accept="img/*" #file hidden (change)="onFileChange($event)"/></span>
+
+
+    <div class="buttons flex justify-end">
+      <button mat-stroked-button
+              color="primary"
+              type="button"
+              (click)="cancelDocument()"
+              class="cancel-button"
+              aria-label="Save">
+        Cancel
+      </button>
+
+      <button mat-raised-button
+              color="primary"
+              type="button"
+              (click)="addDocuments()"
+              class="add-button ml-2"
+              aria-label="Add">
+        Save
+      </button>
+    </div>
+  </form>
+</div>
+<div class="progress-spiner w-full h-full absolute left-0 top-0 opacity-0.5" *ngIf="viewSpinner">
+  <mat-spinner class="mat-spinner m-auto md:top-1/2"></mat-spinner>
+</div>

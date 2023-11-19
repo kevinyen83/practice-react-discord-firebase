@@ -1,0 +1,180 @@
+<div class="resource-details relative">
+  <div class="text-xs">
+    <div
+      *ngIf="type === 'member'"
+      class="close cursor-pointer absolute right-1.5 top-1"
+      (click)="closeWindow()"
+      data-cy="close-icon"
+      aria-label="Close dialog"
+    >
+      <mat-icon class="text-white">close</mat-icon>
+    </div>
+  </div>
+
+  <div
+    class="header-text flex items-center mb-8 justify-between p-6"
+    fxLayout="row"
+    [ngClass]="modalClasses"
+  >
+    <div class="flex items-center">
+      <div
+        class="flex mr-4 overflow-hidden w-[100px] h-[100px] border-2 rounded-full mb-4"
+      >
+        <img
+          class="photo avatar logo-icon"
+          [src]="currentAvatar || defaultAvatar"
+        />
+      </div>
+
+      <div data-cy="name-element" class="text-2xl font-medium">
+        <div class="flex flex-col">
+          <div [ngClass]="modalTextColor">{{ currentResource?.name }}</div>
+          <div *ngIf="type === 'member'">
+            <span class="text-white">Status: </span>
+            <span [ngClass]="getStatusColor(currentResource?.status)">{{
+              this.getStatus(currentResource?.status)
+            }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="flex">
+      <button
+        mat-raised-button
+        color="warn"
+        *ngIf="currentResource?.status == 0 && !editing && type === 'member'"
+        data-cy="deactivate-resource-button"
+        (click)="deactivate()"
+        aria-label="Cancel"
+      >
+        Deactivate
+      </button>
+
+      <button
+        mat-flat-button
+        *ngIf="currentResource?.status == 1 && !editing && type === 'member'"
+        data-cy="activate-resource-button"
+        class="bg-success text-white"
+        (click)="activate()"
+      >
+        Activate
+      </button>
+      <div *ngIf="!editing" class="buttons flex justify-end">
+        <button
+          mat-raised-button
+          color="primary"
+          type="button"
+          *ngIf="type === 'member'"
+          (click)="editResource()"
+          data-cy="edit-button"
+          class="edit-button ml-2"
+        >
+          Edit
+        </button>
+      </div>
+
+      <div
+        *ngIf="editing && type === 'member'"
+        class="buttons-editing flex justify-end"
+      >
+        <button
+          mat-stroked-button
+          type="button"
+          (click)="cancel()"
+          class="cancel-button text-white"
+          aria-label="Cancel"
+        >
+          Cancel
+        </button>
+
+        <button
+          mat-stroked-button
+          type="button"
+          data-cy="save-button"
+          (click)="save()"
+          class="save-button ml-2 text-white"
+        >
+          Save
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="leading-10 pl-6">
+    <div class="flex w-2/3">
+      <div class="w-1/2 text-lg font-medium">Date of Birth:</div>
+      <div class="w-1/2">
+        <span *ngIf="type === 'resource'">{{
+          currentResource?.detail.dob | date: "dd-MMM-yyyy"
+        }}</span>
+      </div>
+    </div>
+
+    <div class="flex w-2/3">
+      <div class="w-1/2 text-lg font-medium">Contact number:</div>
+      <div class="w-1/2">
+        <span *ngIf="type === 'resource'">{{
+          currentResource?.detail.mobile
+        }}</span>
+        <span *ngIf="type === 'member'">{{ currentResource?.mobile }}</span>
+      </div>
+    </div>
+
+    <div class="flex w-2/3">
+      <div class="w-1/2 text-lg font-medium">E-mail:</div>
+      <div class="w-1/2">{{ currentResource?.email }}</div>
+    </div>
+
+    <div class="flex w-2/3">
+      <div class="w-1/2 text-lg font-medium">Address:</div>
+      <div class="w-1/2">
+        <span *ngIf="type === 'resource'">{{
+          currentResource?.detail.address
+        }}</span>
+        <span *ngIf="type === 'member'">{{ currentResource?.address }}</span>
+      </div>
+    </div>
+
+    <div class="flex w-2/3" *ngIf="type === 'resource'">
+      <div class="w-1/2 text-lg font-medium">Supplied By:</div>
+      <div class="w-1/2">{{ currentResource?.supplier?.name }}</div>
+    </div>
+
+    <div class="flex w-2/3" *ngIf="type === 'member' && !editing">
+      <div class="w-1/2 text-lg font-medium">Organisation role</div>
+      <div class="w-1/2" data-cy="div-role">
+        {{ this.getRole(currentResource?.role) }}
+      </div>
+    </div>
+
+    <div class="flex w-2/3" *ngIf="type === 'member' && !editing">
+      <div class="w-1/2 text-lg font-medium">Department</div>
+      <div class="w-1/2" data-cy="div-department">
+        {{ currentResource?.department }}
+      </div>
+    </div>
+
+    <mat-form-field
+      *ngIf="type === 'member' && editing"
+      data-cy="role"
+      class="role w-full mr-1"
+    >
+      <mat-label>Organisation role</mat-label>
+      <mat-select [formControl]="organisationRole">
+        <mat-option *ngFor="let role of roles" [value]="role.value">
+          <div>{{ role.label }}</div>
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field
+      *ngIf="type === 'member' && editing"
+      data-cy="department"
+      class="department w-full"
+      appearance="fill"
+    >
+      <mat-label>Department</mat-label>
+      <input matInput type="text" [formControl]="department" />
+    </mat-form-field>
+  </div>
+</div>

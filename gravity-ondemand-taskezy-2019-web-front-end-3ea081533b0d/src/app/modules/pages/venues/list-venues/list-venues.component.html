@@ -1,0 +1,139 @@
+<div class="inset-0 flex flex-col min-w-0 bottom-0 top-0 right-0 left-0">
+  <mat-drawer-container
+    class="absolute top-0 left-0 bottom-0 right-0"
+    [hasBackdrop]="true">
+    <mat-drawer-content class="flex-auto flex flex-col overflow-hidden">
+      <div class="flex flex-col flex-auto min-w-0 h-full">
+        <!--Header-->
+        <div
+          class="header text-white p-10 p-sm-24 bg-primary flex flex-row justify-between items-center sm:items-start">
+          <!-- APP TITLE -->
+          <div class="flex w-1/3 items-center">
+            <div class="text-3xl flex items-center">
+              <div class="mr-16">
+                <img src="./assets/images/icons/venue.svg" />
+              </div>
+              <div
+                data-cy="logo-text"
+                class="logo-text h1">
+                Venues
+              </div>
+            </div>
+          </div>
+
+          <div class="flex w-2/3 justify-between items-center">
+            <app-filters-for-venues
+              class="w-3/4 mr-2"
+              [users]="venues"
+              (updateList)="updateListVenues($event)"></app-filters-for-venues>
+
+            <button
+              data-cy="add-venue"
+              mat-stroked-button
+              (click)="createNewVenue()">
+              <mat-icon class="text-white">add</mat-icon>
+              Add New Venue
+            </button>
+          </div>
+          <!-- / APP TITLE -->
+        </div>
+        <!--/Header-->
+
+        <div class="content p-5 w-full overflow-y-auto">
+          <div class="w-full">
+            <div class="list-venues mt-5 w-full flex justify-between">
+              <div class="list mr-14 flex flex-col w-1/3">
+                <div *ngIf="venues && venues.length > 0">
+                  <div
+                    class="card mb-2 rounded-[10px] p-4 bg-white hover:bg-zinc-200 cursor-pointer"
+                    data-cy="venue"
+                    (click)="openVenue(venue)"
+                    *ngFor="let venue of venues">
+                    <h1 class="font-medium text-2xl">
+                      {{ venue?.name }}
+                    </h1>
+                    <h2 class="font-medium text-lg">
+                      {{ venue?.type }}
+                    </h2>
+
+                    <div class="flex justify-between">
+                      <div class="description mb-4 mt-3 font-normal text-base">
+                        <p *ngIf="venue?.licenceName">
+                          {{ venue.licenceName }}
+                          {{ venue.licence }}
+                        </p>
+                        <p *ngIf="venue?.address">
+                          {{ venue.address?.street_location }}
+                        </p>
+                        <p
+                          *ngIf="
+                            venue?.client?.uuid !== currentAccount?.uuid;
+                            else directVenue
+                          ">
+                          Client: {{ venue?.client?.name }}
+                        </p>
+                        <ng-template #directVenue>
+                          <i>Direct Venue</i>
+                        </ng-template>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div
+                  class="font-light italic"
+                  *ngIf="venues.length == 0">
+                  You have no connected venues
+                </div>
+              </div>
+              <div
+                *ngIf="venues && venues.length > 0"
+                class="google-map absolute top-25 right-12 w-1/2 h-180">
+                <google-map
+                  (mapInitialized)="onMapReady($event)"
+                  height="510px"
+                  width="100%"
+                  [options]="mapOptions">
+                  <map-marker
+                    *ngFor="let marker of mapMarkers"
+                    [position]="marker.position"
+                    [options]="marker.options"></map-marker>
+                </google-map>
+                <!-- <form class="w-full absolute top-14 left-2" action="">
+                  <mat-form-field class="search" appearance="fill">
+                    <input #addressLocation name="searchLocation" matInput placeholder="Search" [formControl]="searchLocation">
+                    <mat-icon class="absolute right-1.5 top-2.5">search</mat-icon>
+                  </mat-form-field>
+                </form> -->
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </mat-drawer-content>
+
+    <mat-drawer
+      class="sm:w-full md:w-3/5 lg:w-3/5 xl:w-3/5 2xl:w-3/5 dark:bg-primary"
+      [autoFocus]="false"
+      [mode]="'over'"
+      [position]="'end'"
+      #matDrawerVenue>
+      <app-create-venue
+        (backToList)="matDrawerVenue.toggle()"></app-create-venue>
+    </mat-drawer>
+
+    <mat-drawer
+    class="w-2/5 dark:bg-primary"
+    data-cy="mat-drawer-filters"
+    [mode]="'side'"
+    #matDrawerFilterRoster
+  >
+    <!-- <app-filters-roster
+      [reserveClients]="reserveClients"
+      (closeSideBar)="closeSideNav('filter')"
+      (changeShifts)="changeShifts($event, false)"
+      (changeFilter)="changeFilter($event)"
+    >
+    </app-filters-roster> -->
+  </mat-drawer>
+  </mat-drawer-container>
+</div>

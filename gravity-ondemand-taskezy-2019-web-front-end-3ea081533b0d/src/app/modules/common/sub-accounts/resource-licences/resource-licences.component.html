@@ -1,0 +1,55 @@
+<div class="resource-licences">
+  <div class="text-2xl font-bold mb-4 p-5">{{ label }}</div>
+  <div class="p-4 flex flex-wrap">
+    <mat-card
+      data-cy="mat-card"
+      class="m-4 w-[512px]"
+      *ngFor="let accreditation of licences; let i = index"
+    >
+      <mat-card-header class="relative">
+        <mat-icon
+          class="absolute top-[10px] right-[10px] cursor-pointer"
+          data-cy="delete-icon"
+          [svgIcon]="'heroicons_solid:trash'"
+          (click)="handleRemove(accreditation)"
+        ></mat-icon>
+      </mat-card-header>
+      <mat-card-content *ngIf="accreditation">
+        <div class="p-4 grid grid-cols-2">
+          <div>
+            <label class="font-bold">Category</label>
+            <p class="min-h-[35px]">
+              {{ accreditation?.tags[0] }}
+            </p>
+          </div>
+          <div>
+            <label class="font-bold">Accreditation</label>
+            <p class="min-h-[35px]">
+              {{ accreditation?.tags[1] }}
+            </p>
+          </div>
+        </div>
+
+        <div class="p-4 grid grid-cols-2" *ngIf="accreditation?.licence">
+          <div *ngFor="let licenceItem of accreditation.licence">
+            <div *ngIf="licenceItem?.type === 'label'">
+              <label class="font-bold">{{ licenceItem?.label }}</label>
+              <p class="min-h-[35px]">
+                {{ licenceItem?.value }}
+              </p>
+            </div>
+            <div [attr.data-cy]="'img-' + licenceItem?.label.toLowerCase()" *ngIf="licenceItem?.type === 'image'">
+              <label class="font-bold">{{ licenceItem?.label }}</label>
+              <div class="m-4 rounded-[10px] cursor-pointer overflow-hidden">
+                <img
+                  [src]="licenceItem?.url"
+                  (click)="handleOpenPreview(licenceItem.url)"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</div>

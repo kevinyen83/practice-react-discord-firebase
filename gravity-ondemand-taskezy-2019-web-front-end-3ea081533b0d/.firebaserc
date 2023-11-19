@@ -1,0 +1,14 @@
+{
+  "projects": {
+    "default": "taskezy"
+  },
+  "targets": {
+    "taskezy": {
+      "hosting": {
+        "production": [
+          "taskezy"
+        ]
+      }
+    }
+  }
+}

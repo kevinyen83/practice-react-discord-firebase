@@ -1,0 +1,80 @@
+<app-auth-layout class="w-full" [name]="'Email verification'" [status]="'verify-email'" [headerName]="'email-verification-header'">
+  <fuse-alert
+    class="mt-4 mb-1"
+    *ngIf="showAlert"
+    [appearance]="'outline'"
+    [showIcon]="false"
+    [type]="alert.type"
+    [dismissible]="false"
+    [@shake]="alert.type === 'error'">
+    <span fuseAlertTitle></span>
+    {{alert.message}}
+  </fuse-alert>
+  <!-- <form
+      class="flex w-full flex-col m-auto"
+      name="emailVerificationForm"
+      #emailVerificationNgForm="ngForm"
+      [formGroup]="emailVerificationForm"
+    > -->
+    <!-- <div *ngIf="!token">
+      <mat-form-field *ngIf="!isEmailVerified" class="w-full">
+        <mat-label>Verification Token</mat-label>
+        <input matInput type="text" formControlName="token" autocomplete="one-time-code" />
+        <mat-icon matSuffix class="secondary-text">vpn_key</mat-icon>
+        <mat-error
+          *ngIf="emailVerificationForm.get('token').hasError('required')"
+        >
+          Token is required
+        </mat-error>
+      </mat-form-field>
+
+      <button
+        *ngIf="!isEmailVerified"
+        class="bg-primary text-xl font-bold w-full p-6 m-auto rounded-[50px] mt-8 text-white"
+        mat-flat-button
+        [disabled]="emailVerificationForm.disabled"
+        (click)="verifyEmail()"
+      >
+        <span *ngIf="!emailVerificationForm.disabled"> Verify email </span>
+        <mat-progress-spinner
+          *ngIf="emailVerificationForm.disabled"
+          [diameter]="24"
+          [mode]="'indeterminate'"
+        ></mat-progress-spinner>
+      </button>
+    </div> -->
+<!--
+      <button
+        *ngIf="isEmailVerified"
+        class="bg-primary text-xl font-bold w-full p-6 m-auto rounded-[50px] mt-8 text-white"
+        mat-flat-button
+        [routerLink]="['/auth/login']"
+      >
+        Return to sign in
+      </button> -->
+
+      <div class="flex w-full flex-col m-auto" *ngIf="!verificationToken">
+        <p class="mb-2 text-gray-500 text-lg">
+          An email has been sent, please click the link to verify your email address.
+        </p>
+      </div>
+
+      <!-- Form footer -->
+      <div class="mt-8 text-md font-medium text-secondary text-center" *ngIf="!isEmailVerified && authTokenData?.email">
+        <p>
+          <a
+            class="text-primary hover:underline cursor-pointer"
+            (click)="resendVerifyEmail()"
+          >
+            Resend Verification Email
+          </a>
+        </p>
+      </div>
+    <!-- </form> -->
+    <div class="flex flex-col mt-2">
+      <div *ngIf="authTokenData?.email" class="self-center">
+        <button mat-button color="primary" (click)="signOut()">Sign out</button>
+      </div>
+<!--      <div *ngIf="!authTokenData?.email" class="self-center">Return to <a class="text-primary hover:underline" [routerLink]="['/auth/login']">Sign In</a></div>-->
+    </div>
+</app-auth-layout>

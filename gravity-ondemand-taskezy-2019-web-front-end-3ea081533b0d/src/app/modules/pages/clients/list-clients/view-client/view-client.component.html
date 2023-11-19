@@ -1,0 +1,132 @@
+<div class="inset-0 flex flex-col min-w-0 bottom-0 top-0 right-0 left-0">
+  <mat-drawer-container
+    class="absolute top-0 left-0 bottom-0 right-0"
+    [hasBackdrop]="true"
+  >
+    <div class="flex flex-col flex-auto min-w-0 h-full overflow-hidden">
+      <div class="header text-white p-sm-24 flex-none h-[116px] bg-primary">
+        <!-- APP TITLE -->
+        <app-header-with-buttons
+          [avatar]="currentAvatar || defaultAvatar"
+          [isSubAccount]="true"
+          [isExist]="true"
+          [isDetailPage]="false"
+          [title]="pageTitle"
+          [abn]="selectedAccount?.detail?.abn"
+          [userType]="userType"
+          (goToAddAccreditations)="handleAddAccreditation()"
+        ></app-header-with-buttons>
+
+        <app-buttons-clients-details
+          *ngIf="currentTab === 'Details'"
+        ></app-buttons-clients-details>
+        <app-buttons-clients-venues
+          *ngIf="currentTab === 'Venues'"
+          [showAddVenue]="accountService.currentAccountIsSubscriber"
+        >
+        </app-buttons-clients-venues>
+        <app-buttons-clients-venues-details
+          *ngIf="currentTab === 'Venue details'"
+          [showDelete]="
+            selectedAccount.invitation.uuid === '' &&
+            selectedAccount.connection_request.invited_account_uuid === ''
+          "
+        ></app-buttons-clients-venues-details>
+        <app-buttons-detail-acrreditations-page
+          *ngIf="currentTab === 'Accreditations'"
+        ></app-buttons-detail-acrreditations-page>
+
+        <!--        <div class="row" fxLayout="row" fxLayoutAlign="space-between center">-->
+        <!--          <div class="header-text flex items-center" fxLayout="row">-->
+        <!--            <div-->
+        <!--              class="flex mr-4 overflow-hidden w-[50px] h-[50px] border-2 rounded-full"-->
+        <!--            >-->
+        <!--              <img-->
+        <!--                class="photo avatar"-->
+        <!--                [src]="currentAvatar || defaultAvatar"-->
+        <!--              />-->
+        <!--            </div>-->
+        <!--            &lt;!&ndash;        <div class="logo-icon cursor-pointer mr-16" (click)="backListClients()">&ndash;&gt;-->
+        <!--            &lt;!&ndash;          <img src="./assets/images/icons/client.svg" alt="icon">&ndash;&gt;-->
+        <!--            &lt;!&ndash;        </div>&ndash;&gt;-->
+        <!--            <div-->
+        <!--              class="logo mr-4 flex flex-col truncate"-->
+        <!--              title="{{ pageTitle }}"-->
+        <!--            >-->
+        <!--              <span class="logo-text text-3xl"> {{ pageTitle }} </span>-->
+        <!--              <p class="text-lg" *ngIf="selectedAccount">-->
+        <!--                ABN {{ selectedAccount.detail.abn }}-->
+        <!--              </p>-->
+        <!--            </div>-->
+
+        <!--            <div-->
+        <!--              data-cy="status-element"-->
+        <!--              class="w-24 ml-4 rounded-3xl text-center p-1"-->
+        <!--              [ngClass]="-->
+        <!--                utils.getStatusColour(-->
+        <!--                  selectedAccount?.invitation?.status,-->
+        <!--                  false,-->
+        <!--                  true-->
+        <!--                )-->
+        <!--              "-->
+        <!--            >-->
+        <!--              <span>{{-->
+        <!--                utils.getStatus(-->
+        <!--                  selectedAccount?.invitation?.status,-->
+        <!--                  false,-->
+        <!--                  true-->
+        <!--                )-->
+        <!--              }}</span>-->
+        <!--            </div>-->
+        <!--          </div>-->
+
+        <!--        </div>-->
+        <!-- / APP TITLE -->
+      </div>
+      <!-- Alert -->
+      <fuse-alert
+        class="mt-4 mb-1"
+        *ngIf="showAlert"
+        [appearance]="'outline'"
+        [showIcon]="false"
+        [type]="alert.type"
+        [dismissible]="true"
+        [@shake]="alert.type === 'error'"
+      >
+        {{ alert.message }}
+      </fuse-alert>
+
+      <div class="sub-account-details content w-full relative">
+        <app-sub-account-details
+          [accountType]="'client'"
+          [accountUUID]="selectedUUID"
+          (backPrev)="handleBackPrev()"
+          (addAccreditation)="handleAddAccreditation()"
+        ></app-sub-account-details>
+      </div>
+    </div>
+
+    <mat-drawer
+      class="w-1/2 dark:bg-primary"
+      [autoFocus]="false"
+      [mode]="'over'"
+      [position]="'end'"
+      #matDrawerReplaceAdmin
+    >
+      <app-replace-administrator
+        *ngIf="viewMode === 'VIEW_MODE_REPLACE_ADMINSTRATOR'"
+        [accountType]="'client'"
+        [currentAccount]="currentAccount"
+        [selectedAccount]="selectedAccount"
+        (backToList)="handleBackPrev()"
+      ></app-replace-administrator>
+      <app-add-accreditation
+        *ngIf="viewMode === 'VIEW_MODE_ADD_ACCREDITATION'"
+        [accreditations]="accreditations"
+        [method]="'client'"
+        [accountUUID]="selectedUUID"
+        (closeSideNav)="closeSideNav($event)"
+      ></app-add-accreditation>
+    </mat-drawer>
+  </mat-drawer-container>
+</div>

@@ -1,0 +1,770 @@
+<div class="absolute inset-0 flex flex-col min-w-0 overflow-hidden">
+  <!--Header-->
+  <mat-drawer-container
+    class="absolute top-0 left-0 bottom-0 right-0"
+    [hasBackdrop]="true"
+  >
+    <mat-drawer-content class="flex-auto flex flex-col overflow-hidden">
+      <div
+        class="flex-none accent text-white w-full h-[114px] p-8 p-sm-24 bg-primary"
+      >
+        <!-- APP TITLE -->
+        <div class="row flex flex-col">
+          <div class="row-top">
+            <div class="logo flex items-center">
+              <div class="logo-block mb-2 flex items-center">
+                <div class="logo-icon w-5 h-5 mr-16">
+                  <img src="assets/images/icons/roster.svg" />
+                </div>
+                <div class="logo-text h1 text-size-all-headers">Roster</div>
+
+                <!-- <div
+                  class="quick-buttons flex justify-between"
+                  *ngIf="isSelected"
+                >
+                  <button mat-flat-button (click)="cloneShift('', 'multiple')">
+                    Clone Shifts
+                  </button>
+                  <button mat-flat-button (click)="releaseRoster()">
+                    Release Shifts
+                  </button>
+                  <button mat-flat-button (click)="deleteShift()">
+                    Remove Shifts
+                  </button>
+                </div> -->
+              </div>
+
+              <div class="row-bottom w-full flex justify-end">
+                <div class="flex items-center">
+                  <label class="mb-4 mr-2" data-cy="view-as-label"
+                    >View As</label
+                  >
+                  <mat-form-field class="flex" data-cy="view-as-field">
+                    <mat-select
+                      data-cy="view-as"
+                      [formControl]="viewAs"
+                      (selectionChange)="refreshShifts()"
+                    >
+                      <mat-option
+                        *ngIf="accountService.currentAccountIsSubscriber"
+                        value="subscriber"
+                        >Subscriber</mat-option
+                      >
+                      <mat-option value="client">Client</mat-option>
+                      <mat-option value="supplier">Supplier</mat-option>
+                    </mat-select>
+                  </mat-form-field>
+                </div>
+
+                <div class="flex items-center ml-4">
+                  <label class="mb-4 mr-2">View By</label>
+                  <mat-form-field class="flex">
+                    <mat-select
+                      data-cy="view-select"
+                      [(ngModel)]="view"
+                      (selectionChange)="viewChanged($event)"
+                    >
+                      <mat-option value="month">Month</mat-option>
+                      <mat-option value="week">Week</mat-option>
+                      <!-- <mat-option value="day">Day</mat-option>
+                      <mat-option value="list">List</mat-option> -->
+                    </mat-select>
+                  </mat-form-field>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- <div
+            class="row-bottom w-full flex justify-end"
+            *ngIf="
+              viewMode === 'ROSTER_VIEW_MODE_CLIENT' ||
+              viewMode === 'ROSTER_VIEW_MODE_SUPPLIER'
+            "
+          >
+            <div class="flex">
+              <label class="mt-3 mr-2">Released By</label>
+              <mat-form-field class="flex">
+                <mat-select
+                  [(ngModel)]="method"
+                  (selectionChange)="methodChanged($event)"
+                >
+                  <mat-option
+                    value="primary-account"
+                  >
+                    Primary Account
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
+            </div>
+          </div> -->
+        </div>
+        <!-- / APP TITLE -->
+      </div>
+
+      <div class="flex flex-col overflow-y-hidden">
+        <div class="flex-none mt-2 mb-2">
+          <div class="col-md-4 w-full flex flex-row justify-start items-center">
+            <div class="flex w-1/3">
+              <button
+                color="primary"
+                data-cy="filters-icon"
+                class="ml-2 mat-elevation-z0"
+                matTooltip="filters"
+                mat-mini-fab
+                (click)="openFilters()"
+              >
+              <!-- 123 -->
+                <mat-icon>filter_alt</mat-icon>
+              </button>
+              <div *ngIf="selectedShifts.length > 0" class="flex">
+                <button
+                  color="primary"
+                  mat-flat-button
+                  matTooltip="Release Selected Shifts"
+                  class="ml-2"
+                  aria-label="release shift"
+                  [disabled]="!accountService.currentAccountIsSubscriber"
+                  (click)="releaseSelected()"
+                >
+                  Release
+                </button>
+                <!-- <button
+                  color="primary"
+                  class="ml-2"
+                  matTooltip="copy"
+                  (click)="copySelected()"
+                  mat-flat-button
+                >
+                  Copy
+                </button>
+                <button
+                  color="primary"
+                  class="ml-2"
+                  matTooltip="delete"
+                  (click)="deleteSelected()"
+                  mat-flat-button
+                >
+                  Delete
+                </button> -->
+              </div>
+              <!-- <div *ngIf="viewMode === 'ROSTER_VIEW_MODE_CLIENT'">
+                <button
+                  color="primary"
+                  class="ml-2"
+                  matTooltip="filters"
+                  mat-flat-button
+                  (click)="openReleaseRoster()"
+                >
+                  Choose Shift
+                </button>
+              </div> -->
+            </div>
+
+            <div class="flex w-1/3 items-center justify-center">
+              <mat-form-field
+                class="w-[280px] fuse-mat-no-subscript"
+                (click)="dp.open()"
+              >
+                <button
+                  mat-icon-button
+                  color="white"
+                  mwlCalendarPreviousView
+                  [view]="viewAngularCalendar"
+                  [(viewDate)]="viewDate"
+                  (click)="dateChanged(); $event.stopPropagation(); (false)"
+                  matPrefix
+                >
+                  <mat-icon>keyboard_arrow_left</mat-icon>
+                </button>
+                <input matInput readonly [ngModel]="viewDateString()" />
+                <input
+                  matInput
+                  [matDatepicker]="dp"
+                  hidden
+                  (dateChange)="gotoDate($event.target.value)"
+                />
+                <mat-datepicker #dp disabled="false"> </mat-datepicker>
+                <button
+                  mat-icon-button
+                  color="white"
+                  data-cy="to-next-week"
+                  mwlCalendarNextView
+                  [view]="viewAngularCalendar"
+                  [(viewDate)]="viewDate"
+                  (click)="dateChanged(); $event.stopPropagation(); (false)"
+                  matSuffix
+                >
+                  <mat-icon>keyboard_arrow_right</mat-icon>
+                </button>
+                <button
+                  mat-icon-button
+                  color="primary"
+                  mwlCalendarToday
+                  matTooltip="today"
+                  [(viewDate)]="viewDate"
+                  (click)="dateChanged(); $event.stopPropagation(); (false)"
+                  matSuffix
+                >
+                  <mat-icon>today</mat-icon>
+                </button>
+              </mat-form-field>
+            </div>
+
+            <!-- <div *ngIf="viewMode === 'ROSTER_VIEW_MODE_CLIENT'">
+              <button
+                mat-flat-button
+                color="primary"
+                aria-label="create shift"
+                (click)="addShift(null, null)"
+              >
+                <mat-icon class="text-lg">add</mat-icon>
+                Create Shift
+              </button>
+            </div> -->
+
+            <div
+              class="flex w-1/3 justify-end"
+              *ngIf="viewMode === 'ROSTER_VIEW_MODE_PRIMARY'"
+            >
+              <button
+                mat-flat-button
+                class="mr-2"
+                data-cy="create-shift"
+                [disabled]="!accountService.currentAccountIsSubscriber"
+                color="primary"
+                aria-label="create shift"
+                (click)="addShift(null)"
+              >
+                <mat-icon>add</mat-icon>
+                Create Shift
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <app-filters-of-roster-header
+          [chips]="chipsFilters"
+          [shifts]="reserveShifts"
+          [resources]="resources"
+          [suppliers]="suppliers"
+          [clients]="reserveClients"
+          (clearFilters)="clearAll()"
+          (changeShifts)="changeShifts($event, true)"
+          (changeStatus)="changedCheckbox()"
+          *ngIf="view !== 'month'"
+        >
+        </app-filters-of-roster-header>
+
+        <div class="block-chips mb-3">
+          <div class="chips-list flex items-center">
+            <mat-chip-list>
+              <mat-chip data-cy="chip" *ngFor="let chip of chipsFilters">
+                <div class="text-sm">{{ chip }}</div>
+                <mat-icon
+                  class="cursor-pointer text-sm text-zinc-400"
+                  (click)="deleteFilter(chip)"
+                  >close
+                </mat-icon>
+              </mat-chip>
+            </mat-chip-list>
+          </div>
+        </div>
+
+        <div class="calendar-view flex flex-col flex-auto overflow-hidden">
+          <div class="flex flex-auto flex-col overflow-auto" [ngSwitch]="view">
+            <!--MONTH-->
+            <mwl-calendar-month-view
+              class="flex-1"
+              *ngSwitchCase="'month'"
+              [viewDate]="viewDate"
+              [events]="events"
+              [cellTemplate]="customCellTemplate"
+              [openDayEventsTemplate]="customOpenDayEventsTemplate"
+              [refresh]="refreshCalendar"
+              [activeDay]="activeDay"
+              [activeDayIsOpen]="activeDayIsOpen"
+              (beforeViewRender)="beforeMonthViewRender($event)"
+              (eventClicked)="openEventDetails($event.event)"
+              (eventTimesChanged)="eventTimesChanged($event)"
+            >
+              <ng-template
+                #customCellTemplate
+                let-day="day"
+                let-locale="locale"
+                let-openDay="openDay"
+              >
+                <app-cell-template
+                  [day]="day"
+                  [locale]="locale"
+                  [openDay]="openDay"
+                  (openMenu)="dayEventGroupClicked($event)"
+                ></app-cell-template>
+              </ng-template>
+
+              <!-- <mwl-calendar-open-day-events>
+                [events]="openDay?.events"
+                [date]="openDay?.date" -->
+              <!-- [customTemplate]="customOpenDayEventsTemplate" -->
+              <!-- </mwl-calendar-open-day-events> -->
+              <ng-template
+                #customOpenDayEventsTemplate
+                let-events="events"
+                let-eventClicked="eventClicked"
+                let-isOpen="isOpen"
+              >
+                <app-open-day-events-template
+                  [events]="openDayEvents"
+                  [isOpen]="isOpen"
+                  [eventClicked]="eventClicked"
+                  (shiftClick)="selectShift($event)"
+                  [contextMenuTemplate]="eventMenu"
+                >
+                </app-open-day-events-template>
+              </ng-template>
+            </mwl-calendar-month-view>
+            <!--WEEK-->
+            <div *ngSwitchCase="'week'">
+              <div
+                class="mb-4 client-list"
+                *ngFor="let client of clients; let i = index"
+              >
+                <mwl-calendar-week-view-all-day
+                  class="flex-1 flex flex-col"
+                  data-cy="client"
+                  [viewDate]="viewDate"
+                  [weekStartsOn]="1"
+                  [refresh]="refreshCalendar"
+                  [showHeader]="true"
+                  [headerTemplate]="clientWeekHeaderTemplate"
+                >
+                  <ng-template
+                    #clientWeekHeaderTemplate
+                    let-days="days"
+                    let-locale="locale"
+                    let-dayHeaderClicked="dayHeaderClicked"
+                    let-eventDropped="eventDropped"
+                    let-trackByWeekDayHeaderDate="trackByWeekDayHeaderDate"
+                    let-dragEnter="dragEnter"
+                  >
+                    <app-week-client-header-template
+                      [days]="days"
+                      [client]="client"
+                      [showDays]="true"
+                      [locale]="locale"
+                      [releaseDisabled]="
+                        !accountService.currentAccountIsSubscriber
+                      "
+                      [openedClients]="openedClients"
+                      [openedVenues]="openedVenues"
+                      [dayHeaderClicked]="dayHeaderClicked"
+                      [eventDropped]="eventDropped"
+                      [trackByWeekDayHeaderDate]="trackByWeekDayHeaderDate"
+                      [dragEnter]="dragEnter"
+                      (toggleContent)="toggleContent(client, 'client')"
+                      (releaseClicked)="releaseClientShifts($event)"
+                      [index]="i"
+                    >
+                    </app-week-client-header-template>
+                  </ng-template>
+                </mwl-calendar-week-view-all-day>
+
+                <div
+                  @expandCollapse
+                  *ngIf="openedClients.includes(client?.uuid)"
+                >
+                  <div
+                    class="mb-1"
+                    *ngFor="let venue of client.venues; let j = index"
+                  >
+                    <div data-cy="venue" class="flex flex-row bg-white">
+                      <mwl-calendar-week-view-all-day
+                        class="flex-1 flex flex-col"
+                        [viewDate]="viewDate"
+                        [events]="venue.events"
+                        [refresh]="refreshCalendar"
+                        [weekStartsOn]="1"
+                        [showHeader]="false"
+                        [alwaysShowGrid]="true"
+                        [eventTemplate]="eventWeekTemplate"
+                        [sideContentTemplate]="venueWeekSideTemplate"
+                        (eventClicked)="openEventDetails($event.event)"
+                        (eventTimesChanged)="eventTimesChanged($event)"
+                      >
+                        <!-- precision="minutes" -->
+                        <ng-template
+                          #venueWeekSideTemplate
+                          let-days="days"
+                          let-locale="locale"
+                          let-eventDropped="eventDropped"
+                          let-dragEnter="dragEnter"
+                        >
+                          <app-week-venue-header-template
+                            class="w-50"
+                            [days]="days"
+                            [locale]="locale"
+                            [venue]="venue"
+                            [eventDropped]="eventDropped"
+                            [dragEnter]="dragEnter"
+                            [openedVenues]="openedVenues"
+                            [releaseDisabled]="
+                              !accountService.currentAccountIsSubscriber
+                            "
+                            (toggleContent)="toggleContent(venue, 'venue')"
+                            (releaseClicked)="releaseVenueShifts($event)"
+                            [indexFirst]="i"
+                            [indexSecond]="j"
+                          >
+                          </app-week-venue-header-template>
+                        </ng-template>
+
+                        <ng-template
+                          #eventWeekTemplate
+                          let-weekEvent="weekEvent"
+                          let-eventClicked="eventClicked"
+                        >
+                          <div
+                            @expandCollapse
+                            *ngIf="openedVenues.includes(venue?.uuid)"
+                          >
+                            <app-event-week-template
+                              [weekEvent]="weekEvent"
+                              [eventClicked]="eventClicked"
+                              (shiftClick)="selectShift($event)"
+                              [contextMenu]="eventMenu"
+                              [contextMenuValue]="weekEvent.event"
+                            >
+                            </app-event-week-template>
+                          </div>
+                        </ng-template>
+                      </mwl-calendar-week-view-all-day>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!--DAY-->
+            <!-- <ngx-ts
+              class="overflow-auto"
+              *ngSwitchCase="CalendarView.Day"
+              [items]="events"
+              [period]="schedulerPeriod"
+              [sections]="schedulerSections"
+              [events]="schedulerEvents"
+              [start]="viewDate"
+              [hideHeader]="true"
+              [locale]="locale"
+              [customEventTemplate]="eventdayTemplate"
+              [showBusinessDayOnly]="false"
+              [allowDragging]="true"
+              [allowResizing]="false"
+              [minRowHeight]="82"
+            >
+              <ng-template #eventdayTemplate let-itemMeta="itemMeta">
+                <app-event-day-template [itemMeta]="itemMeta">
+                </app-event-day-template>
+              </ng-template>
+            </ngx-ts> -->
+            <!--LIST-->
+            <!-- <div
+              class="roster-list flex flex-col flex-1"
+              *ngSwitchCase="'list'"
+            >
+              <div class="overflow-y-auto">
+                <mat-list>
+                  <div
+                    class="w-full"
+                    *ngFor="
+                      let eventGroup of events
+                        | orderBy: 'datetime'
+                        | groupBy: listGroupBy
+                        | pairs;
+                      let i = index
+                    "
+                  >
+                    <div *ngIf="filterListSections(eventGroup[1][0].start)">
+                      <mat-list-item
+                        class="sticky top-0 bg-default z-10"
+                        matSubheader
+                        [id]="eventGroup[1][0].start | date: 'yyyy-MM-dd'"
+                      >
+                        {{ eventGroup[0] }}
+                      </mat-list-item>
+                      <mat-list>
+                        <mat-list-item
+                          class="shifts flex w-full"
+                          *ngFor="let event of eventGroup[1]"
+                        >
+                          <mat-card
+                            class="flex flex-wrap items-center w-full"
+                            [ngStyle]="{
+                              backgroundColor: event.backgroundColor,
+                              borderColor: 'lightgrey',
+                              borderLeft: event.color
+                            }"
+                            (click)="handleEvent('Clicked', event)"
+                          >
+                            <div class="flex-1">
+                              <span matLine>{{
+                                event.start | date: "hh:mm aa"
+                              }}</span>
+                              <span matLine *ngIf="event.end">{{
+                                event.end | date: " - hh:mm aa"
+                              }}</span>
+                            </div>
+                            <div class="flex-1 flex items-center">
+                              <div
+                                class="flex-2 text-right"
+                                *ngIf="event?.released"
+                              >
+                                <mat-icon
+                                  class="p-5"
+                                  aria-hidden="false"
+                                  [style.color]="
+                                    statusColor(event?.client?.status)
+                                  "
+                                  >{{
+                                    statusIcon(event?.client?.status)
+                                  }}</mat-icon
+                                >
+                              </div>
+                              <div class="flex-1">
+                                <p matLine>{{ event?.venue?.name }}</p>
+                                <p matLine>{{ event?.client?.profile_name }}</p>
+                              </div>
+                            </div>
+                            <div class="flex-1 flex items-center">
+                              <div
+                                class="flex-2 text-right"
+                                *ngIf="
+                                  event?.released && event?.supplier?.profile_name
+                                "
+                              >
+                                <mat-icon
+                                  class="p-5"
+                                  aria-hidden="false"
+                                  [style.color]="
+                                    statusColor(event?.supplier?.status)
+                                  "
+                                  >{{
+                                    statusIcon(event?.supplier?.status)
+                                  }}</mat-icon
+                                >
+                              </div>
+                              <div class="flex-1">
+                                <p matLine *ngIf="event?.supplier?.profile_name">
+                                  {{ event?.supplier?.profile_name }}
+                                </p>
+                                <p matLine *ngIf="!event?.supplier?.profile_name">
+                                  <i>{{ "unassigned" }}</i>
+                                </p>
+                              </div>
+                            </div>
+                            <div class="flex-1 flex items-center">
+                              <div
+                                class="flex-2 text-right"
+                                *ngIf="
+                                  event?.released && event?.resource?.profile_name
+                                "
+                              >
+                                <mat-icon
+                                  class="p-5"
+                                  aria-hidden="false"
+                                  [style.color]="
+                                    statusColor(event?.resource?.status)
+                                  "
+                                  >{{
+                                    statusIcon(event?.resource?.status)
+                                  }}</mat-icon
+                                >
+                              </div>
+                              <div class="flex-1">
+                                <p matLine *ngIf="event?.resource?.profile_name">
+                                  {{ event?.resource?.profile_name }}
+                                </p>
+                                <p matLine *ngIf="!event?.resource?.profile_name">
+                                  <i>{{ "unassigned" }}</i>
+                                </p>
+                              </div>
+                            </div>
+                          </mat-card>
+                        </mat-list-item>
+                      </mat-list>
+                    </div>
+                  </div>
+                </mat-list>
+              </div>
+            </div> -->
+          </div>
+        </div>
+      </div>
+
+      <div
+        class="progress-spiner w-96 absolute top-1/2 left-1/2 opacity-0.5 z-99"
+        *ngIf="viewSpinner"
+      >
+        <mat-spinner class="mat-spinner m-auto -ml-14"></mat-spinner>
+      </div>
+
+      <!--Content-->
+      <div
+        class="absolute bottom-0 left-0 right-0 mx-auto w-[40%]"
+        *ngIf="selectedShifts.length > 0"
+      >
+        <app-selected-indicator
+          [selectedLength]="selectedShifts.length"
+          (clearSelectedItems)="clearSelectedItems($event)"
+        ></app-selected-indicator>
+      </div>
+    </mat-drawer-content>
+  </mat-drawer-container>
+
+  <mat-drawer
+    class="w-2/5 sm:w-full dark:bg-primary"
+    data-cy="mat-drawer-filters"
+    [mode]="'side'"
+    #matDrawerFilterRoster
+  >
+    <app-filters-roster
+      [reserveClients]="reserveClients"
+      [connectedVenues]="connectedVenues"
+      (closeSideBar)="closeSideNav('filter')"
+      (changeShifts)="changeShifts($event, false)"
+      (changeFilter)="changeFilter($event)"
+    >
+    </app-filters-roster>
+  </mat-drawer>
+
+  <mat-drawer
+    class="sm:w-full md:w-3/5 lg:w-3/5 xl:w-3/5 2xl:w-3/5 dark:bg-primary"
+    data-cy="creating-shift-drawer"
+    [autoFocus]="false"
+    [mode]="'over'"
+    [position]="'end'"
+    #matDrawerAddShift
+  >
+    <app-add-shift
+      *ngIf="viewAddShift && matDrawerAddShift.opened"
+      [viewMode]="viewMode"
+      [addShiftData]="addShiftData"
+      (closeSideBar)="closeSideNav('add')"
+    >
+    </app-add-shift>
+  </mat-drawer>
+
+  <mat-drawer
+    class="sm:w-full md:w-3/5 lg:w-3/5 xl:w-3/5 2xl:w-3/5 dark:bg-primary"
+    [autoFocus]="false"
+    [mode]="'over'"
+    [position]="'end'"
+    #matDrawerEditShift
+  >
+    <app-edit-shift
+      *ngIf="viewEditShift && matDrawerEditShift.opened"
+      [viewAs]="viewAs"
+      [currentShift]="currentShift"
+      (closeSideBar)="closeSideNav('edit')"
+    >
+    </app-edit-shift>
+  </mat-drawer>
+
+  <mat-drawer
+    class="sm:w-full md:w-3/5 lg:w-3/5 xl:w-3/5 2xl:w-3/5 dark:bg-primary"
+    data-cy="shift-details"
+    [autoFocus]="false"
+    [mode]="'over'"
+    [position]="'end'"
+    #matDrawerShiftDetails
+  >
+    <app-shift-details
+      [viewAs]="viewAs"
+      [connectedVenues]="connectedVenues"
+      (cancelingShift)="deleteShift($event)"
+      (editingShift)="editShift($event)"
+      (releasingShift)="releaseSingleShift($event)"
+      (openingChangelog)="openingChangelog()"
+      (closeSideBar)="closeSideNav('details')"
+      *ngIf="matDrawerShiftDetails.opened"
+    >
+      <!-- (openReleaseRoster)="openReleaseRoster()" -->
+    </app-shift-details>
+  </mat-drawer>
+
+  <!-- <mat-drawer
+    class="w-2/5 dark:bg-primary"
+    [autoFocus]="false"
+    [mode]="'over'"
+    [position]="'end'"
+    #matDrawerShiftRelease
+  >
+    <app-release-roster
+      *ngIf="viewReleaseShifts && matDrawerShiftRelease.opened"
+      [header]="headerRelease"
+      [viewMode]="viewMode"
+      (closeSideNav)="closeSideNav('release') "
+      (releaseShifts)="releaseShifts($event)"
+    >
+    </app-release-roster>
+  </mat-drawer> -->
+
+  <mat-drawer
+    class="w-2/5 dark:bg-primary"
+    [autoFocus]="false"
+    [mode]="'over'"
+    [position]="'end'"
+    #matDrawerShiftChangelog
+  >
+    <app-shift-changelog
+      *ngIf="matDrawerShiftChangelog.opened"
+      (closeSideBar)="closeSideNav('changelog')"
+    >
+    </app-shift-changelog>
+  </mat-drawer>
+
+  <context-menu #eventMenu>
+    <ng-template contextMenuItem (execute)="openEventDetails($event.value)">
+      Details
+    </ng-template>
+    <ng-template
+      contextMenuItem
+      [visible]="showReleaseOnContext"
+      (execute)="releaseSingleShift($event.value)"
+      let-value
+    >
+      Release
+    </ng-template>
+    <ng-template
+      contextMenuItem
+      (execute)="selectShift($event.value)"
+      let-value
+    >
+      {{ value?.selected ? "Unselect" : "Select" }}
+    </ng-template>
+    <!-- /*
+      menu will have
+      select/unselect
+      release
+      copy
+      delete
+      open
+      */ -->
+  </context-menu>
+  <context-menu #emptySpotMenu>
+    <ng-template contextMenuItem (execute)="addShift($event.value)" let-value>
+      Create Shift
+      <!--value should include {day, client, venue} as its expected from the location clicked-->
+    </ng-template>
+    <!-- <ng-template
+      contextMenuItem
+      (execute)="pasteSelected()"
+      [visible]="selectedShifts.length > 0"
+      let-value>
+      Paste Shifts
+    </ng-template> -->
+    <!-- /*
+      menu will have
+      create
+      paste
+      */ -->
+  </context-menu>
+</div>
+<!-- context menu doesnt work properly on month view events -->

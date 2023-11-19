@@ -1,0 +1,55 @@
+<div>
+  <mat-toolbar class="mat-accent bg-primary h-[74px] m-0">
+    <mat-toolbar-row class="flex justify-between items-center">
+      <div class="header-shift text-3xl font-semibold mt-4">Filters</div>
+      <!-- <div>
+        <button mat-icon-button (click)="close()" aria-label="Close dialog">
+          <mat-icon class="font-light">close</mat-icon>
+        </button>
+      </div> -->
+    </mat-toolbar-row>
+  </mat-toolbar>
+  <form class="p-6" action="">
+    <div *ngIf="currentUser==='client'"
+    class="venue flex items-center justify-between">
+      <mat-form-field class="w-full" appearance="fill">
+        <mat-label>Management type</mat-label>
+        <mtx-select
+        [multiple]="true"
+          placeholder="All"
+          [formControl]="managedType"
+          (change)="changeSelect($event, 'managed')"
+          data-cy="management-type-select"
+          >
+        <mtx-option *ngFor="let managedType of managedTypes" [value]="managedType.value">{{managedType.name}}</mtx-option>
+          <!-- <mat-option>Internally Managed</mat-option>
+          <mat-option>Externally Managed</mat-option> -->
+        </mtx-select>
+      </mat-form-field>
+    </div>
+    <div class="client flex items-center justify-between">
+      <mat-form-field class="w-full" appearance="fill">
+        <mat-label>Status</mat-label>
+        <mtx-select
+        [multiple]="true"
+          placeholder="All"
+          [formControl]="select"
+          (change)="changeSelect($event, 'status')"
+          data-cy="status-select"
+        >
+        <mtx-option *ngFor="let select of selects" [value]="select.value">{{select.name}}</mtx-option>
+          <!-- <mat-option>Pending</mat-option>
+          <mat-option>Active</mat-option>
+          <mat-option>Inactive</mat-option>
+          <mat-option>Banned</mat-option>
+          <mat-option>Waiting for approval</mat-option>
+          <mat-option>Failed</mat-option>
+          <mat-option>Verified</mat-option> -->
+        </mtx-select>
+      </mat-form-field>
+    </div>
+    <!--    <mat-checkbox formControlName="viewDraft" (change)="changeView($event, 'viewDraft')" color="primary" class="mt-3">Draft</mat-checkbox>-->
+
+
+  </form>
+</div>

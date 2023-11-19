@@ -1,0 +1,13 @@
+<div class="interviews mt-10">
+  <div class="text-2xl font-bold mb-4">{{status}}</div>
+  <div class="flex">
+    <div class="interview leading-6 p-3 mr-2 flex flex-col w-96 h-32 border border-blue-500 rounded" *ngFor="let interview of interviews">
+      <p class="text-primary">{{interview.name}}</p>
+      <p class="text-gray-400">{{interview.updated | date: 'longDate'}}</p>
+      <p class="text-green-500">{{interview.status}}</p>
+    </div>
+    <div *ngIf="status === 'Interviews'" class="add-interview cursor-pointer text-xl flex items-center text-primary justify-center w-96 h-32 border border-blue-500 rounded">
+      <mat-icon class="text-primary">add</mat-icon>Add Interview
+    </div>
+  </div>
+</div>

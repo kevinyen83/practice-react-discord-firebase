@@ -1,0 +1,20 @@
+<div class="time-sch-item-content flex flex-col flex-nowrap flex-start whitespace-nowrap overflow-hidden" [style]="{
+    'border-left': itemMeta.item.color,
+    'background-color': itemMeta.item.backgroundColor,
+    'color': 'black',
+    'max-height': '82px',
+    'padding-left': itemMeta.item.color == 'none'?'8px': '0'
+  }"
+    [title]="itemMeta.item.tooltip? itemMeta.item.tooltip : ''">
+  <div class="flex py-0.5">
+    <span>{{itemMeta.item.start | date: 'shortTime'}} - {{itemMeta.item.end | date: 'shortTime'}}</span>
+  </div>
+  <div class="flex py-0.5">
+    <mat-icon>location_on</mat-icon>
+    <span>{{itemMeta.item.address}}</span>
+  </div>
+  <div class="flex py-0.5">
+    <mat-icon>account_circle</mat-icon>
+    <span>{{itemMeta.item.client.profile_name}}</span>
+  </div>
+</div>

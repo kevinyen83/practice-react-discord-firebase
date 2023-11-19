@@ -1,0 +1,243 @@
+<div id="flex flex-col flex-auto min-w-0">
+  <!--Header-->
+  <div
+    class="header accent p-20 p-sm-24"
+    fxLayout="column"
+    fxLayoutAlign="start"
+    fxLayout.gt-xs="row"
+    fxLayoutAlign.gt-xs="space-between center"
+  >
+    <!-- APP TITLE -->
+    <div fxLayout="row" fxLayoutAlign="start center">
+      <div class="logo" fxLayout="row" fxLayoutAlign="start center">
+        <div class="logo-icon">
+          <div class="logo-icon mr-16">
+            <mat-icon>library_books</mat-icon>
+          </div>
+        </div>
+        <span class="logo-text h1"> Resources </span>
+      </div>
+    </div>
+    <!-- / APP TITLE -->
+  </div>
+  <!--/Header-->
+
+  <!--Content-->
+  <div class="content">
+    <mat-tab-group>
+      <mat-tab label="Request Connection" style="padding: 25px">
+        <div
+          class="notification"
+          [ngClass]="{ error: classError }"
+          *ngIf="message"
+        >
+          <div>{{ message }}</div>
+          <mat-icon (click)="closeMessage()">close</mat-icon>
+        </div>
+        <mat-form-field class="search" appearance="fill">
+          <input
+            matInput
+            placeholder="Search"
+            [formControl]="searchResources"
+            (input)="searchingResources(searchResources.value)"
+          />
+          <mat-icon>search</mat-icon>
+        </mat-form-field>
+        <app-found-supplier-for-resource
+          *ngIf="foundResources !== []"
+          [resources]="foundResources"
+          (sendConnectionRequests)="sendConnectionRequests($event)"
+        ></app-found-supplier-for-resource>
+      </mat-tab>
+      <mat-tab label="Sent Connection Requests">
+        <div class="example-container mat-elevation-z8">
+          <mat-table [dataSource]="dataSource" matSort>
+            <!-- Number Column -->
+            <ng-container matColumnDef="number">
+              <mat-header-cell *matHeaderCellDef mat-sort-header>
+                №
+              </mat-header-cell>
+              <mat-cell *matCellDef="let row; let index = index">{{
+                index + 1
+              }}</mat-cell>
+            </ng-container>
+
+            <!-- identifier Column -->
+            <ng-container matColumnDef="identifier">
+              <mat-header-cell *matHeaderCellDef mat-sort-header
+                >Identifier</mat-header-cell
+              >
+              <mat-cell *matCellDef="let row">{{ row.identifier }}</mat-cell>
+            </ng-container>
+
+            <!-- name Column -->
+            <ng-container matColumnDef="name">
+              <mat-header-cell *matHeaderCellDef mat-sort-header>
+                Name
+              </mat-header-cell>
+              <mat-cell *matCellDef="let row">{{ row.name }}</mat-cell>
+            </ng-container>
+
+            <!-- tradingname Column -->
+            <ng-container matColumnDef="preferredName">
+              <mat-header-cell *matHeaderCellDef mat-sort-header>
+                Preferred Name</mat-header-cell
+              >
+              <mat-cell *matCellDef="let row">{{ row.preferredName }}</mat-cell>
+            </ng-container>
+
+            <!-- ABN Column -->
+            <ng-container matColumnDef="primaryResourceType">
+              <mat-header-cell *matHeaderCellDef mat-sort-header>
+                Primary Resource Type</mat-header-cell
+              >
+              <mat-cell *matCellDef="let row">{{ row.resourceType }}</mat-cell>
+            </ng-container>
+
+            <!-- Address Column -->
+            <ng-container matColumnDef="primaryAccreditationNumber">
+              <mat-header-cell *matHeaderCellDef mat-sort-header>
+                Primary Accreditation Number</mat-header-cell
+              >
+              <mat-cell *matCellDef="let row">{{ row.licenceNumber }}</mat-cell>
+            </ng-container>
+
+            <!-- State Column -->
+            <ng-container matColumnDef="state">
+              <mat-header-cell *matHeaderCellDef mat-sort-header>
+                State</mat-header-cell
+              >
+              <mat-cell *matCellDef="let row">{{ row.state }}</mat-cell>
+            </ng-container>
+
+            <!-- Connection Status Column -->
+            <ng-container matColumnDef="statusConnection">
+              <mat-header-cell *matHeaderCellDef mat-sort-header>
+                Connection status</mat-header-cell
+              >
+              <mat-cell *matCellDef="let row">{{
+                row.connectionStatus
+              }}</mat-cell>
+            </ng-container>
+
+            <!-- Buttons Column -->
+            <ng-container matColumnDef="button">
+              <mat-header-cell
+                *matHeaderCellDef
+                mat-sort-header
+              ></mat-header-cell>
+              <mat-cell class="buttons-supplier" *matCellDef="let row">
+                <div>
+                  <button
+                    mat-raised-button
+                    color="accent"
+                    type="button"
+                    (click)="cancelConnectionRequest(row)"
+                    class="cancel-button"
+                    aria-label="cancel client"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    mat-raised-button
+                    color="accent"
+                    type="button"
+                    (click)="resendSupplier(row)"
+                    class="resend-button"
+                    aria-label="create supplier"
+                  >
+                    Resend
+                  </button>
+                </div>
+              </mat-cell>
+            </ng-container>
+
+            <mat-header-row
+              *matHeaderRowDef="displayedColumns"
+            ></mat-header-row>
+            <mat-row
+              class="hover:bg-gray-100"
+              *matRowDef="let row; columns: displayedColumns; let index = index"
+            >
+            </mat-row>
+          </mat-table>
+          <p class="total">
+            Total Requests: {{ dataSource.filteredData.length }}
+          </p>
+          <mat-paginator [pageSizeOptions]="[5, 10, 25]"></mat-paginator>
+        </div>
+      </mat-tab>
+      <mat-tab label="Received Connection Requests">
+        <div class="table">
+          <table mat-table [dataSource]="dataReceived" matSort>
+            <!-- ID Column -->
+            <ng-container matColumnDef="number">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header>№</th>
+              <td mat-cell *matCellDef="let row; let index = index">
+                {{ index + 1 }}
+              </td>
+            </ng-container>
+
+            <!-- Progress Column -->
+            <ng-container matColumnDef="name">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header>Name</th>
+              <td mat-cell *matCellDef="let row">
+                {{ row.name }}
+              </td>
+            </ng-container>
+
+            <!-- Name Column -->
+            <ng-container matColumnDef="preferredName">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header>
+                Preferred Name
+              </th>
+              <td mat-cell *matCellDef="let row">
+                {{ row.preferredName }}
+              </td>
+            </ng-container>
+
+            <!-- Color Column -->
+            <ng-container matColumnDef="primaryResourceType">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header>
+                Primary Resource Type
+              </th>
+              <td mat-cell *matCellDef="let row">
+                {{ row.resourceType }}
+              </td>
+            </ng-container>
+
+            <ng-container matColumnDef="primaryAccreditationNumber">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header>
+                Primary Accreditation Number
+              </th>
+              <td mat-cell *matCellDef="let row">
+                {{ row.licenceNumber }}
+              </td>
+            </ng-container>
+
+            <ng-container matColumnDef="state">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header>State</th>
+              <td mat-cell *matCellDef="let row">
+                {{ row.state }}
+              </td>
+            </ng-container>
+
+            <ng-container matColumnDef="sentBy">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header>Sent By</th>
+              <td mat-cell *matCellDef="let row"></td>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="displayedColumnsReceived"></tr>
+            <tr
+              mat-row
+              *matRowDef="let row; columns: displayedColumnsReceived"
+            ></tr>
+          </table>
+
+          <mat-paginator [pageSizeOptions]="[5, 10, 25, 100]"></mat-paginator>
+        </div>
+      </mat-tab>
+    </mat-tab-group>
+  </div>
+  <!--Content-->
+</div>

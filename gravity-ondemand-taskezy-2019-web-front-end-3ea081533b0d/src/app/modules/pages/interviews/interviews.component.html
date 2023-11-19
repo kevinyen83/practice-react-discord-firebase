@@ -1,0 +1,159 @@
+<div class="flex flex-col flex-auto min-w-0">
+  <div
+    class="header accent text-white p-10 p-sm-24 bg-primary"
+    fxLayout="column"
+    fxLayoutAlign="start"
+    fxLayout.gt-xs="row"
+    fxLayoutAlign.gt-xs="space-between center"
+  >
+    <div class="header-content">
+      <!-- APP TITLE -->
+      <div fxLayout="row" class="row">
+        <div
+          class="logo flex text-3xl"
+          fxLayout="row"
+          fxLayoutAlign="start center"
+        >
+          <div class="logo-icon flex items-center mr-16">
+            <img src="assets/images/icons/web_Interviews.svg" />
+          </div>
+          <span data-cy="logo-text" class="logo-text h1"> Interviews </span>
+        </div>
+
+        <div class="row-bottom flex justify-end">
+          <div
+            fxFlex.gt-sm="1 1 100%"
+            fxFlex.lt-md="1 1 100%"
+            fxLayout.gt-xs="row wrap"
+            fxLayout.lt-sm="column"
+            fxFlexOrder="3"
+            fxLayoutAlign.gt-xs="end start"
+            class="action-bar"
+          >
+            <button
+              mat-raised-button
+              id="addAction-button"
+              *ngIf="selectedTabIndex !== 2"
+              (click)="addAction()"
+            >
+              {{ getBtnLabel() }}<mat-icon>add</mat-icon>
+            </button>
+          </div>
+        </div>
+      </div>
+      <!-- / APP TITLE -->
+    </div>
+  </div>
+  <!--/Header-->
+
+  <!--Content-->
+  <mat-tab-group
+    [(selectedIndex)]="selectedTabIndex"
+    (selectedTabChange)="onTabChanged($event)"
+  >
+    <mat-tab label="Interviews">
+      <div class="interviews-content">
+        <div class="table-of-interviews">
+          <mat-table
+            [dataSource]="dataSource"
+            matSort
+            (matSortChange)="sortData($event)"
+          >
+            <!-- Email Column -->
+            <ng-container matColumnDef="email">
+              <mat-header-cell
+                mat-header-cell
+                *matHeaderCellDef
+                mat-sort-header
+              >
+                Email
+              </mat-header-cell>
+              <mat-cell mat-cell *matCellDef="let row">
+                {{ row.email }}
+              </mat-cell>
+            </ng-container>
+
+            <!-- Template Column -->
+            <ng-container matColumnDef="template">
+              <mat-header-cell
+                mat-header-cell
+                *matHeaderCellDef
+                mat-sort-header
+              >
+                Template Used
+              </mat-header-cell>
+              <mat-cell mat-cell *matCellDef="let row">
+                {{ row.template }}
+              </mat-cell>
+            </ng-container>
+
+            <!-- Status Column -->
+            <ng-container matColumnDef="status">
+              <mat-header-cell
+                mat-header-cell
+                *matHeaderCellDef
+                mat-sort-header
+              >
+                Status</mat-header-cell
+              >
+              <mat-cell mat-cell *matCellDef="let row">
+                {{ row.status }}
+              </mat-cell>
+            </ng-container>
+
+            <ng-container matColumnDef="updated">
+              <mat-header-cell
+                *matHeaderCellDef
+                mat-sort-header="activeLink"
+                class="link-container"
+                >Updated</mat-header-cell
+              >
+              <mat-cell
+                fxLayout="row"
+                fxLayoutAlign="space-between center"
+                *matCellDef="let row"
+                class="link-container"
+              >
+                {{ row.updated | date: "medium" }}
+              </mat-cell>
+            </ng-container>
+
+            <mat-header-row
+              mat-header-row
+              *matHeaderRowDef="displayedColumns"
+            ></mat-header-row>
+            <mat-row
+              mat-row
+              class="hover:bg-gray-100"
+              *matRowDef="let row; columns: displayedColumns"
+            >
+            </mat-row>
+          </mat-table>
+          <p class="total pl-3 text-gray-400 bg-white">
+            Total Interviews:
+            {{ dataSource?.data ? dataSource.data.length : 0 }}
+          </p>
+          <mat-paginator
+            #paginator
+            [pageSizeOptions]="[5, 10, 25, 100]"
+          ></mat-paginator>
+        </div>
+      </div>
+    </mat-tab>
+    <mat-tab label="Templates">
+      <app-templates-interviews
+        *ngIf="viewTemplateList"
+        (updateTemplate)="handleUpdateTemplate($event)"
+      ></app-templates-interviews>
+      <app-templates-interview-form
+        [templateItem]="templateItem"
+        *ngIf="!viewTemplateList"
+        (formClose)="handleCloseTemplateForm()"
+      ></app-templates-interview-form>
+    </mat-tab>
+    <mat-tab label="Completed">
+      <app-completed-interviews></app-completed-interviews>
+    </mat-tab>
+  </mat-tab-group>
+  <!--Content-->
+</div>

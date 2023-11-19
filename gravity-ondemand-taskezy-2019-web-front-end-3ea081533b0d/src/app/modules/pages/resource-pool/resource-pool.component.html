@@ -1,0 +1,229 @@
+<div class="flex flex-col flex-auto min-w-0">
+  <!--Header-->
+  <div
+    class="header accent text-white p-10 p-sm-24 bg-primary"
+    fxLayout="column"
+    fxLayoutAlign="start"
+    fxLayout.gt-xs="row"
+    fxLayoutAlign.gt-xs="space-between center"
+  >
+    <!-- APP TITLE -->
+    <div fxLayout="row" fxLayoutAlign="start center">
+      <div
+        class="logo flex text-3xl"
+        fxLayout="row"
+        fxLayoutAlign="start center"
+      >
+        <div class="logo-icon">
+          <div class="logo-icon mr-16">
+            <mat-icon class="text-white">assignment_ind</mat-icon>
+          </div>
+        </div>
+        <span class="logo-text h1"> Resource Pool </span>
+      </div>
+    </div>
+    <!-- / APP TITLE -->
+  </div>
+  <!--/Header-->
+
+  <div class="content p-12">
+    <mat-form-field class="search w-full" appearance="fill">
+      <input
+        matInput
+        placeholder="Search"
+        name="searchResources"
+        [formControl]="searchResources"
+      />
+      <mat-icon class="absolute right-1.5 top-2.5">search</mat-icon>
+    </mat-form-field>
+
+    <div class="resource-pool-filters">
+      <mat-accordion>
+        <mat-expansion-panel>
+          <mat-expansion-panel-header>
+            <mat-panel-title class="h2"> Filters </mat-panel-title>
+          </mat-expansion-panel-header>
+
+          <div class="card">
+            <form action="" [formGroup]="resourcePoolForm">
+              <mat-form-field class="name" appearance="fill">
+                <mat-label>Name</mat-label>
+                <input
+                  matInput
+                  name="name"
+                  class="sub-input-field"
+                  formControlName="name"
+                />
+              </mat-form-field>
+
+              <mat-form-field class="accreditation" appearance="fill">
+                <mat-label>Accreditation</mat-label>
+                <mat-select
+                  placeholder="accreditation"
+                  name="accreditation"
+                  formControlName="accreditation"
+                >
+                  <mat-option value="Security Licence"
+                    >Security Licence</mat-option
+                  >
+                  <mat-option value="RSA Licence">RSA Licence</mat-option>
+                  <mat-option value="RSG Licence">RSG Licence</mat-option>
+                  <mat-option value="RSA Privacy Licence"
+                    >RSA Privacy Licence</mat-option
+                  >
+                  <mat-option value="Liquor Licence">Liquor Licence</mat-option>
+                  <mat-option value="Driver Licence">Driver Licence</mat-option>
+                  <mat-option value="Other Individual Accreditation"
+                    >Other Individual Accreditation</mat-option
+                  >
+                  <mat-option value="Other Organisation Accreditation"
+                    >Other Organisation Accreditation</mat-option
+                  >
+                </mat-select>
+              </mat-form-field>
+
+              <mat-form-field class="rating" appearance="fill">
+                <mat-label>Rating</mat-label>
+                <mat-select
+                  placeholder="Rating"
+                  name="rating"
+                  formControlName="rating"
+                >
+                  <mat-option value="1">1</mat-option>
+                  <mat-option value="2">2</mat-option>
+                  <mat-option value="3">3</mat-option>
+                  <mat-option value="4">4</mat-option>
+                  <mat-option value="5">5</mat-option>
+                </mat-select>
+              </mat-form-field>
+            </form>
+            <div class="h2">
+              <button
+                mat-raised-button
+                color="primary"
+                type="button"
+                class="apply-button"
+                aria-label="Apply"
+                (click)="handleFilter()"
+              >
+                Apply Filter
+              </button>
+            </div>
+          </div>
+        </mat-expansion-panel>
+      </mat-accordion>
+    </div>
+    <div class="resource-pool-table mt-5">
+      <mat-table
+        [dataSource]="dataSource"
+        matSort
+        (matSortChange)="sortData($event)"
+      >
+        <!-- Avatar Column -->
+        <ng-container matColumnDef="avatar">
+          <mat-header-cell mat-header-cell *matHeaderCellDef mat-sort-header
+            >Avatar</mat-header-cell
+          >
+          <mat-cell mat-cell *matCellDef="let row">
+            <div
+              class="avatar w-12 h-12 border-2 border-gray-100 rounded-full overflow-hidden"
+            >
+              <img
+                class="photo w-full"
+                *ngIf="!row.detail.avatar"
+                [src]="defaultAvatar"
+              />
+              <img [src]="row.detail.avatar" *ngIf="row.detail.avatar" />
+            </div>
+          </mat-cell>
+        </ng-container>
+
+        <!-- Name Column -->
+        <ng-container matColumnDef="name">
+          <mat-header-cell mat-header-cell *matHeaderCellDef mat-sort-header
+            >Name</mat-header-cell
+          >
+          <mat-cell mat-cell *matCellDef="let row">
+            {{ row.detail.name }}
+          </mat-cell>
+        </ng-container>
+
+        <!-- Accreditation Column -->
+        <ng-container matColumnDef="accreditation">
+          <mat-header-cell mat-header-cell *matHeaderCellDef mat-sort-header>
+            Accreditation
+          </mat-header-cell>
+          <mat-cell mat-cell *matCellDef="let row">
+            <span *ngFor="let accred of row.accreditation">{{
+              accred.accreditation
+            }}</span>
+          </mat-cell>
+        </ng-container>
+
+        <!-- Address Column -->
+        <ng-container matColumnDef="address">
+          <mat-header-cell mat-header-cell *matHeaderCellDef mat-sort-header>
+            Address
+          </mat-header-cell>
+          <mat-cell mat-cell *matCellDef="let row">
+            <span *ngFor="let addr of row.addresses">{{ addr.address }}</span>
+          </mat-cell>
+        </ng-container>
+
+        <!-- Rating Column -->
+        <ng-container matColumnDef="rating">
+          <mat-header-cell mat-header-cell *matHeaderCellDef mat-sort-header>
+            Rating</mat-header-cell
+          >
+          <mat-cell mat-cell *matCellDef="let row">
+            <mat-icon *ngFor="let n of counter(row.rating)">star_rate</mat-icon>
+          </mat-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="menu">
+          <mat-header-cell
+            *matHeaderCellDef
+            mat-sort-header="activeLink"
+            class="link-container"
+          ></mat-header-cell>
+          <mat-cell
+            fxLayout="row"
+            fxLayoutAlign="space-between center"
+            *matCellDef="let row"
+            class="link-container flex justify-end"
+          >
+            <mat-icon
+              class="menu cursor-pointer"
+              [matMenuTriggerFor]="beforeMenu"
+              >more_vert</mat-icon
+            >
+            <mat-menu #beforeMenu="matMenu" xPosition="before">
+              <button mat-menu-item (click)="toInvite(row)">Invite</button>
+              <button mat-menu-item (click)="toInterview(row)">
+                Interview
+              </button>
+            </mat-menu>
+          </mat-cell>
+        </ng-container>
+
+        <mat-header-row
+          mat-header-row
+          *matHeaderRowDef="displayedColumns"
+        ></mat-header-row>
+        <mat-row
+          class="hover:bg-gray-100 p-2"
+          mat-row
+          *matRowDef="let row; columns: displayedColumns"
+        >
+        </mat-row>
+      </mat-table>
+      <p class="total pl-3 text-gray-400 bg-white">
+        Total Resources: {{ dataSource?.data ? dataSource.data.length : 0 }}
+      </p>
+      <mat-paginator
+        #paginator
+        [pageSizeOptions]="[5, 10, 25, 100]"
+      ></mat-paginator>
+    </div>
+  </div>
+</div>

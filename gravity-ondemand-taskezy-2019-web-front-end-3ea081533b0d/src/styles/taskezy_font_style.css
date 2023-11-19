@@ -1,0 +1,172 @@
+@font-face {
+  font-family: 'taskezy';
+  src:  url('../assets/fonts/taskezy/taskezy.eot?go2eyn');
+  src:  url('../assets/fonts/taskezy/taskezy.eot?go2eyn#iefix') format('embedded-opentype'),
+    url('../assets/fonts/taskezy/taskezy.ttf?go2eyn') format('truetype'),
+    url('../assets/fonts/taskezy/taskezy.woff?go2eyn') format('woff'),
+    url('../assets/fonts/taskezy/taskezy.svg?go2eyn#taskezy') format('svg');
+  font-weight: normal;
+  font-style: normal;
+  font-display: block;
+}
+
+[class^="te_"], [class*=" te_"] {
+  /* use !important to prevent issues with browser extensions that change fonts */
+  font-family: 'taskezy' !important;
+  speak: never;
+  font-style: normal;
+  font-weight: normal;
+  font-variant: normal;
+  text-transform: none;
+  line-height: 1;
+
+  /* Better Font Rendering =========== */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.te_mob_accepted:before {
+  content: "\e900";
+  color: #14b8a6;
+}
+.te_mob_break-duration .path1:before {
+  content: "\e901";
+  color: rgb(21, 61, 89);
+}
+.te_mob_break-duration .path2:before {
+  content: "\e902";
+  margin-left: -1em;
+  color: rgb(255, 255, 255);
+}
+.te_mob_calendarGrey:before {
+  content: "\e903";
+}
+.te_mob_end-time:before {
+  content: "\e904";
+  color: #153d59;
+}
+.te_mob_HomeBlue:before {
+  content: "\e905";
+}
+.te_mob_icon_attetion:before {
+  content: "\e906";
+  color: #369be5;
+}
+.te_mob_icon_connections:before {
+  content: "\e907";
+}
+.te_mob_icon_fab:before {
+  content: "\e908";
+}
+.te_mob_icon_patron-number:before {
+  content: "\e909";
+}
+.te_mob_icon_reports:before {
+  content: "\e90a";
+  color: #369be5;
+}
+.te_mob_icon_supervising:before {
+  content: "\e90b";
+}
+.te_mob_icon_venue-manager:before {
+  content: "\e90c";
+  color: #369be5;
+}
+.te_mob_icon_venue:before {
+  content: "\e90d";
+  color: #369be5;
+}
+.te_mob_IncidentGray:before {
+  content: "\e90e";
+}
+.te_mob_pending:before {
+  content: "\e90f";
+  color: #face85;
+}
+.te_mob_sign-off:before {
+  content: "\e910";
+  color: #153d59;
+}
+.te_mob_sign-on:before {
+  content: "\e911";
+  color: #153d59;
+}
+.te_mob_start-time .path1:before {
+  content: "\e912";
+  color: rgb(21, 61, 89);
+}
+.te_mob_start-time .path2:before {
+  content: "\e913";
+  margin-left: -1em;
+  color: rgb(255, 255, 255);
+}
+.te_mob_total-hours .path1:before {
+  content: "\e914";
+  color: rgb(21, 61, 89);
+}
+.te_mob_total-hours .path2:before {
+  content: "\e915";
+  margin-left: -1em;
+  color: none;
+}
+.te_mob_total-hours .path3:before {
+  content: "\e916";
+  margin-left: -1em;
+  color: rgb(255, 255, 255);
+}
+.te_web_assessment:before {
+  content: "\e917";
+}
+.te_web_clients:before {
+  content: "\e918";
+  color: #fff;
+}
+.te_web_dashboard:before {
+  content: "\e919";
+}
+.te_web_Details:before {
+  content: "\e91a";
+}
+.te_web_equipment-register-icon:before {
+  content: "\e91b";
+}
+.te_web_incident-report:before {
+  content: "\e91c";
+}
+.te_web_Interviews:before {
+  content: "\e91d";
+  color: #fff;
+}
+.te_web_item-code:before {
+  content: "\e91e";
+  color: #fff;
+}
+.te_web_logs:before {
+  content: "\e91f";
+  color: #fff;
+}
+.te_web_members:before {
+  content: "\e920";
+  color: #fff;
+}
+.te_web_resource:before {
+  content: "\e921";
+}
+.te_web_roster:before {
+  content: "\e922";
+  color: #fff;
+}
+.te_web_supplier:before {
+  content: "\e923";
+}
+.te_web_task-Checklist:before {
+  content: "\e924";
+  color: #fff;
+}
+.te_web_timesheet-register:before {
+  content: "\e925";
+  color: #fff;
+}
+.te_web_venue:before {
+  content: "\e926";
+}

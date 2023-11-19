@@ -1,0 +1,46 @@
+<div class="bg-white rounded-2xl p-2">
+
+  <div class="list-venues mt-5 w-full flex justify-between">
+    <div class="list mr-3 flex flex-col w-1/3 overflow-y-auto h-full">
+      <div *ngIf="venues && venues.length > 0">
+        <div
+          class="card mb-2 rounded-2xl p-4 bg-gray-200 hover:bg-gray-300 cursor-pointer"
+          (click)="editVenue(venue)"
+          *ngFor="let venue of venues"
+        >
+          <h1 class="font-bold text-lg">{{ venue?.name }}</h1>
+          <h2 class="font-bold text-base">{{ venue?.type }}</h2>
+
+          <div class="flex justify-between">
+            <div class="description mb-4">
+              <p *ngIf="venue?.licenceName">
+                {{ venue?.licenceName }} {{ venue?.licence }}
+              </p>
+              <p *ngIf="venue?.address">
+                {{ venue?.address?.street_location }}
+              </p>
+              <!-- <p>Venue manager: Mike Morison</p> -->
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="font-light italic" *ngIf="venues.length == 0">
+        You have no connected venues
+      </div>
+    </div>
+    <div *ngIf="venues && venues.length > 0" class="google-map w-2/3 h-180">
+      <google-map
+        (mapInitialized)="onMapReady($event)"
+        height="510px"
+        width="100%"
+        [options]="mapOptions"
+      >
+        <map-marker
+          *ngFor="let marker of mapMarkers"
+          [position]="marker.position"
+          [options]="marker.options"
+        ></map-marker>
+      </google-map>
+    </div>
+  </div>
+</div>

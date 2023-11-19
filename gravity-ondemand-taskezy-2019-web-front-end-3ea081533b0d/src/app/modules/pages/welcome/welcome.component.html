@@ -1,0 +1,319 @@
+<div class="w-full" *ngIf="!asResource && !viewConnections">
+  <app-auth-layout
+    class="w-full"
+    [headerName]="'not-asResource-or-viewConnections-welcome-header'"
+    [showHeader]="false"
+    [circles]="true"
+    [status]="'welcome'"
+    [showBack]="false"
+    [asResource]="asResource"
+    [hasInvites]="hasInvites"
+    [showTitle]="true"
+    (toBack)="imAResource()"
+    *ngIf="!viewVerifyingNow && !viewAutorityVerification"
+  >
+    <div class="welcome h-full">
+      <p class="text-3xl mb-8 text-black">
+        Welcome
+        <span class="font-medium"
+          >{{ currentUser?.firstName | titlecase }}!</span
+        >
+      </p>
+      <!--      <p class="text-2xl font-normal text-black">You don’t have a connection request.</p>-->
+      <!--      <p class="text-2xl font-normal text-black mb-4">Would you like to continue and create a Primary Account?</p>-->
+      <p class="text-2xl font-normal text-black mb-8">
+        Select one of the active options
+      </p>
+
+      <button
+        mat-flat-button
+        color="primary"
+        [disabled]="!invitations.length"
+        data-cy="view-connections"
+        class="w-full m-auto rounded-full mt-2"
+        (click)="goToMyConnections()"
+      >
+        View my connections: {{ invitations?.length }}
+      </button>
+
+      <button
+        mat-flat-button
+        color="primary"
+        data-cy="create-primary-account"
+        class="w-full m-auto rounded-full mt-2"
+        (click)="createPrimary()"
+      >
+        Create Primary Account
+      </button>
+
+      <button
+        mat-flat-button
+        color="primary"
+        data-cy="here-as-resource"
+        class="w-full m-auto rounded-full mt-2"
+        (click)="imAResource()"
+      >
+        I'm here as a Resource
+      </button>
+
+      <!--      <mat-checkbox data-cy="checkbox-terms" class="text-zinc-400 font-normal mt-6" [formControl]="privacyConditions">-->
+      <!--        Creating an account means you agree with our-->
+      <!--        <a class="text-primary underline" (click)="openModal('terms_conditions', $event)">Terms & Conditions</a>-->
+      <!--        and <a class="text-primary underline" (click)="openModal('privacy_policy', $event)">Privacy Policy</a>-->
+      <!--      </mat-checkbox>-->
+      <p
+        data-cy="notification-error"
+        class="text-red-400 notification-error mt-4"
+        *ngIf="notification"
+      >
+        {{ notification | async }}
+      </p>
+
+      <div class="flex flex-col mt-5">
+        <div class="self-center">
+          <button mat-button color="primary" (click)="signOut()">
+            Sign Out
+          </button>
+        </div>
+      </div>
+    </div>
+  </app-auth-layout>
+</div>
+
+<div class="w-full" *ngIf="viewConnections && !viewAutorityVerification">
+  <app-auth-layout
+    class="w-full"
+    [headerName]="'pending-connections-header'"
+    [showHeader]="false"
+    [circles]="true"
+    [status]="'connections'"
+    [noSplit]="true"
+    [showBack]="true"
+    [name]="'Pending connections'"
+    [asResource]="asResource"
+    (toBack)="backFromConnections()"
+  >
+    <p class="font-medium text-xl" data-cy="pending-connection-description">
+      These are your pending account connection requests. You have been invited
+      to the following role(s):
+    </p>
+
+    <div class="cards flex justify-center items-center">
+      <button
+        mat-icon-button
+        class="mr-2"
+        data-cy="arrow-left"
+        *ngIf="currentPage > 0"
+        (click)="getList(currentPage - 1)"
+      >
+        <mat-icon>arrow_back</mat-icon>
+      </button>
+      <div *ngFor="let invite of currentOneList; let i = index">
+        <div
+          *ngIf="!invite.hidden"
+          class="card border-2 w-[250px] h-[400px] flex flex-col rounded mt-5 mr-2 p-4"
+          [ngClass]="{
+            'border-red-500': invite?.designCard === 'decline',
+            'border-green-400': invite?.designCard === 'accept'
+          }"
+        >
+          <div class="header-of-card text-3xl text-primary font-medium" data-cy="header-invite-role">
+            {{ invite.role }}
+          </div>
+
+          <div class="card-logo m-auto">
+            <div
+              class="flex overflow-hidden w-[100px] h-[100px] m-auto border-2 rounded-full"
+            >
+              <img
+                class="photo avatar"
+                data-cy="invite-photo-avatar"
+                [src]="invite?.account_logo || defaultAvatar"
+              />
+            </div>
+            <div data-cy="invite-account-name">
+              {{ invite?.account_name }}
+            </div>
+            <div data-cy="invite-account-abn">
+              {{
+                invite?.account_detail?.abn || invite?.sub_account_detail?.abn
+              }}
+            </div>
+            <div class="mt-2" *ngIf="invite?.primary_account_detail">
+              <div>Invited as a {{ invite.sub_account_type }} of</div>
+              <div data-cy="invite-primary-account-detail-name">
+                {{
+                  invite?.primary_account_detail?.tradingname ||
+                    invite?.primary_account_detail?.name
+                }}
+              </div>
+            </div>
+          </div>
+          <div *ngIf="invite.status == 'Pending'">
+            <div class="card-buttons flex justify-between">
+              <button
+                mat-raised-button
+                [disabled]="invite?.spinner"
+                [color]="invite?.designCard === 'decline' ? 'primary' : ''"
+                data-cy="decline-invite"
+                [ngClass]="{
+                  'bg-red-500': invite?.designCard === 'decline'
+                }"
+                (click)="declineInvite(invite, i)"
+              >
+                <div class="flex items-center">
+                  <div *ngIf="invite?.designCard === 'default'">Decline</div>
+                  <div *ngIf="invite?.designCard === 'decline'">
+                    <mat-icon>highlight_off</mat-icon>
+                    <span>Declined</span>
+                  </div>
+                </div>
+              </button>
+
+              <button
+                mat-raised-button
+                data-cy="accept-invite"
+                color="primary"
+                [disabled]="invite?.spinner"
+                [ngClass]="{
+                  'bg-green-500': invite?.designCard === 'accept'
+                }"
+                (click)="acceptInvite(invite, i)"
+              >
+                <div class="flex items-center">
+                  <div *ngIf="invite?.designCard === 'default'">Accept</div>
+                  <div *ngIf="invite?.designCard === 'accept'">
+                    <mat-icon>check_circle</mat-icon>
+                    <span>Accepted</span>
+                  </div>
+                </div>
+              </button>
+            </div>
+
+            <button
+              mat-button
+              class="w-full mt-2"
+              data-cy="decide-later-invite"
+              (click)="hideInvite(invite, i)"
+            >
+              <div class="text-zinc-400">Decide later</div>
+            </button>
+          </div>
+          <div
+            class="text-zinc-400 text-xl font-medium"
+            *ngIf="invite.status == 'Waiting For Approval'"
+          >
+            Authority is being Verified
+          </div>
+          <div
+            class="text-red-400 text-xl font-medium"
+            *ngIf="invite.status == 'Failed'"
+          >
+            Authority has been Declined
+          </div>
+          <div
+            class="text-green-400 text-xl font-medium"
+            *ngIf="invite.status == 'Verified'"
+          >
+            Authority is Verified.<br />
+            Please confirm to become the owner.
+            <button
+              mat-raised-button
+              color="primary"
+              class="w-full mt-2"
+              data-cy="confirm-invite"
+              (click)="confirmExternal(invite, i)"
+            >
+              <div>Confirm</div>
+            </button>
+          </div>
+          <div
+            class="text-red-400 text-xl font-medium"
+            *ngIf="invite.status == 'Declined'"
+          >
+            You declined this invite
+          </div>
+        </div>
+      </div>
+      <button
+        mat-icon-button
+        class="ml-2"
+        data-cy="arrow-right"
+        *ngIf="invitations.length > 3 && currentPage < resultChunks.length - 1"
+        (click)="getList(currentPage + 1)"
+      >
+        <mat-icon>arrow_forward</mat-icon>
+      </button>
+    </div>
+  </app-auth-layout>
+</div>
+
+<div class="w-full" *ngIf="asResource">
+  <app-auth-layout
+    class="w-full"
+    [headerName]="'welcome-asResource-header'"
+    [showHeader]="false"
+    [circles]="true"
+    [status]="'welcome'"
+    [showBack]="true"
+    [asResource]="asResource"
+    (toBack)="imAResource()"
+  >
+    <div>
+      <p class="text-3xl mb-8 text-black">I'm here as a Resource...</p>
+      <p class="text-xl font-normal leading-5">
+        Then there is not much for you to do here - as a Resource you can only
+        use TaskEzy through the TaskEzy mobile app
+      </p>
+
+      <div class="flex flex-col mt-5">
+        <div class="self-center">
+          <button mat-button color="primary" (click)="signOut()">
+            Sign Out
+          </button>
+        </div>
+      </div>
+    </div>
+  </app-auth-layout>
+</div>
+
+<app-auth-layout
+  class="w-full"
+  [headerName]="'authority-verification-header'"
+  [name]="'Authority verification'"
+  [circles]="true"
+  [status]="'authority-verification'"
+  [noSplit]="true"
+  [showHeader]="true"
+  [showBack]="false"
+  [showTitle]="false"
+  *ngIf="viewAutorityVerification"
+>
+  <div class="authority-verification">
+    <app-authority-verification
+      [profile]="currentUser"
+      [invitation]="invitation"
+      [status]="'external-manager'"
+      (back)="resetAuthorityVerification()"
+    ></app-authority-verification>
+  </div>
+</app-auth-layout>
+
+<app-auth-layout
+  class="w-full"
+  [headerName]="'verifying-now-header'"
+  [name]="'Verifying now'"
+  [circles]="true"
+  [status]="'verifying-now'"
+  [noSplit]="false"
+  [showHeader]="false"
+  [showBack]="false"
+  [showTitle]="false"
+  *ngIf="viewVerifyingNow"
+>
+  <div class="verifying-now">
+    <app-verifying-now></app-verifying-now>
+  </div>
+</app-auth-layout>
+
+<!--INVITES NEED TO GO HERE SOMEHOW-->

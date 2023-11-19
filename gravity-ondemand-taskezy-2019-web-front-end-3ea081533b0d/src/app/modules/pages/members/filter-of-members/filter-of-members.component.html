@@ -1,0 +1,42 @@
+<div>
+  <form action="" class="flex justify-between" [formGroup]="filterMembersForm">
+
+   <div class="flex items-center w-2/3">
+
+     <mat-form-field class="search-by w-1/3">
+       <!--      <mat-label>Search by</mat-label>-->
+       <mat-select placeholder="Search by" formControlName="searchBy">
+         <mat-option value="Name">Name</mat-option>
+         <mat-option value="Role">Role</mat-option>
+       </mat-select>
+     </mat-form-field>
+
+     <mat-form-field class="select ml-2 w-1/3">
+       <mat-select placeholder="Select" formControlName="select">
+         <!--        <mat-option value="Name">Name</mat-option>-->
+       </mat-select>
+     </mat-form-field>
+
+     <button mat-raised-button
+             color="primary"
+             type="button"
+             class="ml-2 mb-4 rounded-full"
+             aria-label="search">
+       Search
+     </button>
+
+   </div>
+
+    <button mat-raised-button
+            color="primary"
+            type="button"
+            (click)="toAddMember()"
+            class="ml-2 p-7 rounded-full"
+            aria-label="search">
+      <mat-icon>add</mat-icon>
+      Add member
+    </button>
+
+  </form>
+
+</div>

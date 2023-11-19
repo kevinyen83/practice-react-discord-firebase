@@ -1,0 +1,94 @@
+<!-- Navigation -->
+<fuse-vertical-navigation
+  class="dark bg-sky-900 print:hidden"
+  [mode]="isScreenSmall ? 'over' : 'side'"
+  [name]="'mainNavigation'"
+  [navigation]="navigation.default"
+  [opened]="!isScreenSmall"
+>
+  <!-- Navigation header hook -->
+  <ng-container fuseVerticalNavigationHeader>
+    <div class="flex justify-center max-w-[200px]">
+      <!-- Logo -->
+      <div class="flex p-6 items-center justify-center">
+        <img src="assets/images/logo/taskezy_1.svg" />
+      </div>
+      <!-- Components -->
+      <div class="flex items-center ml-auto">
+        <!-- <notifications [notifications]="data.notifications"></notifications> -->
+        <!-- <user-menu [showAvatar]="false"></user-menu> -->
+      </div>
+    </div>
+    <!-- User -->
+    <!-- <div class="flex flex-col items-center w-full p-4">
+            <div class="relative w-24 h-24">
+                <img
+                    class="w-full h-full rounded-full"
+                    *ngIf="user.avatar"
+                    [src]="user.avatar"
+                    alt="User avatar">
+                <mat-icon
+                    class="icon-size-24"
+                    *ngIf="!user.avatar"
+                    [svgIcon]="'heroicons_solid:user-circle'"></mat-icon>
+            </div>
+            <div class="flex flex-col items-center justify-center w-full mt-6">
+                <div class="w-full whitespace-nowrap text-ellipsis overflow-hidden text-center leading-normal font-medium">
+                    {{user.id ? user.given_names + ' ' + user.last_name : ''}}
+                </div>
+                <div class="w-full mt-0.5 whitespace-nowrap text-ellipsis overflow-hidden text-center text-md leading-normal font-medium text-secondary">
+                    {{user.id && user.emails && user.emails[0] ? user.emails[0].address : ''}}
+                </div>
+            </div>
+        </div> -->
+    <!-- Account -->
+    <div class="flex justify-left ml-4">
+      <primary-account-menu></primary-account-menu>
+    </div>
+  </ng-container>
+  <!-- Navigation footer hook -->
+  <ng-container fuseVerticalNavigationContentFooter>
+    <div
+      class="flex flex-col flex-0 items-center justify-center h-16 pr-6 pl-2 mt-2 mb-4 opacity-12"
+    >
+      <img class="max-w-36" src="assets/images/logo/taskezy_1.svg" />
+      <div class="flex items-center mt-0.5">
+        <p class="font-medium">{{ version }}</p>
+      </div>
+    </div>
+  </ng-container>
+</fuse-vertical-navigation>
+
+<!-- Wrapper -->
+<div class="flex flex-col flex-auto w-full min-w-0">
+  <!-- Header -->
+  <div
+    class="relative flex flex-0 items-center w-full h-16 px-4 md:px-6 z-49 shadow dark:shadow-none dark:border-b bg-card dark:bg-transparent print:hidden"
+  >
+    <!-- Navigation toggle button -->
+    <button mat-icon-button (click)="toggleNavigation('mainNavigation')">
+      <mat-icon [svgIcon]="'heroicons_outline:menu'"></mat-icon>
+    </button>
+    <!-- Components -->
+    <div class="flex items-center pl-2 ml-auto space-x-2">
+      <!-- <fuse-fullscreen></fuse-fullscreen>
+            <search [appearance]="'bar'"></search>
+            <shortcuts [shortcuts]="data.shortcuts"></shortcuts>
+            <messages [messages]="data.messages"></messages> -->
+      <user-menu [showName]="true"></user-menu>
+    </div>
+    <fuse-loading-bar></fuse-loading-bar>
+  </div>
+
+  <!-- Content -->
+  <div class="flex flex-col flex-auto">
+    <!-- *ngIf="true" hack is required here for router-outlet to work correctly.
+             Otherwise, layout changes won't be registered and the view won't be updated! -->
+    <router-outlet *ngIf="true"></router-outlet>
+  </div>
+
+  <!-- Footer -->
+  <!--<div class="relative flex flex-0 items-center justify-start w-full h-14 px-4 md:px-6 z-49 border-t bg-card dark:bg-transparent print:hidden">
+        <span class="font-medium text-secondary">Fuse &copy; {{currentYear}}</span>
+    </div>-->
+</div>

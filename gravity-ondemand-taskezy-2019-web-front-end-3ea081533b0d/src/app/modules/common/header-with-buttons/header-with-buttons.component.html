@@ -1,0 +1,324 @@
+<div
+  class="header accent text-white p-10 p-sm-24 bg-primary"
+  fxLayout="column"
+  fxLayoutAlign="start"
+  fxLayout.gt-xs="row"
+  fxLayoutAlign.gt-xs="space-between center"
+>
+  <!-- APP TITLE -->
+  <div fxLayout="row" fxLayoutAlign="start center">
+    <div
+      class="logo flex justify-between"
+      fxLayout="row"
+      fxLayoutAlign="start center"
+    >
+      <div class="flex">
+        <div
+          *ngIf="isSubAccount"
+          class="flex mr-4 overflow-hidden w-[50px] h-[50px] border-2 rounded-full"
+        >
+          <img class="photo avatar" [src]="avatar" />
+        </div>
+        <div class="flex items-center ml-4">
+          <div
+            *ngIf="isDetailPage"
+            class="logo-icon flex items-center justify-end mr-4"
+          >
+            <img
+              class="w-[30px] h-[30px]"
+              src="assets/images/icons/web_Details.svg"
+            />
+          </div>
+          <div
+            *ngIf="isVenuePage"
+            class="logo-icon flex items-center justify-end mr-4"
+          >
+            <img
+              class="w-[30px] h-[30px]"
+              src="/assets/images/icons/venue.svg"
+            />
+          </div>
+          <div
+            *ngIf="isResourcePage"
+            class="logo-icon flex items-center justify-end mr-4"
+          >
+            <img src="./assets/images/icons/resource.svg" alt="icon" />
+          </div>
+          <div
+            class="logo mr-4 flex flex-col truncate text-3xl"
+            title="{{ title }}"
+          >
+            <span
+              class="logo-text text-3xl"
+              [attr.data-cy]="
+                'header-text-' + title?.split(' ').pop()?.toLowerCase()
+              "
+            >
+              {{ title }}
+            </span>
+            <p class="text-lg" *ngIf="isSubAccount">ABN {{ abn }}</p>
+          </div>
+          <div *ngIf="(typeOfManagedEmail || typeOfManagedConnection === 'client') && userType==='client'" class="bg-accent w-48 h-10 ml-4 rounded-3xl text-center p-1 flex items-center justify-center whitespace-nowrap text-lg ml-12">Externally Managed</div>
+          <div *ngIf="(!typeOfManagedEmail && typeOfManagedConnection !== 'client') && userType==='client'" class="bg-accent w-48 h-10 ml-4 rounded-3xl text-center p-1 flex items-center justify-center whitespace-nowrap text-lg ml-12">Internally Managed</div>
+          <div
+            data-cy="status-element"
+            *ngIf="isResourcePage"
+            class="w-24 ml-4 rounded-3xl text-center p-1 flex items-center justify-center"
+            [ngClass]="utils.getStatusColour(status, false, true)"
+          >
+            <span class="flex items-center justify-center">{{
+              utils.getStatus(status, false, true)
+            }}</span>
+          </div>
+        </div>
+      </div>
+      <ng-container *ngTemplateOutlet="buttonsTemplate"></ng-container>
+      <!-- <div class="">
+        <div
+          *ngIf="isVenueTab == 'VENUE_DETAILS_TAB' && this.isVenuePage == true"
+          class="flex flex-row items-center"
+        >
+          <button
+            mat-flat-button
+            type="button"
+            color="warn"
+            *ngIf="!editing"
+            (click)="venueDelete()"
+            class="delete-button"
+            aria-label="Cancel"
+            data-cy="venue-details-delete"
+          >
+            Delete
+          </button>
+          <div>
+            <button
+              *ngIf="editing"
+              mat-stroked-button
+              color="primary"
+              class="rounded-[33px] mr-1 ml-1 text-white"
+              (click)="cancelVenue()"
+            >
+              Back
+            </button>
+
+            <button
+              *ngIf="editing"
+              mat-stroked-button
+              color="primary"
+              class="add-venue-button rounded-[33px] text-white"
+              id="save-details-button"
+              data-cy="save-details-button"
+              (click)="venueSaveForVenueDetails()"
+            >
+              Save
+            </button>
+          </div>
+          <button
+            class="ml-2 text-white"
+            color="primary"
+            (click)="venueEdit()"
+            *ngIf="!editing"
+            mat-stroked-button
+            data-cy="venue-details-edit"
+          >
+            Edit
+          </button>
+        </div>
+        <div
+          *ngIf="
+            (isSubAccount && currentTab === 'Details') || activeTab == 'Details'
+          "
+          class="flex flex-row justify-end items-center"
+        >
+          <div>
+            <button
+              *ngIf="editing"
+              mat-stroked-button
+              color="primary"
+              class="rounded-[33px] mr-2 text-white"
+              (click)="isCancelEdit()"
+            >
+              Back
+            </button>
+
+            <button
+              *ngIf="editing"
+              mat-stroked-button
+              color="primary"
+              class="add-venue-button rounded-[33px] text-white"
+              id="save-details-button"
+              data-cy="save-details-button"
+              (click)="saveDetails()"
+            >
+              Save
+            </button>
+          </div>
+
+          <div>
+            <button
+              *ngIf="(isDetailPage && !editing) || (isSubAccount && !editing)"
+              mat-stroked-button
+              color="primary"
+              class="edit-venue-button rounded-[33px] text-white"
+              id="edit-details-button"
+              data-cy="edit-details-button"
+              (click)="isEditDetails()"
+            >
+              Edit
+            </button>
+          </div>
+        </div>
+        <div class="flex flex-row justify-end">
+          <button
+            mat-stroked-button
+            color="primary"
+            class="add-accreditation-button text-white rounded-[33px]"
+            id="add-accreditation-button"
+            data-cy="add-accreditation-button"
+            *ngIf="activeTab == 'Accreditations'"
+            (click)="handleAddAccreditation()"
+          >
+            Add accreditations
+          </button>
+        </div>
+
+        <div
+          class="flex flex-row justify-end"
+          *ngIf="currentTab === 'Accreditations'"
+        >
+          <button
+            mat-stroked-button
+            color="primary"
+            class="add-accreditation-button text-white rounded-[33px] m-4"
+            id="add-accreditation-button"
+            data-cy="add-accreditation-button"
+            (click)="handleAddAccreditation()"
+          >
+            Add accreditations
+          </button>
+        </div>
+
+        <div
+          class="header-button flex justify-end"
+          *ngIf="currentTab === 'Venues'"
+        >
+          <button
+            *ngIf="!editing"
+            class="text-white"
+            color="primary"
+            mat-stroked-button
+            (click)="openAddVenue()"
+          >
+            <mat-icon class="text-white">add</mat-icon>
+            Add new venue
+          </button>
+
+          <div *ngIf="editing" class="buttons-venue flex items-center">
+            <button
+              mat-stroked-button
+              class="cancel-button text-center w-[193px] rounded-full ml-2 mr-3"
+              (click)="cancelVenue()"
+            >
+              Cancel
+            </button>
+
+            <button
+              color="primary"
+              [disabled]="headerButtonService.venueForm?.invalid"
+              class="save-button w-[193px] text-white rounded-full"
+              mat-stroked-button
+              data-cy="save-venue"
+              (click)="saveVenue()"
+            >
+              <span>SAVE</span>
+            </button>
+          </div>
+        </div>
+
+        <div
+          *ngIf="
+            !editing && isResourcePage && currentTab === 'Resource details'
+          "
+          class="buttons justify-end flex mr-12"
+        >
+          <button
+            mat-flat-button
+            color="warn"
+            *ngIf="status === 1 && isAdminOfCurrentAccount"
+            data-cy="deactivate-resource-button"
+            (click)="deactivate()"
+            aria-label="Cancel"
+          >
+            Deactivate
+          </button>
+
+
+          <button
+            mat-flat-button
+            data-cy="activate-resource-button"
+            class="bg-success"
+            (click)="activate()"
+          >
+            Activate
+          </button>
+
+          <button
+            mat-stroked-button
+            type="button"
+            *ngIf="type === 'member'"
+            (click)="editResource()"
+            data-cy="edit-button"
+            class="edit-button ml-2 text-white"
+          >
+            Edit
+          </button>
+        </div>
+        <div
+          *ngIf="
+            editing && type === 'member' && currentTab === 'Resource details'
+          "
+          class="buttons-editing flex justify-end mr-6"
+        >
+          <button
+            mat-stroked-button
+            type="button"
+            (click)="cancelResource()"
+            class="cancel-button text-white"
+            aria-label="Cancel"
+          >
+            Cancel
+          </button>
+
+          <button
+            mat-stroked-button
+            type="button"
+            data-cy="save-button"
+            (click)="saveResource()"
+            class="save-button ml-2 text-white"
+          >
+            Save
+          </button>
+        </div>
+
+        <div
+          class="flex justify-end"
+          *ngIf="isResourcePage && currentTab === 'Licences and Accreditations'"
+        >
+          <button
+            mat-stroked-button
+            color="primary"
+            class="text-white"
+            type="button"
+            (click)="toggleAccreditation()"
+            data-cy="add-accreditation-button"
+            aria-label="Save"
+          >
+            Add Accreditation
+          </button>
+        </div>
+      </div> -->
+    </div>
+  </div>
+
+  <!-- / APP TITLE -->
+</div>

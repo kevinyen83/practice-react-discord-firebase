@@ -1,0 +1,64 @@
+<div class="resource-assessments">
+  <h1 class="text-2xl font-bold">Assessments</h1>
+
+  <div class="table w-full">
+    <mat-table class="w-full" [dataSource]="dataSource">
+      <!-- Avatar By Column -->
+      <ng-container matColumnDef="avatar">
+        <mat-header-cell mat-header-cell *matHeaderCellDef></mat-header-cell>
+        <mat-cell mat-cell *matCellDef="let row">
+          <div>
+            <div
+              style="width: 50px; height: 50px"
+              class="rounded-3xl flex justify-center items-center bg-white mr-11 flex-initial"
+            >
+              <img [src]="row.avatar || defaultAvatar" alt="logo" />
+            </div>
+          </div>
+        </mat-cell>
+      </ng-container>
+
+      <!-- Rated By Column -->
+      <ng-container matColumnDef="ratedBy">
+        <mat-header-cell mat-header-cell *matHeaderCellDef
+          >Rated By</mat-header-cell
+        >
+        <mat-cell mat-cell *matCellDef="let row">
+          {{ row.type }}
+        </mat-cell>
+      </ng-container>
+
+      <!--Rating Column -->
+      <ng-container matColumnDef="rating">
+        <mat-header-cell mat-header-cell *matHeaderCellDef>
+          Rating
+        </mat-header-cell>
+        <mat-cell mat-cell *matCellDef="let row">
+          <mat-icon
+            *ngFor="let rate of counter(row.rating)"
+            class="text-orange-300"
+            >star_rate</mat-icon
+          >
+        </mat-cell>
+      </ng-container>
+
+      <!-- Note Column -->
+      <ng-container matColumnDef="note">
+        <mat-header-cell mat-header-cell *matHeaderCellDef
+          >Note</mat-header-cell
+        >
+        <mat-cell mat-cell *matCellDef="let row">
+          {{ row.description }}
+        </mat-cell>
+      </ng-container>
+
+      <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+      <mat-row
+        class="hover:bg-gray-100 bg-gray-200 p-2 mb-2 rounded-xl"
+        mat-row
+        *matRowDef="let row; columns: displayedColumns"
+      >
+      </mat-row>
+    </mat-table>
+  </div>
+</div>

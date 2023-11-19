@@ -1,0 +1,114 @@
+<div class="resource-requirements mt-10">
+  <div class="flex justify-between items-center mb-6">
+    <h1 data-cy="shift-roles-header" class="text-2xl font-bold">Shift Roles</h1>
+    <button
+      mat-flat-button
+      type="button"
+      title="create shift role"
+      (click)="createShiftRole()"
+      class="w-48 bg-primary text-white"
+      aria-label="release task"
+      data-cy="create-shift-role-button"
+    >
+      Create Shift Role
+    </button>
+  </div>
+
+  <table mat-table class="w-full rounded-3xl" [dataSource]="dataSource">
+    <ng-container [matColumnDef]="columnsToDisplay[0]">
+      <th mat-header-cell *matHeaderCellDef>{{ columnsToDisplay[0] }}</th>
+      <td mat-cell class="py-4" *matCellDef="let row">
+        {{ row?.name }}
+      </td>
+    </ng-container>
+
+    <ng-container [matColumnDef]="columnsToDisplay[1]">
+      <th mat-header-cell *matHeaderCellDef>{{ columnsToDisplay[1] }}</th>
+      <td mat-cell class="py-4" *matCellDef="let row">
+        <div class="flex flex-col" *ngFor="let licence of row?.credentials">
+          <span>{{ licence.type }}</span>
+        </div>
+      </td>
+    </ng-container>
+
+    <ng-container [matColumnDef]="columnsToDisplay[2]">
+      <th mat-header-cell *matHeaderCellDef>{{ columnsToDisplay[2] }}</th>
+      <td mat-cell class="py-4" *matCellDef="let row">
+        <div class="flex flex-col">
+          <div
+            *ngFor="let item of getCurrentRate(row?.resource_rate_id, 'type')"
+          >
+            {{ item }}
+          </div>
+        </div>
+      </td>
+    </ng-container>
+
+    <ng-container [matColumnDef]="columnsToDisplay[3]">
+      <th mat-header-cell *matHeaderCellDef>{{ columnsToDisplay[3] }}</th>
+      <td mat-cell class="py-4" *matCellDef="let row">
+        <div *ngFor="let item of getCurrentRate(row?.resource_rate_id, 'rate')">
+          {{ item | currency }}
+        </div>
+      </td>
+    </ng-container>
+
+    <ng-container [matColumnDef]="columnsToDisplay[4]">
+      <th mat-header-cell *matHeaderCellDef>{{ columnsToDisplay[4] }}</th>
+      <td mat-cell class="py-4" *matCellDef="let row">
+        <div *ngFor="let item of getCurrentRate(row?.resource_rate_id, 'code')">
+          {{ item }}
+        </div>
+      </td>
+    </ng-container>
+
+    <ng-container [matColumnDef]="columnsToDisplay[5]">
+      <th mat-header-cell *matHeaderCellDef>{{ columnsToDisplay[5] }}</th>
+      <td class="py-4" mat-cell *matCellDef="let row">
+        {{ row.description }}
+      </td>
+    </ng-container>
+
+    <ng-container [matColumnDef]="columnsToDisplay[6]">
+      <th mat-header-cell *matHeaderCellDef></th>
+      <td mat-cell class="py-4" *matCellDef="let row">
+        <div class="flex items-center">
+          <button mat-icon-button [matMenuTriggerFor]="menu">
+            <mat-icon>more_vert</mat-icon>
+          </button>
+          <mat-menu #menu="matMenu">
+            <button mat-menu-item (click)="editRole(row)">Edit</button>
+          </mat-menu>
+        </div>
+      </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="columnsToDisplay"></tr>
+    <tr
+      mat-row
+      class="hover:bg-gray-100"
+      *matRowDef="let row; columns: columnsToDisplay; let index = index"
+    ></tr>
+  </table>
+
+  <div class="task-checklist-box mt-10 flex justify-between">
+    <div>
+    <h1 class="text-2xl font-bold">Task Checklist</h1>
+    <p>
+      Task Checklist will be saved as a form that can be attached to the Shift
+      and allocated by Resources.
+    </p>
+  </div>
+  <div>
+    <button
+      color="primary"
+      class="w-40 add-roles-button rounded-full"
+      (click)="addTaskChecklist()"
+      mat-flat-button
+      data-cy="add-task-checklist"
+    >
+      Add Task Checklist
+    </button>
+  </div>
+  </div>
+</div>

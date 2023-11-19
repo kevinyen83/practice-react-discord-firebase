@@ -1,0 +1,79 @@
+<div
+  class="w-full flex flex-col h-full bg-white rounded-3xl p-10"
+  draggable="true"
+>
+  <h1 class="mb-4" *ngIf="viewAddDocuments">Documents</h1>
+  <!--  <h1 class="mb-4" *ngIf="!viewAddDocuments">Upload documents relative to the client:</h1>-->
+
+  <div class="row w-full">
+    <div class="files flex flex-col" *ngIf="files.length">
+      <div [formGroup]="formDocuments">
+        <ng-container
+          formArrayName="fileGroup"
+          *ngFor="let form of fileGroup.controls; let i = index"
+        >
+          <div
+            class="w-full flex lg:flex-col md:flex-col sm:flex-col"
+            [formGroupName]="i"
+          >
+            <div class="name-file w-full flex justify-between">
+              <div class="choose-type ml-2 lg:mt-2 md:mt-2 sm:mt-2">
+                <mat-radio-group
+                  class="flex flex-col"
+                  color="primary"
+                  formControlName="typeDocument"
+                  aria-label="Select an option"
+                >
+                  <mat-radio-button class="text-lg" value="0"
+                    >Private</mat-radio-button
+                  >
+                  <mat-radio-button class="text-lg" value="1"
+                    >Shared with {{ accountType }}</mat-radio-button
+                  >
+                </mat-radio-group>
+              </div>
+
+              <div
+                class="text w-1/2 lg ml-2:mt-3 md:mt-3 sm:mt-3 fuse-mat-textarea"
+              >
+                <mat-form-field class="w-full">
+                  <textarea
+                    matInput
+                    formControlName="descriptionFile"
+                    placeholder="Put a note here"
+                    cdkTextareaAutosize
+                    #autosize="cdkTextareaAutosize"
+                    cdkAutosizeMinRows="3"
+                    cdkAutosizeMaxRows="5"
+                  ></textarea>
+                </mat-form-field>
+              </div>
+            </div>
+          </div>
+        </ng-container>
+      </div>
+    </div>
+
+    <app-choose-files (saveFiles)="saveFiles($event)"></app-choose-files>
+  </div>
+</div>
+
+<div class="buttons-documents flex mt-4" *ngIf="!viewAddDocuments">
+  <button
+    mat-stroked-button
+    color="primary"
+    class="save-button text-center rounded-full mr-3"
+    (click)="cancelDocuments()"
+  >
+    Cancel
+  </button>
+
+  <button
+    mat-raised-button
+    color="primary"
+    class="save-button text-center rounded-full ml-2"
+    (click)="save()"
+  >
+    SAVE
+  </button>
+</div>

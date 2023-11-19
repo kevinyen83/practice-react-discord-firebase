@@ -1,0 +1,62 @@
+<div class="subscription p-12 overflow-y-auto">
+  <div>
+    <h1 data-cy="subscription-header" class="text-3xl font-bold mb-2">
+      Current Plan
+    </h1>
+    <div class="plan-content bg-white rounded-xl p-8">
+      <h1 class="font-bold text-xl">Business Tier One</h1>
+
+      <div class="flex justify-between">
+        <mat-table class="w-1/2" [dataSource]="dataUsers">
+          <ng-container matColumnDef="type-users">
+            <mat-header-cell *matHeaderCellDef></mat-header-cell>
+            <mat-cell *matCellDef="let row">
+              {{ row.typeUser }}
+            </mat-cell>
+          </ng-container>
+
+          <ng-container matColumnDef="count-used">
+            <mat-header-cell *matHeaderCellDef>Used</mat-header-cell>
+            <mat-cell *matCellDef="let row; let i = index">
+              {{ row.used }}
+            </mat-cell>
+          </ng-container>
+
+          <ng-container matColumnDef="remaining">
+            <mat-header-cell *matHeaderCellDef>Remaining</mat-header-cell>
+            <mat-cell *matCellDef="let row; let i = index">
+              {{ row.remaining }}
+            </mat-cell>
+          </ng-container>
+
+          <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+          <mat-row
+            class="hover:bg-gray-100"
+            *matRowDef="let row; columns: displayedColumns; let index = index"
+          ></mat-row>
+        </mat-table>
+
+        <button
+          class="text-primary border-blue-400 border-2"
+          (click)="openBusinessPlan()"
+          mat-raised-button
+        >
+          See Business Plans
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div>
+    <h1 class="text-3xl font-bold mt-6 mb-2">Invoicing</h1>
+    <div class="invoicing-content flex justify-between bg-white rounded-xl p-8">
+      <div class="payment-info flex flex-col leading-8">
+        Last payment: 10/11/2021
+        <a class="cursor-pointer text-primary" (click)="goToHistory()"
+          >Check building history</a
+        >
+      </div>
+      <button color="primary" mat-stroked-button>Modify Payment Method</button>
+    </div>
+  </div>
+</div>

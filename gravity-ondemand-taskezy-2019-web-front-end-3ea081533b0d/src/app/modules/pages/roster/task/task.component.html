@@ -1,0 +1,96 @@
+<div
+  class="flex flex-row items-center"
+  *ngIf="task?.supplier?.uuid === currentAccount?.uuid
+                  || currentShift?.account_uuid === currentAccount?.uuid"
+>
+  <div class="icon">
+    <mat-icon>description</mat-icon>
+  </div>
+  <div class="avatar">
+    <div
+      style="width: 50px; height: 50px"
+      class="rounded-3xl flex justify-center items-center border-2 border-gray-400 mr-2 flex-initial"
+    >
+      <img
+        class="photo w-full"
+        [src]="task?.resource?.logo || defaultAvatar"
+      />
+    </div>
+  </div>
+  <div>
+    <div class="flex h-full items-center">
+      <div
+        class="resource-name capitalize"
+        [ngClass]="{ italic: task?.resource?.name == '' }"
+      >
+        {{
+        task?.resource?.name == ""
+          ? "To be Assigned"
+          : task?.resource?.name
+        }}
+      </div>
+
+      <div
+        class="w-22 h-8 ml-4 rounded-3xl text-center p-1 flex items-center justify-center"
+        [ngClass]="getStatusColor(task?.resource?.release_status, 'resource')"
+      >
+                        <span class="text-sm flex items-center justify-center">{{
+                          getStatus(task?.resource?.release_status, 'resource')
+                          }}</span>
+      </div>
+      <div
+        class="w-22 h-8 ml-4 rounded-3xl text-center p-1 flex items-center justify-center"
+        [ngClass]="getStatusColor(task?.supplier?.release_status, 'supplier')"
+      >
+                      <span class="text-sm flex items-center justify-center">{{
+                        getStatus(task?.supplier?.release_status, 'supplier')
+                        }}</span>
+      </div>
+
+    </div>
+
+    <div class="flex">
+      <div class="supplier-name text-sm capitalize">
+        {{ task?.supplier?.name }}
+      </div>
+
+
+    </div>
+
+    <div
+      class="resource-name text-sm italics"
+      *ngIf="task?.supervisor"
+    >
+      supervisor
+    </div>
+  </div>
+
+  <div class="resource-status">
+    <div class="flex justify-between items-center mt-2"
+         *ngIf="((task?.supplier?.uuid === currentAccount?.uuid && !shiftInPast) ||
+                       (currentAccount?.uuid === currentShift?.account_uuid && !shiftInPast)) && currentShift?.release_status > 0"
+    >
+      <button
+        mat-raised-button
+        class="text-red-400"
+        data-cy="decline-task"
+        *ngIf="task?.supplier?.release_status !== 3"
+        (click)="declineTask(task)"
+        type="button"
+      >
+        Decline
+      </button>
+
+      <button
+        mat-raised-button
+        class="text-green-400"
+        data-cy="accept-task"
+        *ngIf="task?.supplier?.release_status !== 2"
+        (click)="acceptTask(task)"
+        typt="button"
+      >
+        Accept
+      </button>
+    </div>
+  </div>
+</div>

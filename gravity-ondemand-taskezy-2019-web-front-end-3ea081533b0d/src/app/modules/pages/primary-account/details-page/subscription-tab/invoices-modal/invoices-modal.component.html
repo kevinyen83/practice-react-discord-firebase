@@ -1,0 +1,60 @@
+<div class="invoices-table">
+  <div class="head flex justify-end p-2">
+    <mat-icon class="cursor-pointer" (click)="close()">clear</mat-icon>
+  </div>
+  <h1 class="text-3xl pl-4 font-bold">Invoices</h1>
+  <mat-table class="w-full p-4" [dataSource]="dataInvoices">
+    <ng-container matColumnDef="product">
+      <mat-header-cell *matHeaderCellDef>Product</mat-header-cell>
+      <mat-cell *matCellDef="let row">
+        {{ row.product }}
+      </mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="reference">
+      <mat-header-cell *matHeaderCellDef>Reference</mat-header-cell>
+      <mat-cell *matCellDef="let row; let i = index">
+        {{ row.reference }}
+      </mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="date">
+      <mat-header-cell *matHeaderCellDef>Date</mat-header-cell>
+      <mat-cell *matCellDef="let row; let i = index">
+        {{ row.date | date: "shortDate" }}
+      </mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="price">
+      <mat-header-cell *matHeaderCellDef>Price</mat-header-cell>
+      <mat-cell *matCellDef="let row; let i = index">
+        {{ row.price }}
+      </mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="status">
+      <mat-header-cell *matHeaderCellDef>Status</mat-header-cell>
+      <mat-cell *matCellDef="let row; let i = index">
+        <!--        {{row.status}}-->
+        <mat-icon class="text-green-400" *ngIf="row.status === 'ok'"
+          >check</mat-icon
+        >
+      </mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="download">
+      <mat-header-cell *matHeaderCellDef>Download</mat-header-cell>
+      <mat-cell *matCellDef="let row; let i = index">
+        <button class="bg-blue-400 text-white" mat-raised-button>
+          <mat-icon>download</mat-icon>
+        </button>
+      </mat-cell>
+    </ng-container>
+
+    <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+    <mat-row
+      class="hover:bg-gray-100"
+      *matRowDef="let row; columns: displayedColumns; let index = index"
+    ></mat-row>
+  </mat-table>
+</div>

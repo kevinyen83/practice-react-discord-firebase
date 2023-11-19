@@ -1,0 +1,116 @@
+<mat-table
+  class="table-members bg-white"
+  [dataSource]="dataSource"
+  matSort
+  (matSortChange)="sortData($event)"
+>
+  <ng-container matColumnDef="pic">
+    <mat-header-cell *matHeaderCellDef mat-sort-header="pic"> </mat-header-cell>
+    <mat-cell *matCellDef="let row">
+      <div class="py-4">
+        <div
+          style="width: 50px; height: 50px"
+          class="rounded-3xl flex justify-center border-2 border-gray-300 items-center bg-white flex-initial"
+        >
+          <!-- <img
+            class="photo w-full"
+            *ngIf="!row.detail.avatar"
+            [src]="defaultAvatar"/>
+
+          <img
+            *ngIf="row.detail.avatar"
+            [src]="row.detail.avatar"
+            alt="logo"/> -->
+        </div>
+      </div>
+    </mat-cell>
+  </ng-container>
+  <!-- Name Column -->
+  <ng-container matColumnDef="name">
+    <mat-header-cell *matHeaderCellDef mat-sort-header="name"
+      >Name</mat-header-cell
+    >
+    <mat-cell *matCellDef="let row">
+      {{ row.name }}
+    </mat-cell>
+  </ng-container>
+
+  <!-- Email Column -->
+  <ng-container matColumnDef="email">
+    <mat-header-cell *matHeaderCellDef mat-sort-header="email"
+      >Email</mat-header-cell
+    >
+    <mat-cell *matCellDef="let row">
+      {{ row.email }}
+    </mat-cell>
+  </ng-container>
+
+  <!-- Phone Column -->
+  <ng-container matColumnDef="phone">
+    <mat-header-cell *matHeaderCellDef mat-sort-header="phone"
+      >Phone</mat-header-cell
+    >
+    <mat-cell *matCellDef="let row">
+      {{ row.phone }}
+    </mat-cell>
+  </ng-container>
+
+  <!-- Role Column -->
+  <ng-container matColumnDef="role">
+    <mat-header-cell *matHeaderCellDef mat-sort-header="role"
+      >Role</mat-header-cell
+    >
+    <mat-cell *matCellDef="let row">
+      {{ row.role }}
+    </mat-cell>
+  </ng-container>
+
+  <!-- Department Column -->
+  <ng-container matColumnDef="department">
+    <mat-header-cell *matHeaderCellDef mat-sort-header="department"
+      >Depertment</mat-header-cell
+    >
+    <mat-cell *matCellDef="let row">
+      {{ row?.department }}
+    </mat-cell>
+  </ng-container>
+
+  <!-- Address Column -->
+  <ng-container matColumnDef="address">
+    <mat-header-cell *matHeaderCellDef mat-sort-header="address"
+      >Address</mat-header-cell
+    >
+    <mat-cell *matCellDef="let row">
+      {{ row?.address }}
+    </mat-cell>
+  </ng-container>
+
+  <ng-container matColumnDef="activeLink">
+    <mat-header-cell
+      *matHeaderCellDef
+      mat-sort-header="activeLink"
+      class="link-container"
+    ></mat-header-cell>
+    <mat-cell
+      fxLayout="row"
+      fxLayoutAlign="space-between center"
+      *matCellDef="let row"
+      class="link-container flex justify-end"
+    >
+      <mat-icon class="menu cursor-pointer" [matMenuTriggerFor]="beforeMenu"
+        >more_vert</mat-icon
+      >
+      <mat-menu #beforeMenu="matMenu" xPosition="before">
+        <button mat-menu-item (click)="toEditMember(row)">Edit</button>
+        <button mat-menu-item (click)="deleteMember(row)">Delete</button>
+      </mat-menu>
+    </mat-cell>
+  </ng-container>
+
+  <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+  <mat-row
+    class="hover:bg-gray-100"
+    *matRowDef="let row; columns: displayedColumns; let index = index"
+  >
+  </mat-row>
+</mat-table>

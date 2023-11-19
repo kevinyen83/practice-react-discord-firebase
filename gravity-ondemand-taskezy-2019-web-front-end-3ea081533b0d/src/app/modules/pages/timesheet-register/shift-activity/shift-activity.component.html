@@ -1,0 +1,41 @@
+<div class="w-full" style="min-width: 600px">
+  <div
+    class="flex justify-between items-center py-7 px-10"
+    style="background-color: #369be5"
+  >
+    <h3 class="text-white text-3xl">Activity</h3>
+    <mat-icon class="text-white cursor-pointer" (click)="handleModalClose()"
+      >close</mat-icon
+    >
+  </div>
+  <div
+    class="py-6 px-16 overflow-y-scroll"
+    style="min-height: 500px; max-height: 800px"
+  >
+    <div *ngFor="let activityDataItem of activityData">
+      <button
+        class="rounded-full text-white py-1 px-6"
+        style="background-color: #369be5"
+      >
+        {{ activityDataItem.date }}
+      </button>
+      <div
+        *ngFor="let activityItem of activityDataItem.activityData"
+        class="my-8 flex items-center"
+      >
+        <div
+          class="rounded-full w-16 h-16 bg-center bg-cover bg-no-repeat"
+          [ngStyle]="{ background: 'url(' + activityItem?.avatar + ')' }"
+        ></div>
+        <div class="ml-10">
+          <h4 class="text-sm">
+            {{ activityItem.name + " " + activityItem?.activity }}
+          </h4>
+          <h5 class="text-xs text-gray-400">
+            {{ activityItem.date | date: "mediumDate" }}
+          </h5>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

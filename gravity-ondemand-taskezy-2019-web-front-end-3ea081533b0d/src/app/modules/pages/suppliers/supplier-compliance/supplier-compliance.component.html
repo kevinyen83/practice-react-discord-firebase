@@ -1,0 +1,276 @@
+<div id="flex flex-col flex-auto min-w-0">
+  <!--Header-->
+  <div
+    class="header accent p-20 p-sm-24"
+    fxLayout="column"
+    fxLayoutAlign="start"
+    fxLayout.gt-xs="row"
+    fxLayoutAlign.gt-xs="space-between center"
+  >
+    <!-- APP TITLE -->
+    <div fxLayout="row" fxLayoutAlign="start center">
+      <div class="logo" fxLayout="row" fxLayoutAlign="start center">
+        <div class="logo-icon">
+          <mat-icon class="logo-icon mr-16"> view_quilt </mat-icon>
+        </div>
+        <span class="logo-text h1"> Suppliers </span>
+      </div>
+    </div>
+    <!-- / APP TITLE -->
+  </div>
+  <!--/Header-->
+
+  <!--Content-->
+
+  <div class="content">
+    <mat-form-field class="search" appearance="fill">
+      <input
+        matInput
+        placeholder="Search"
+        name="searchSuppliers"
+        [formControl]="searchSuppliers"
+      />
+      <mat-icon>search</mat-icon>
+    </mat-form-field>
+
+    <div class="card">
+      <div class="h3">
+        Filters
+        <button
+          mat-raised-button
+          color="accent"
+          type="button"
+          (click)="applyFiltering()"
+          class="apply-button"
+          aria-label="Apply"
+        >
+          Apply Filters
+        </button>
+      </div>
+
+      <form action="" [formGroup]="filterSuppliersForm">
+        <div>
+          <mat-form-field class="compliant" appearance="fill">
+            <mat-label>Compliant</mat-label>
+            <mat-select
+              placeholder="Compliant"
+              formControlName="compliant"
+              (selectionChange)="onChangeFilter('compliant', $event)"
+              multiple
+            >
+              <mat-option value="Yes">Yes</mat-option>
+              <mat-option value="No">No</mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field class="email" appearance="fill">
+            <mat-label>Email</mat-label>
+            <mat-select
+              placeholder="Email"
+              formControlName="email"
+              (selectionChange)="onChangeFilter('email', $event)"
+              multiple
+            >
+              <mat-option value="No">No</mat-option>
+              <mat-option value="Yes">Yes</mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field class="contact-number" appearance="fill">
+            <mat-label>Contact Number</mat-label>
+            <mat-select
+              placeholder="Contact Number"
+              formControlName="contactNumber"
+              (selectionChange)="onChangeFilter('phoneNumber', $event)"
+              multiple
+            >
+              <mat-option value="No">No</mat-option>
+              <mat-option value="Yes">Yes</mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field class="logo" appearance="fill">
+            <mat-label>Logo</mat-label>
+            <mat-select
+              placeholder="Logo"
+              formControlName="logo"
+              (selectionChange)="onChangeFilter('logo', $event)"
+              multiple
+            >
+              <mat-option value="Yes">Yes</mat-option>
+              <mat-option value="No">No</mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field class="address" appearance="fill">
+            <mat-label>Address</mat-label>
+            <mat-select
+              placeholder="Address"
+              formControlName="address"
+              (selectionChange)="onChangeFilter('address', $event)"
+              multiple
+            >
+              <mat-option value="Yes">Yes</mat-option>
+              <mat-option value="No">No</mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field class="compliance-issues" appearance="fill">
+            <mat-label>Compliance Issues</mat-label>
+            <mat-select
+              placeholder="Compliance Issues"
+              formControlName="complianceIssues"
+              (selectionChange)="onChangeFilter('complianceIssues', $event)"
+              multiple
+            >
+              <mat-option value="No">No</mat-option>
+              <mat-option value="Yes">Yes</mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+      </form>
+    </div>
+
+    <div class="add-file">
+      <a href="#">Download as XLS</a>
+      <a href="#">Download as PDF</a>
+    </div>
+
+    <div class="example-container mat-elevation-z8">
+      <mat-table
+        [dataSource]="
+          dataSource | searchSupplierCompliance: searchSuppliers.value
+        "
+        matSort
+        (matSortChange)="sortData($event)"
+      >
+        <!-- Number Column -->
+        <ng-container matColumnDef="number">
+          <mat-header-cell *matHeaderCellDef mat-sort-header>
+            №
+          </mat-header-cell>
+          <mat-cell *matCellDef="let row; let index = index">
+            <div>{{ index + 1 }}</div>
+          </mat-cell>
+        </ng-container>
+
+        <!-- Logo Column -->
+        <ng-container matColumnDef="photo">
+          <mat-header-cell *matHeaderCellDef mat-sort-header
+            >Photo</mat-header-cell
+          >
+          <mat-cell *matCellDef="let row">
+            <div class="logo1">
+              <mat-icon *ngIf="row.logo === ''">perm_identity</mat-icon>
+              <img *ngIf="row.logo !== ''" [src]="row.logo" alt="logo" />
+            </div>
+          </mat-cell>
+        </ng-container>
+
+        <!-- identifier Column -->
+        <ng-container matColumnDef="identifier">
+          <mat-header-cell *matHeaderCellDef mat-sort-header="identifier"
+            >Identifier</mat-header-cell
+          >
+          <mat-cell *matCellDef="let row">
+            <div>{{ row.identifier }}</div>
+          </mat-cell>
+        </ng-container>
+
+        <!-- name Column -->
+        <ng-container matColumnDef="name">
+          <mat-header-cell *matHeaderCellDef mat-sort-header="name">
+            Name
+          </mat-header-cell>
+          <mat-cell *matCellDef="let row">
+            <div>{{ row.name }}</div>
+          </mat-cell>
+        </ng-container>
+
+        <!-- tradingname Column -->
+        <ng-container matColumnDef="tradingname">
+          <mat-header-cell *matHeaderCellDef mat-sort-header="tradingname">
+            Trading Name</mat-header-cell
+          >
+          <mat-cell *matCellDef="let row">
+            <div *ngIf="row.tradingname">{{ row.tradingname }}</div>
+            <div *ngIf="!row.tradingname">No</div>
+          </mat-cell>
+        </ng-container>
+
+        <!-- tradingname Column -->
+        <ng-container matColumnDef="contactNumber">
+          <mat-header-cell *matHeaderCellDef mat-sort-header="contactNumber">
+            Contact Number</mat-header-cell
+          >
+          <mat-cell *matCellDef="let row">
+            <div *ngIf="row.phoneNumber">{{ row.phoneNumber }}</div>
+            <div *ngIf="!row.phoneNumber">No</div>
+          </mat-cell>
+        </ng-container>
+
+        <!-- Logo Column -->
+        <ng-container matColumnDef="logo">
+          <mat-header-cell *matHeaderCellDef mat-sort-header="logo">
+            Logo</mat-header-cell
+          >
+          <mat-cell *matCellDef="let row">
+            <div *ngIf="row.logo">Yes</div>
+            <div *ngIf="!row.logo">No</div>
+          </mat-cell>
+        </ng-container>
+
+        <!--<ng-container matColumnDef="email">-->
+        <!--<mat-header-cell *matHeaderCellDef mat-sort-header="email"> Email</mat-header-cell>-->
+        <!--<mat-cell *matCellDef="let row;">-->
+        <!--<div *ngIf="row.email">{{row.email}}</div>-->
+        <!--<div *ngIf="!row.email">No</div>-->
+        <!--</mat-cell>-->
+        <!--</ng-container>-->
+
+        <!-- State Column -->
+        <ng-container matColumnDef="address">
+          <mat-header-cell *matHeaderCellDef mat-sort-header="address"
+            >Address</mat-header-cell
+          >
+          <mat-cell *matCellDef="let row">
+            <div *ngIf="row.address">Yes</div>
+            <div *ngIf="!row.address">No</div>
+          </mat-cell>
+        </ng-container>
+
+        <!-- complianceIssues Status Column -->
+        <ng-container matColumnDef="complianceIssues">
+          <mat-header-cell *matHeaderCellDef mat-sort-header="complianceIssues">
+            Compliance Issues</mat-header-cell
+          >
+          <mat-cell *matCellDef="let row">
+            <div *ngIf="row.complianceIssues">{{ row.complianceIssues }}</div>
+            <div *ngIf="!row.complianceIssues">No</div>
+          </mat-cell>
+        </ng-container>
+
+        <!-- lastUpdated Status Column -->
+        <ng-container matColumnDef="lastUpdated">
+          <mat-header-cell *matHeaderCellDef mat-sort-header="lastUpdated">
+            Last Updated</mat-header-cell
+          >
+          <mat-cell *matCellDef="let row">
+            <div>{{ row.lastUpdated | date: "dd.MM.yyyy" }}</div>
+          </mat-cell>
+        </ng-container>
+
+        <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+        <mat-row
+          class="hover:bg-gray-100"
+          *matRowDef="let row; columns: displayedColumns; let index = index"
+          (click)="toEditSupplier(row)"
+        >
+        </mat-row>
+      </mat-table>
+      <p class="total">Total Suppliers: {{ dataSource.filteredData.length }}</p>
+      <mat-paginator [pageSizeOptions]="[5, 10, 25]"></mat-paginator>
+    </div>
+  </div>
+  <!--Content-->
+</div>

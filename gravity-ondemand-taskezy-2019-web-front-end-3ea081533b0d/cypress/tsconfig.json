@@ -1,0 +1,10 @@
+{
+  // "extends": "../tsconfig.json",
+  "compilerOptions": {
+    "sourceMap": false,
+    "types": ["cypress", "node"]
+  },
+  "baseUrl": "http://localhost:4200",
+  "video": false,
+  "include": ["**/*.ts"]
+}

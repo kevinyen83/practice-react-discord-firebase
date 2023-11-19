@@ -1,0 +1,38 @@
+<div class="p-10">
+  <h1>Resources</h1>
+  <mat-list>
+    <mat-list-item *ngFor="let resource of data.resources;let i = index">
+      <div class="flex">
+        <mat-checkbox color="primary" (change)="selectResource(i)"><span>{{resource?.resource?.name}}</span></mat-checkbox>
+      </div>
+    </mat-list-item>
+    <p class="text-gray-400" *ngIf="!data.resources">
+      You do not have the resources to assign
+    </p>
+  </mat-list>
+
+  <div class="buttons flex justify-start w-1/4 m-auto">
+
+    <button
+      mat-raised-button
+      mat-dialog-close
+      class="ml-2"
+      data-cy="close-button"
+      type="button"
+    >
+      Close
+    </button>
+
+    <button
+      mat-raised-button
+      class="ml-2"
+      color="primary"
+      [disabled]="!selectedResource"
+      data-cy="save-button"
+      (click)="saveResource()"
+      type="button"
+    >
+      Save
+    </button>
+  </div>
+</div>

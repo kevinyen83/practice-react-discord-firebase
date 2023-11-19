@@ -1,0 +1,34 @@
+<div class="p-4">
+  <div class="">
+    <h1 mat-dialog-title class="font-bold mb-0">
+      {{ title }}
+    </h1>
+  </div>
+
+  <div mat-dialog-content class="p-4">
+    <p>{{ message }}</p>
+  </div>
+
+  <div mat-dialog-actions class="flex justify-end">
+    <button
+      mat-raised-button
+      color="warn"
+      type="button"
+      class="confirm-button"
+      aria-label="add incident"
+      (click)="onDismiss()"
+    >
+      No
+    </button>
+    <button
+      mat-raised-button
+      color="primary"
+      type="button"
+      (click)="onConfirm()"
+      class="confirm-button"
+      aria-label="add incident"
+    >
+      Yes
+    </button>
+  </div>
+</div>

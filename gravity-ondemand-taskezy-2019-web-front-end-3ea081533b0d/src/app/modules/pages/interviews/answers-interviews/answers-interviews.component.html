@@ -1,0 +1,40 @@
+<div class="answers">
+  <div class="answers-form">
+    <form action="" [formGroup]="answersForm">
+      <mat-form-field class="name" appearance="fill">
+        <mat-label>Name</mat-label>
+        <input matInput
+               name="name"
+               formControlName="name">
+      </mat-form-field>
+
+      <mat-form-field class="country" appearance="fill">
+        <mat-label>Country</mat-label>
+        <input matInput
+               name="country"
+               formControlName="country">
+      </mat-form-field>
+
+      <mat-form-field class="licence" appearance="fill">
+        <mat-label>Email</mat-label>
+        <input matInput
+               name="licence"
+               formControlName="licence">
+      </mat-form-field>
+
+      <mat-form-field class="description fuse-mat-textarea" appearance="fill">
+        <mat-label>Description</mat-label>
+        <textarea matInput placeholder="Description"></textarea>
+      </mat-form-field>
+
+      <mat-form-field class="make-selection" appearance="fill">
+        <mat-label>Make a selection</mat-label>
+        <mat-select placeholder="Make a selection" formControlName="selection">
+          <mat-option></mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <button mat-raised-button color="accent" class="close-button">Close</button>
+    </form>
+  </div>
+</div>

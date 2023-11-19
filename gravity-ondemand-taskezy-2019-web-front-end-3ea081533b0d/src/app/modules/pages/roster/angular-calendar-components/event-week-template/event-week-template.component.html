@@ -1,0 +1,21 @@
+<div
+  data-cy="cal-event"
+  
+  class="cal-event leading-5 border-r-gray-300 border-y-gray-300 border-l-8"
+  [class]="event.leftBorderColor"
+  [ngClass]="[
+    event.rawShift.issue?'bg-red-500':'bg-zinc-100',
+    event.selected?'outline outline-4 outline-indigo-600':''
+  ]"
+  (click)="clickOnEvent($event)"
+  role="application">
+  <div class="flex text-gray-600 whitespace-normal">
+    {{event.start | date: 'HH:mm aa'}} - {{event.end | date: 'HH:mm aa'}}
+    <!-- <div class="text-xs">{{event.start | date: 'HH:mm aa'}} - {{event.end | date: 'HH:mm aa'}}</div> -->
+    <!-- <div><mat-icon class="text-xs font-bold text-xl cursor-pointer">more_vert</mat-icon></div> -->
+  </div>
+  <div class="text-gray-500">
+    <mat-icon class="text-sm">badge</mat-icon>
+    <span>Resources: {{event.rawShift.tasks.length}}</span>
+  </div>
+</div>

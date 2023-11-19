@@ -1,0 +1,323 @@
+<div class="flex flex-col w-full bg-white rounded-2xl p-6">
+  <div>
+    <!--    <div class="flex items-center text-xl text-zinc-400 cursor-pointer mt-7" (click)="backToVenues()">-->
+    <!--      <mat-icon class="mr-2">keyboard_backspace</mat-icon>-->
+    <!--      {{accountType}} Venues <span> /</span><span> {{header}}</span>-->
+    <!--    </div>-->
+
+    <div class="flex justify-between">
+      <form
+        [formGroup]="venueForm"
+        class="w-full venue-form flex flex-col"
+        fxLayout="column"
+        fxLayoutAlign="space-between center"
+      >
+        <div
+          class="flex items-center justify-between"
+          *ngIf="isCreatingVenueFromClient == true"
+        >
+          <h1 class="font-bold text-2xl mb-5">{{ header }}</h1>
+          <!-- <div class="buttons-venue flex items-center">
+            <button
+              mat-flat-button
+              color="primary"
+              class="cancel-button text-center ml-2 mr-3"
+              (click)="cancelVenue()"
+              data-cy="cancel-venue"
+            >
+              Cancel
+            </button>
+
+            <button
+              color="primary"
+              class="save-button"
+              [disabled]="venueForm.invalid"
+              mat-flat-button
+              type="reset"
+              data-cy="save-venue"
+              (click)="save()"
+            >
+              <span>SAVE</span>
+            </button>
+          </div> -->
+        </div>
+        <mat-form-field class="type-venue" data-cy="client-select">
+          <mat-label>Client</mat-label>
+          <mat-select formControlName="client">
+            <mat-option *ngFor="let client of clients" [value]="client">{{
+              client.detail.name
+            }}</mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field class="venue-name">
+          <mat-label>Venue name</mat-label>
+          <input
+            matInput
+            data-cy="venue-name-input"
+            name="venueName"
+            formControlName="venueName"
+          />
+          <mat-error *ngIf="venueForm.get('venueName').hasError('required')">
+            This field is required
+          </mat-error>
+        </mat-form-field>
+
+        <mat-form-field class="address">
+          <mat-label>Venue Address</mat-label>
+          <input
+            matInput
+            data-cy="venue-address-input"
+            name="address"
+            formControlName="address"
+            #address
+          />
+          <mat-error *ngIf="venueForm.get('address').hasError('required')">
+            This field is required
+          </mat-error>
+        </mat-form-field>
+
+        <mat-form-field data-cy="stations" class="stations" appearance="fill">
+          <mat-label>Stations</mat-label>
+
+          <mat-select
+            class="venue-stations-select"
+            data-cy="venue-stations-input"
+            formControlName="stations"
+            multiple
+          >
+            <mat-option *ngFor="let station of stationList" [value]="station">{{
+              station
+            }}</mat-option>
+            <div class="w-full relative" *ngIf="isNewStationField">
+              <input
+                class="bg-gray-200 p-3"
+                matInput
+                placeholder="Enter station name"
+                name="station"
+                [formControl]="station"
+              />
+
+              <div class="flex absolute right-0 top-0">
+                <button mat-button color="primary" (click)="saveNewStation()">
+                  Save
+                </button>
+                <button
+                  mat-button
+                  color="warn"
+                  (click)="isNewStationField = false"
+                >
+                  Cancel
+                </button>
+              </div>
+            </div>
+            <div
+              class="flex p-3 items-center text-primary cursor-pointer"
+              (click)="addNewStation()"
+            >
+              <mat-icon class="text-primary">add</mat-icon>Add new station
+            </div>
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field data-cy="venue-type-select" class="type-venue">
+          <mat-label>Venue Type</mat-label>
+          <mat-select
+            formControlName="typeOfVenue"
+            (selectionChange)="changeType($event)"
+          >
+            <mat-option value="Public">Public</mat-option>
+            <mat-option value="Private">Private</mat-option>
+          </mat-select>
+        </mat-form-field>
+        <!-- *ngIf="viewLicence" -->
+        <div class="w-full flex flex-col">
+          <mat-form-field data-cy="licence-number" class="licence">
+            <mat-label>Licence Number</mat-label>
+            <input
+              matInput
+              name="licenceNumber"
+              formControlName="licenceNumber"
+              (change)="handleLicenceChange($event)"
+            />
+            <mat-error *ngIf="this.venueForm.get('licenceNumber').invalid">
+              Licence Number is invalid
+            </mat-error>
+          </mat-form-field>
+        </div>
+        <mat-form-field data-cy="sign-on-distance" class="sign-on-distance">
+          <mat-label>Sign On Distance</mat-label>
+          <input
+            matInput
+            name="signOnDistance"
+            formControlName="signOnDistance"
+          />
+          <mat-error *ngIf="this.venueForm.get('signOnDistance').invalid">
+            Must be only numbers
+          </mat-error>
+        </mat-form-field>
+        <div *ngIf="licenceDetail?.licenceDetail">
+          <label class="font-bold">Licence Detail</label>
+          <div class="mb-4 mt-4">
+            <label>Address Type</label>
+            <div
+              class="p-3.5 border border-inherit mt-1"
+              data-cy="licence-detail-address-type"
+            >
+              {{ licenceDetail?.licenceDetail?.addressType }}
+            </div>
+          </div>
+          <div class="mb-4">
+            <label>Address</label>
+            <div
+              class="p-3.5 border border-inherit mt-1"
+              data-cy="licence-detail-address"
+            >
+              {{ licenceDetail?.licenceDetail?.address }}
+            </div>
+          </div>
+          <div class="mb-4">
+            <label>Licence Name</label>
+            <div
+              class="p-3.5 border border-inherit mt-1"
+              data-cy="licence-detail-licence-name"
+            >
+              {{ licenceDetail?.licenceDetail?.licenceName }}
+            </div>
+          </div>
+          <div class="mb-4">
+            <label>Licence Number</label>
+            <div
+              class="p-3.5 border border-inherit mt-1"
+              data-cy="licence-detail-licence-number"
+            >
+              {{ licenceDetail?.licenceDetail?.licenceNumber }}
+            </div>
+          </div>
+          <div class="mb-4">
+            <label>Licensee</label>
+            <div
+              class="p-3.5 border border-inherit mt-1"
+              data-cy="licence-detail-licensee"
+            >
+              {{ licenceDetail?.licenceDetail?.licensee }}
+            </div>
+          </div>
+          <div class="mb-4">
+            <label>Licence Type</label>
+            <div
+              class="p-3.5 border border-inherit mt-1"
+              data-cy="licence-detail-licence-type"
+            >
+              {{ licenceDetail?.licenceDetail?.licenceType }}
+            </div>
+          </div>
+          <div class="mb-4">
+            <label>Licensee Birthdate</label>
+            <div
+              class="p-3.5 border border-inherit mt-1"
+              data-cy="licence-detail-licence-birth-date"
+            >
+              {{ licenceDetail?.licenceDetail?.licenseeBirthdate }}
+            </div>
+          </div>
+          <div class="mb-4">
+            <label>Status</label>
+            <div
+              class="p-3.5 border border-inherit mt-1"
+              data-cy="licence-detail-licence-status"
+            >
+              {{ licenceDetail?.licenceDetail?.status }}
+            </div>
+          </div>
+          <div class="mb-4">
+            <label>Licence Type Name</label>
+            <div
+              class="p-3.5 border border-inherit mt-1"
+              data-cy="licence-detail-licence-type-name"
+            >
+              {{ licenceDetail?.licenceDetail?.licenceTypeName }}
+            </div>
+          </div>
+          <div class="mb-4">
+            <label>Refused Date</label>
+            <div
+              class="p-3.5 border border-inherit mt-1"
+              data-cy="licence-detail-refused-date"
+            >
+              {{ licenceDetail?.licenceDetail?.refusedDate }}
+            </div>
+          </div>
+          <div class="mb-4">
+            <label>Start Date</label>
+            <div
+              class="p-3.5 border border-inherit mt-1"
+              data-cy="licence-detail-start-date"
+            >
+              {{ licenceDetail?.licenceDetail?.startDate }}
+            </div>
+          </div>
+          <div class="mb-4">
+            <label>Expiry Date</label>
+            <div
+              class="p-3.5 border border-inherit mt-1"
+              data-cy="licence-detail-expiry-date"
+            >
+              {{ licenceDetail?.licenceDetail?.expiryDate }}
+            </div>
+          </div>
+          <div class="mb-4">
+            <label>Licencee ABN</label>
+            <div
+              class="p-3.5 border border-inherit mt-1"
+              data-cy="licence-detail-licencee-ABN"
+            >
+              {{ licenceDetail?.licenceDetail?.licenceeABN }}
+            </div>
+          </div>
+          <div class="mb-4">
+            <label>Licencee ACN</label>
+            <div
+              class="p-3.5 border border-inherit mt-1"
+              data-cy="licence-detail-licencee-ACN"
+            >
+              {{ licenceDetail?.licenceDetail?.licenceeACN }}
+            </div>
+          </div>
+        </div>
+
+        <div class="map w-full h-120" data-cy="map">
+          <div class="relative w-full h-full border-2 border-gray-100">
+            <google-map
+              height="100%"
+              width="100%"
+              [center]="mapCenter"
+              *ngIf="mapVisible"
+              [options]="mapOptions"
+            >
+              <map-marker
+                [position]="mapCenter"
+                [options]="markerOptions"
+                (mapDrag)="dragMarker()"
+              ></map-marker>
+            </google-map>
+            <p
+              data-cy="map-false"
+              class="mt-15 text-center text-gray-400"
+              *ngIf="!mapVisible"
+            >
+              Enter the address and the map will automatically appear
+            </p>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<div
+  class="progress-spiner w-96 absolute top-1/2 left-1/2 opacity-0.5"
+  *ngIf="viewSpinner"
+>
+  <mat-spinner class="mat-spinner m-auto -ml-14"></mat-spinner>
+</div>

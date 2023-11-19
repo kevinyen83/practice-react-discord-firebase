@@ -1,0 +1,359 @@
+<div id="flex flex-col flex-auto min-w-0">
+  <!--Header-->
+  <div
+    class="header accent p-20 p-sm-24"
+    fxLayout="column"
+    fxLayoutAlign="start"
+    fxLayout.gt-xs="row"
+    fxLayoutAlign.gt-xs="space-between center"
+  >
+    <!-- APP TITLE -->
+    <div fxLayout="row" fxLayoutAlign="start center">
+      <div class="logo" fxLayout="row" fxLayoutAlign="start center">
+        <div class="logo-icon">
+          <div class="logo-icon mr-16">
+            <mat-icon>library_books</mat-icon>
+          </div>
+        </div>
+        <span class="logo-text h1"> Resources </span>
+      </div>
+    </div>
+    <!-- / APP TITLE -->
+  </div>
+  <!--/Header-->
+
+  <!--Content-->
+
+  <div class="content">
+    <mat-form-field class="search" appearance="fill">
+      <input
+        matInput
+        placeholder="Search"
+        name="searchResources"
+        [formControl]="searchResources"
+      />
+      <mat-icon>search</mat-icon>
+    </mat-form-field>
+
+    <div class="card">
+      <div class="h3">
+        Filters
+        <button
+          mat-raised-button
+          color="accent"
+          type="button"
+          class="apply-button"
+          (click)="applyFiltering()"
+          aria-label="Apply"
+        >
+          Apply Filters
+        </button>
+      </div>
+
+      <form action="" [formGroup]="resourceComplianceFiltersForm">
+        <div>
+          <mat-form-field class="incomplete-profile" appearance="fill">
+            <mat-label>Incomplete Profile</mat-label>
+            <mat-select
+              placeholder="Incomplete Profile"
+              formControlName="incompleteProfile"
+              (selectionChange)="onChangeFilter('incompleteProfile', $event)"
+              multiple
+            >
+              <mat-option value="Yes">Yes</mat-option>
+              <mat-option value="No">No</mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field class="profilePic" appearance="fill">
+            <mat-label>Profile Pic</mat-label>
+            <mat-select
+              placeholder="Profile Pic"
+              formControlName="profilePic"
+              (selectionChange)="onChangeFilter('profilePic', $event)"
+              multiple
+            >
+              <mat-option value="Yes">Yes</mat-option>
+              <mat-option value="No">No</mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field class="email-address" appearance="fill">
+            <mat-label>Email address</mat-label>
+            <mat-select
+              placeholder="Email Address"
+              formControlName="emailAddress"
+              (selectionChange)="onChangeFilter('email', $event)"
+              multiple
+            >
+              <mat-option value="Yes">Yes</mat-option>
+              <mat-option value="No">No</mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field class="address" appearance="fill">
+            <mat-label>Address</mat-label>
+            <mat-select
+              placeholder="Address"
+              formControlName="address"
+              (selectionChange)="onChangeFilter('address', $event)"
+              multiple
+            >
+              <mat-option value="Yes">Yes</mat-option>
+              <mat-option value="No">No</mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field class="contactNumber" appearance="fill">
+            <mat-label>Contact Number</mat-label>
+            <mat-select
+              placeholder="Contact Number"
+              formControlName="contactNumber"
+              (selectionChange)="onChangeFilter('contactNumber', $event)"
+              multiple
+            >
+              <mat-option value="Yes">Yes</mat-option>
+              <mat-option value="No">No</mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field class="contact-details" appearance="fill">
+            <mat-label>Emergency Contact Details</mat-label>
+            <mat-select
+              placeholder="Emargency Contact Details"
+              formControlName="contactDetails"
+              (selectionChange)="onChangeFilter('contactDetails', $event)"
+              multiple
+            >
+              <mat-option value="Yes">Yes</mat-option>
+              <mat-option value="No">No</mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field class="gender" appearance="fill">
+            <mat-label>Gender</mat-label>
+            <mat-select
+              placeholder="Gender"
+              formControlName="gender"
+              (selectionChange)="onChangeFilter('gender', $event)"
+              multiple
+            >
+              <mat-option value="Unspecified">Unspecified</mat-option>
+              <mat-option value="Male">Male</mat-option>
+              <mat-option value="Female">Female</mat-option>
+              <mat-option value="Other">Other</mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field class="compliance-issues" appearance="fill">
+            <mat-label>Compliance Issues</mat-label>
+            <mat-select
+              placeholder="Compliance Issues"
+              formControlName="complianceIssues"
+              (selectionChange)="onChangeFilter('complianceIssues', $event)"
+              multiple
+            >
+              <mat-option value="Yes">Yes</mat-option>
+              <mat-option value="No">No</mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field class="date-of-birth" appearance="fill">
+            <mat-label>Date of Birth</mat-label>
+            <mat-select
+              placeholder="Date of Birth"
+              formControlName="dateOfBirth"
+              (selectionChange)="onChangeFilter('dateOfBirth', $event)"
+              multiple
+            >
+              <mat-option value="Yes">Yes</mat-option>
+              <mat-option value="No">No</mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field class="connection-status" appearance="fill">
+            <mat-label>Connection Status</mat-label>
+            <mat-select
+              placeholder="Connection Status"
+              formControlName="connectionStatus"
+              (selectionChange)="onChangeFilter('connectionStatus', $event)"
+              multiple
+            >
+              <mat-option value="Active">Active</mat-option>
+              <mat-option value="Pending">Pending</mat-option>
+              <mat-option value="Inactive">Inactive</mat-option>
+              <mat-option value="Blacklisted">Blacklisted</mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field class="residency-status" appearance="fill">
+            <mat-label>Residency Status</mat-label>
+            <mat-select
+              placeholder="Residency Status"
+              formControlName="residencyStatus"
+              (selectionChange)="onChangeFilter('residencyStatus', $event)"
+              multiple
+            >
+              <mat-option value="Yes">Yes</mat-option>
+              <mat-option value="No">No</mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+      </form>
+    </div>
+
+    <div class="add-file">
+      <a href="#">Download as XLS</a>
+      <a href="#">Download as PDF</a>
+    </div>
+
+    <div class="table">
+      <mat-table
+        [dataSource]="dataSource"
+        matSort
+        (matSortChange)="sortData($event)"
+      >
+        <!-- Number Column -->
+        <ng-container matColumnDef="number">
+          <mat-header-cell mat-header-cell *matHeaderCellDef mat-sort-header>
+            №
+          </mat-header-cell>
+          <mat-cell mat-cell *matCellDef="let row; let index = index">
+            {{ index + 1 }}
+          </mat-cell>
+        </ng-container>
+
+        <!--Logo Column-->
+        <ng-container matColumnDef="avatar">
+          <mat-header-cell mat-header-cell *matHeaderCellDef mat-sort-header
+            >Avatar</mat-header-cell
+          >
+          <mat-cell mat-cell *matCellDef="let row">
+            <div class="avatar1">
+              <mat-icon *ngIf="row.avatar === ''">perm_identity</mat-icon>
+              <img *ngIf="row.avatar !== ''" [src]="row.avatar" alt="avatar" />
+            </div>
+          </mat-cell>
+        </ng-container>
+
+        <!-- Name Column -->
+        <ng-container matColumnDef="name">
+          <mat-header-cell mat-header-cell *matHeaderCellDef mat-sort-header
+            >Name</mat-header-cell
+          >
+          <mat-cell mat-cell *matCellDef="let row">
+            <span *ngIf="row.name">{{ row.name }}</span>
+            <span *ngIf="!row.name"
+              >{{ row.firstName }} {{ row.lastName }}</span
+            >
+          </mat-cell>
+        </ng-container>
+
+        <!-- Email Column -->
+        <ng-container matColumnDef="email">
+          <mat-header-cell mat-header-cell *matHeaderCellDef mat-sort-header>
+            Email
+          </mat-header-cell>
+          <mat-cell mat-cell *matCellDef="let row"> {{ row.email }} </mat-cell>
+        </ng-container>
+
+        <!-- Phone Column -->
+        <ng-container matColumnDef="contactNumber">
+          <mat-header-cell mat-header-cell *matHeaderCellDef mat-sort-header>
+            Mobile/Phone Number
+          </mat-header-cell>
+          <mat-cell mat-cell *matCellDef="let row">
+            {{ row.mobileNumber }}
+          </mat-cell>
+        </ng-container>
+
+        <!--Gender Column-->
+        <ng-container matColumnDef="gender">
+          <mat-header-cell mat-header-cell *matHeaderCellDef mat-sort-header>
+            Gender
+          </mat-header-cell>
+          <mat-cell mat-cell *matCellDef="let row"> {{ row.gender }} </mat-cell>
+        </ng-container>
+
+        <!--DateOfBirth Column-->
+        <ng-container matColumnDef="dateOfBirth">
+          <mat-header-cell mat-header-cell *matHeaderCellDef mat-sort-header>
+            Date Of Birth
+          </mat-header-cell>
+          <mat-cell mat-cell *matCellDef="let row">
+            <span *ngIf="row.dateOfBirth">Yes</span>
+            <span *ngIf="!row.dateOfBirth">No</span>
+          </mat-cell>
+        </ng-container>
+
+        <!--Residency Status Column-->
+        <ng-container matColumnDef="residencyStatus">
+          <mat-header-cell mat-header-cell *matHeaderCellDef mat-sort-header>
+            Residency Status
+          </mat-header-cell>
+          <mat-cell mat-cell *matCellDef="let row">
+            <span *ngIf="row.residencyStatus">Yes</span>
+            <span *ngIf="!row.residencyStatus">No</span>
+          </mat-cell>
+        </ng-container>
+
+        <!--Address Column-->
+        <ng-container matColumnDef="address">
+          <mat-header-cell mat-header-cell *matHeaderCellDef mat-sort-header>
+            Address
+          </mat-header-cell>
+          <mat-cell mat-cell *matCellDef="let row">
+            <span *ngIf="row.address">Yes</span>
+            <span *ngIf="!row.address">No</span>
+          </mat-cell>
+        </ng-container>
+
+        <!-- Emergency Column -->
+        <ng-container matColumnDef="emergency">
+          <mat-header-cell mat-header-cell *matHeaderCellDef mat-sort-header>
+            Emergency Contact Details</mat-header-cell
+          >
+          <mat-cell mat-cell *matCellDef="let row">
+            <span *ngIf="row.contactNumber">Yes</span>
+            <span *ngIf="!row.contactNumber">No</span>
+          </mat-cell>
+        </ng-container>
+
+        <!-- Compliance Issues Column -->
+        <ng-container matColumnDef="complianceIssues">
+          <mat-header-cell mat-header-cell *matHeaderCellDef mat-sort-header>
+            Compliance Issues</mat-header-cell
+          >
+          <mat-cell mat-cell *matCellDef="let row">
+            {{ row.complianceIssues }}
+          </mat-cell>
+        </ng-container>
+
+        <!-- lastUpdated Column -->
+        <ng-container matColumnDef="lastUpdated">
+          <mat-header-cell mat-header-cell *matHeaderCellDef mat-sort-header>
+            Last Updated</mat-header-cell
+          >
+          <mat-cell mat-cell *matCellDef="let row">{{
+            row.lastUpdated | date: "dd/MM/yyyy"
+          }}</mat-cell>
+        </ng-container>
+
+        <mat-header-row
+          mat-header-row
+          *matHeaderRowDef="displayedColumns"
+        ></mat-header-row>
+        <mat-row
+          class="hover:bg-gray-100"
+          mat-row
+          *matRowDef="let row; columns: displayedColumns"
+          (click)="toEditResource(row)"
+        >
+        </mat-row>
+      </mat-table>
+
+      <mat-paginator [pageSizeOptions]="[5, 10, 25, 100]"></mat-paginator>
+    </div>
+  </div>
+  <!--Content-->
+</div>

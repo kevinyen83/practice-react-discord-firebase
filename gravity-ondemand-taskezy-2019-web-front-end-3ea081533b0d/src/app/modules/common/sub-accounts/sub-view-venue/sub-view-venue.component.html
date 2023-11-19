@@ -1,0 +1,63 @@
+<div class="flex justify-between w-full">
+  <!-- <app-tabs-detail
+    class="w-fit"
+    *ngIf="accountType !== 'clientVenue'"
+    [buttons]="tabs"
+    (goToNextPage)="selectTabOfVenue($event)"></app-tabs-detail> -->
+  <app-tabs-detail
+    class="w-fit"
+    [buttons]="tabs"
+    *ngIf="showSidemenu"
+    (goToNextPage)="selectTabOfVenue($event)"
+  ></app-tabs-detail>
+  <div class="w-full p-4">
+    <div class="flex items-center cursor-pointer" (click)="emitBack()">
+      <mat-icon class="active:text-primary text-gray-400 mr-2"
+        >arrow_back</mat-icon
+      >
+      <div class="text-xl text-gray-400">Venues / {{ venue?.name }}</div>
+    </div>
+
+    <app-venue-details
+      [venue]="venue"
+      [venueClient]="venueClient"
+      (deletedVenue)="deletedVenues($event)"
+      *ngIf="currentTab === 'VENUE_DETAILS_TAB'"
+    ></app-venue-details>
+
+    <app-venue-managers
+      [venue]="venue"
+      [venueClient]="venueClient"
+      *ngIf="currentTab === 'VENUE_MANAGERS_TAB'"
+    ></app-venue-managers>
+
+    <app-reports-tab
+      *ngIf="currentTab === 'VENUE_REPORTS_TAB'"
+    ></app-reports-tab>
+
+    <app-engagement-documents
+      [venue]="venue"
+      [accountType]="accountType"
+      [venueClient]="venueClient"
+      [currentAccount]="currentAccount"
+      *ngIf="currentTab === 'VENUE_DOCUMENTS_TAB'"
+    ></app-engagement-documents>
+
+    <app-resources-for-sub-accounts
+      [accountType]="accountType"
+      *ngIf="currentTab === 'VENUE_RESOURCE_TAB'"
+    ></app-resources-for-sub-accounts>
+    <!--
+    <app-venue-compliance
+      *ngIf="currentTab === 'VENUE_COMPLIANCE_TAB'"></app-venue-compliance> -->
+
+    <!--    <div *ngIf="currentTab === 'VENUE_EQUIPMENT_REGISTER_TAB'">NOT DONE</div>-->
+
+    <app-resource-roles
+      [venue]="venue"
+      [venueClient]="venueClient"
+      [currentAccount]="currentAccount"
+      *ngIf="currentTab === 'VENUE_RESOURCE_REQUIREMENTS_TAB'"
+    ></app-resource-roles>
+  </div>
+</div>

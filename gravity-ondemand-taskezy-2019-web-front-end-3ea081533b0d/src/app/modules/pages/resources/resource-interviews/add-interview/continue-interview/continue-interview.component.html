@@ -1,0 +1,81 @@
+<form class="continue-form" action="" [formGroup]="continueInterviewForm">
+  <div class="h2">Rating Answers of the Interviewed Resource</div>
+   <div class="block-rate">
+     <div class="question">
+       <app-star-rating-control (click)="chooseQuestion('question1')" (changeMark)="changeMark($event)" formControlName="question1"></app-star-rating-control>
+       <p>1. What are the key tasks for a security guard?</p>
+     </div>
+     <div class="question">
+       <app-star-rating-control (click)="chooseQuestion('question2')" (changeMark)="changeMark($event)" formControlName="question2"></app-star-rating-control>
+       <p>2. Can you give me one example of a difficult situation you have dealt with?</p>
+     </div>
+     <div class="question">
+       <app-star-rating-control (click)="chooseQuestion('question3')" (changeMark)="changeMark($event)" formControlName="question3"></app-star-rating-control>
+       <p>3. You`re one a building or worksite and see something or someone suspicious.How do you respond?</p>
+     </div>
+     <div class="question">
+       <app-star-rating-control (click)="chooseQuestion('question4')" (changeMark)="changeMark($event)" formControlName="question4"></app-star-rating-control>
+       <p>4. In your opinion, what are the main roles of a concierge and building/office security guard?</p>
+     </div>
+     <div class="question">
+       <app-star-rating-control (click)="chooseQuestion('question5')" (changeMark)="changeMark($event)" formControlName="question5"></app-star-rating-control>
+       <p>5. Tell me about a time you had to defuse a potentially violent situation</p>
+     </div>
+     <div class="question">
+       <app-star-rating-control (click)="chooseQuestion('question6')" (changeMark)="changeMark($event)" formControlName="question6"></app-star-rating-control>
+       <p>6. Tell me about a time you had to remove a person from the premises(role play)</p>
+     </div>
+     <div class="question">
+       <app-star-rating-control (click)="chooseQuestion('question7')" (changeMark)="changeMark($event)" formControlName="question7"></app-star-rating-control>
+       <p>7. Tell me about a situation which required you to apply first aid</p>
+     </div>
+     <div class="question">
+       <app-star-rating-control (click)="chooseQuestion('question8')" (changeMark)="changeMark($event)" formControlName="question8"></app-star-rating-control>
+       <p>8. What powers allow you to refuse a person entry?</p>
+     </div>
+     <div class="question">
+       <app-star-rating-control (click)="chooseQuestion('question9')" (changeMark)="changeMark($event)" formControlName="question9"></app-star-rating-control>
+       <p>9. How would you explain fail to quit legislation to a person?</p>
+     </div>
+   </div>
+
+  <div class="h2">Additional Notes</div>
+  <mat-form-field class="additional-notes fuse-mat-textarea" appearance="fill">
+    <mat-label>Additional Notes</mat-label>
+    <textarea matInput placeholder="Additional Notes" name="additionalNotes" formControlName="additionalNotes"></textarea>
+  </mat-form-field>
+
+  <div class="h2">Document for Accreditation: RSA Licence</div>
+  <mat-checkbox class="rsa-licence" name="rsaLicence" aria-label="rsaLicence" formControlName="rsaLicence">
+    <span>I have confirmed that this document is valid</span>
+  </mat-checkbox>
+
+  <div class="h2">Document for Accreditation: First Aid Certificate</div>
+  <mat-checkbox class="aid-certificate" name="aidCertificate" aria-label="aidCertificate" formControlName="aidCertificate">
+    <span>I have confirmed that this document is valid</span>
+  </mat-checkbox>
+
+  <div class="h2">Document for Accreditation: Drivers Licence</div>
+  <div><b>Licence/Accreditation Number</b></div>
+  <mat-checkbox class="drivers-licence" name="driversLicence" aria-label="driversLicence" formControlName="driversLicence">
+    <span>I have confirmed that this document is valid</span>
+  </mat-checkbox>
+
+  <div class="buttons">
+    <button mat-raised-button
+            type="button"
+            (click)="cancelInterview()"
+            class="cancel-button"
+            aria-label="Cancel">
+      Cancel
+    </button>
+
+    <button mat-raised-button color="accent"
+            type="button"
+            (click)="saveInterview()"
+            class="save-button"
+            aria-label="saver">
+      Continue Interview Form
+    </button>
+  </div>
+</form>

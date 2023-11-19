@@ -1,0 +1,200 @@
+<div class="compliance mt-5">
+  <h1 class="font-bold text-2xl">Licence conditions</h1>
+  <div class="abn-verification">
+    <div fxLayout="row" fxLayoutAlign="start start">
+      <mat-form-field
+        class="relative w-1/3 mt-2"
+        appearance="fill"
+        [floatLabel]="true"
+      >
+        <mat-label>Licence number</mat-label>
+        <input matInput [formControl]="searchAbn" />
+        <mat-spinner
+          class="absolute right-1.5 top-2"
+          [diameter]="22"
+          *ngIf="spinnerSearch"
+        >
+        </mat-spinner>
+      </mat-form-field>
+
+      <button
+        class="absolute bg-blue-400 mt-3 pt-4 pb-4 pl-8 pr-8 text-white rounded-3xl text-base ml-4"
+        matSuffix
+        *ngIf="!spinnerSearch"
+        (click)="searchingAbn()"
+      >
+        Search
+      </button>
+    </div>
+
+    <div class="notification text-red-400" *ngIf="notificationABN">
+      {{ notificationABN }}
+    </div>
+  </div>
+
+  <div class="operating-regulations mt-6">
+    <h1 class="font-bold text-2xl">Operating Regulations</h1>
+    <mat-table
+      class="table-operating"
+      [dataSource]="dataSourceOperatingRegulations"
+      matSort
+    >
+      <!-- Name Column -->
+      <ng-container matColumnDef="name">
+        <mat-header-cell *matHeaderCellDef mat-sort-header="name">
+          Name
+        </mat-header-cell>
+        <mat-cell *matCellDef="let row">
+          {{ row.name }}
+        </mat-cell>
+      </ng-container>
+
+      <!-- Email Column -->
+      <ng-container matColumnDef="email">
+        <mat-header-cell *matHeaderCellDef mat-sort-header="email"
+          >Email</mat-header-cell
+        >
+        <mat-cell *matCellDef="let row">
+          {{ row.email }}
+        </mat-cell>
+      </ng-container>
+
+      <!-- Phone Column -->
+      <ng-container matColumnDef="phone">
+        <mat-header-cell *matHeaderCellDef mat-sort-header="phone"
+          >Phone</mat-header-cell
+        >
+        <mat-cell *matCellDef="let row">
+          {{ row.phone }}
+        </mat-cell>
+      </ng-container>
+
+      <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+      <mat-row
+        class="hover:bg-gray-100"
+        *matRowDef="let row; columns: displayedColumns; let index = index"
+      >
+      </mat-row>
+    </mat-table>
+  </div>
+
+  <div class="training mt-6">
+    <h1 class="font-bold text-2xl">Training and Induction Programs</h1>
+
+    <mat-table
+      class="table-operating"
+      [dataSource]="dataSourceTraining"
+      matSort
+    >
+      <!-- Name Column -->
+      <ng-container matColumnDef="name">
+        <mat-header-cell *matHeaderCellDef mat-sort-header="name">
+          Name
+        </mat-header-cell>
+        <mat-cell *matCellDef="let row">
+          {{ row.name }}
+        </mat-cell>
+      </ng-container>
+
+      <!-- Email Column -->
+      <ng-container matColumnDef="email">
+        <mat-header-cell *matHeaderCellDef mat-sort-header="email"
+          >Email</mat-header-cell
+        >
+        <mat-cell *matCellDef="let row">
+          {{ row.email }}
+        </mat-cell>
+      </ng-container>
+
+      <!-- Phone Column -->
+      <ng-container matColumnDef="phone">
+        <mat-header-cell *matHeaderCellDef mat-sort-header="phone"
+          >Phone</mat-header-cell
+        >
+        <mat-cell *matCellDef="let row">
+          {{ row.phone }}
+        </mat-cell>
+      </ng-container>
+
+      <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+      <mat-row
+        class="hover:bg-gray-100"
+        *matRowDef="let row; columns: displayedColumns; let index = index"
+      >
+      </mat-row>
+    </mat-table>
+  </div>
+
+  <div class="plan-of-management mt-6">
+    <h1 class="font-bold text-2xl mb-4">Plan of Management</h1>
+
+    <div class="block-management w-full h-30 bg-gray-200"></div>
+  </div>
+
+  <div class="engagement-details mt-6">
+    <h1 class="font-bold text-2xl">Engagement Details</h1>
+
+    <mat-table
+      class="table-engagement"
+      [dataSource]="dataSourceEngagement"
+      matSort
+    >
+      <!-- Commencement Date Column -->
+      <ng-container matColumnDef="commencementDate">
+        <mat-header-cell *matHeaderCellDef mat-sort-header="commencementDate">
+          Commencement Date
+        </mat-header-cell>
+        <mat-cell *matCellDef="let row">
+          <!--          {{ row.name }}-->
+        </mat-cell>
+      </ng-container>
+
+      <!-- Term Column -->
+      <ng-container matColumnDef="term">
+        <mat-header-cell *matHeaderCellDef mat-sort-header="term"
+          >Term</mat-header-cell
+        >
+        <mat-cell *matCellDef="let row">
+          <!--          {{ row.email }}-->
+        </mat-cell>
+      </ng-container>
+
+      <!-- Contract Renewal Date Column -->
+      <ng-container matColumnDef="contractRenewalDate">
+        <mat-header-cell *matHeaderCellDef mat-sort-header="contractRenewalDate"
+          >Contract Renewal Date</mat-header-cell
+        >
+        <mat-cell *matCellDef="let row">
+          <!--          {{ row.phone }}-->
+        </mat-cell>
+      </ng-container>
+
+      <!-- Key Contract Terms Column -->
+      <ng-container matColumnDef="keyContractTerms">
+        <mat-header-cell *matHeaderCellDef mat-sort-header="keyContractTerms"
+          >Key Contract Terms</mat-header-cell
+        >
+        <mat-cell *matCellDef="let row">
+          <!--          {{ row.phone }}-->
+        </mat-cell>
+      </ng-container>
+
+      <!-- Additional Comments Column -->
+      <ng-container matColumnDef="additionalComments">
+        <mat-header-cell *matHeaderCellDef mat-sort-header="additionalComments"
+          >Additional Comments</mat-header-cell
+        >
+        <mat-cell *matCellDef="let row">
+          <!--          {{ row.phone }}-->
+        </mat-cell>
+      </ng-container>
+
+      <mat-header-row *matHeaderRowDef="engagementColumns"></mat-header-row>
+      <mat-row
+        class="hover:bg-gray-100"
+        *matRowDef="let row; columns: engagementColumns; let index = index"
+      >
+      </mat-row>
+    </mat-table>
+  </div>
+</div>

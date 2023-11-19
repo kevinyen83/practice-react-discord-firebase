@@ -1,0 +1,115 @@
+<div>
+  <div
+    class="flex justify-between p-6 items-center"
+    style="background-color: #369be5"
+  >
+    <h1 class="text-white text-3xl">{{ header }}</h1>
+    <mat-icon class="text-white">close</mat-icon>
+  </div>
+  <div class="px-9 py-5">
+    <h4 class="font-bold text-2xl">Monday, 21 June 2021</h4>
+    <h5 class="text-xl mb-7">08:00 AM - 22:00 PM</h5>
+
+    <h4 class="font-bold text-xl mb-4">
+      Client: <span class="text-lg font-light">Edward Albert </span>
+    </h4>
+    <h4 class="font-bold text-xl mb-4">
+      Venue:
+      <span class="text-lg font-light"
+        >Marriot Hotel, 147c Cromwell Road, Kensington</span
+      >
+    </h4>
+    <h4 class="font-bold text-xl mb-4">
+      Supplier: <span class="text-lg font-light">Jack Allon</span>
+    </h4>
+    <h4 class="text-lg">Security Licence:</h4>
+    <h4 class="text-lg">Security Expiry:</h4>
+    <h4 class="text-lg">ABN:</h4>
+    <h4 class="text-lg">ACN:</h4>
+    <h4 class="text-lg">Phone:</h4>
+  </div>
+
+  <div>
+    <mat-accordion class="example-headers-align" multi>
+      <mat-expansion-panel>
+        <mat-expansion-panel-header>
+          <mat-panel-title class="text-xl font-bold"
+            >Shift checklist</mat-panel-title
+          >
+        </mat-expansion-panel-header>
+        <div>
+          <section>
+            <mat-checkbox class="bg-blue-400" [formControl]="shiftChecked" ngDefaultControl
+              >Shift #1</mat-checkbox
+            >
+          </section>
+          <section>
+            <mat-checkbox class="example-margin" [formControl]="shiftChecked" ngDefaultControl
+              >Shift #2</mat-checkbox
+            >
+          </section>
+
+          <section>
+            <mat-checkbox class="example-margin" [formControl]="shiftChecked" ngDefaultControl
+              >Shift #3</mat-checkbox
+            >
+          </section>
+          <section>
+            <mat-checkbox class="example-margin" [formControl]="shiftChecked" ngDefaultControl
+              >Shift #4</mat-checkbox
+            >
+          </section>
+        </div>
+      </mat-expansion-panel>
+
+      <mat-expansion-panel>
+        <mat-expansion-panel-header>
+          <mat-panel-title class="text-xl font-bold">Reports</mat-panel-title>
+        </mat-expansion-panel-header>
+        <div>No reports were added</div>
+      </mat-expansion-panel>
+
+      <mat-expansion-panel>
+        <mat-expansion-panel-header>
+          <mat-panel-title class="text-xl font-bold"
+            >Equipments</mat-panel-title
+          >
+        </mat-expansion-panel-header>
+        <div>No Equipments</div>
+      </mat-expansion-panel>
+
+      <mat-expansion-panel>
+        <mat-expansion-panel-header>
+          <mat-panel-title class="text-xl font-bold">Breaks</mat-panel-title>
+        </mat-expansion-panel-header>
+        <div>
+          <h4>13:00 - 13:45</h4>
+          <h4>13:00 - 13:45</h4>
+          <h4>13:00 - 13:45</h4>
+        </div>
+      </mat-expansion-panel>
+
+      <mat-expansion-panel>
+        <mat-expansion-panel-header>
+          <mat-panel-title class="text-xl font-bold">Notes</mat-panel-title>
+        </mat-expansion-panel-header>
+        <div>Notes Here</div>
+      </mat-expansion-panel>
+      <div>
+        <!-- <google-map
+          class="w-full"
+          height="400px"
+          width="100%"
+          [center]="mapCenter"
+          [zoom]="zoom"
+          [options]="mapOptions"
+        >
+          <map-marker
+            [position]="mapPin"
+            [options]="markerOptions"
+          ></map-marker>
+        </google-map> -->
+      </div>
+    </mat-accordion>
+  </div>
+</div>

@@ -1,0 +1,141 @@
+<div
+  class="adding-member pb-2 rounded-2xl flex flex-col"
+  *ngIf="getControls().length > 0"
+>
+  <div class="header-of-members flex justify-between">
+    <div>
+      <div
+        class="text-primary text-3xl font-semibold"
+        *ngIf="type === 'resource'"
+      >
+        Invite Direct Resources
+      </div>
+    </div>
+    <button
+      mat-raised-button
+      data-cy="send-invites"
+      color="primary"
+      [disabled]="addMembersForm.invalid"
+      class="button-confirm rounded-[50px] self-end w-fit mb-2"
+      (click)="sendInvites()"
+    >
+      <a>Send Invites</a>
+    </button>
+  </div>
+  <div
+    class="add-member flex flex-col rounded-2xl border-2 border-slate-300 border-dashed"
+  >
+    <form
+      (keydown.enter)="checkAndAddInvite($event)"
+      [formGroup]="addMembersForm"
+      class="flex mt-4 w-full flex-col items-center"
+    >
+      <div
+        *ngFor="let invite of getControls(); let i = index"
+        formArrayName="invites"
+        class="flex flex-row items-center w-full"
+      >
+        <div
+          [formGroupName]="i"
+          class="flex flex-row w-full items-start justify-center"
+        >
+          <mat-form-field class="name w-1/4 px-3">
+            <mat-label *ngIf="i == 0">Name</mat-label>
+            <input
+            [attr.data-cy]="'name-'+i"
+              matInput
+              placeholder="Name*"
+              name="name"
+              formControlName="name"
+            />
+            <mat-error
+              *ngIf="getControls()[i].get('name').hasError('required')"
+            >
+              A name is required
+            </mat-error>
+          </mat-form-field>
+
+          <mat-form-field class="email w-1/4 px-3">
+            <mat-label *ngIf="i == 0">Email</mat-label>
+            <input
+            [attr.data-cy]="'email-'+i"
+              matInput
+              placeholder="Email*"
+              name="email"
+              formControlName="email"
+            />
+            <mat-error *ngIf="getControls()[i].get('email').hasError('email')">
+              Email address is Invalid
+            </mat-error>
+            <mat-error
+              *ngIf="getControls()[i].get('email').hasError('required')"
+            >
+              Email address is required
+            </mat-error>
+            <mat-error *ngIf="getControls()[i].get('email').hasError('exists')">
+              Email already invited
+            </mat-error>
+          </mat-form-field>
+
+          <mat-form-field class="role w-1/4 px-3" *ngIf="type === 'member'"  [attr.data-cy]="'role-field-'+i">
+            <mat-label *ngIf="i == 0"  [attr.data-cy]="'role-label-'+i">Role</mat-label>
+            <mat-select placeholder="Role*" formControlName="role" [attr.data-cy]="'role-select-'+i">
+              <mat-option *ngFor="let role of roles" [value]="role.value" [attr.data-cy]="'role-options-'+role">{{
+                role.label
+              }}</mat-option>
+            </mat-select>
+            <mat-error
+              *ngIf="getControls()[i].get('role').hasError('required')"
+            >
+              A Roll is required
+            </mat-error>
+          </mat-form-field>
+          <!-- </div> -->
+          <!-- <div class="w-1/3 ml-2"> -->
+          <mat-form-field
+            class="department w-1/4 px-3"
+            *ngIf="type === 'member'"
+          >
+            <mat-label *ngIf="i == 0">Department</mat-label>
+            <input
+            [attr.data-cy]="'department-'+i"
+            data-cy="department"
+              matInput
+              placeholder="Department"
+              name="department"
+              formControlName="department"
+            />
+          </mat-form-field>
+          <!-- </div> -->
+          <div [ngClass]="{'mt-6': i === 0}">
+            <button
+            [attr.data-cy]="'close-'+i"
+              *ngIf="!getControls()[i].get('sending').value"
+              mat-icon-button
+              class="button-remove-invite-line place-self-center"
+              (click)="removeInvite(i)"
+            >
+              <mat-icon class="hover:text-primary text-gray-300"
+                >close</mat-icon
+              >
+            </button>
+            <mat-spinner
+              class="place-self-center"
+              [diameter]="30"
+              *ngIf="getControls()[i].get('sending').value"
+              color="primary"
+            ></mat-spinner>
+          </div>
+        </div>
+      </div>
+    </form>
+    <button
+      mat-icon-button
+      class="button-add-invite-line self-center"
+      (click)="addInvite()"
+      data-cy="add"
+    >
+      <mat-icon class="hover:text-primary text-gray-300">add</mat-icon>
+    </button>
+  </div>
+</div>

@@ -1,0 +1,83 @@
+<app-auth-layout
+  class="w-full"
+  [headerName]="'account-information-header'"
+  [name]="'Account information'"
+  [circles]="true"
+  [status]="'abn-check'"
+  [noSplit]="true"
+  [showHeader]="true"
+  [showBack]="!detailedInformation"
+  [showTitle]="false"
+  (toBack)="back($event)"
+  *ngIf="viewAccountInformation">
+  <div class="account-information">
+    <app-account-information
+      (setAbnInfo)="setAbnInfo($event)"
+      (nextStep)="goToNextPage($event)"></app-account-information>
+  </div>
+</app-auth-layout>
+
+<app-auth-layout
+  class="w-full"
+  [headerName]="'authority-verification-header'"
+  [name]="'Authority verification'"
+  [circles]="true"
+  [status]="'authority-verification'"
+  [noSplit]="true"
+  [showHeader]="true"
+  [showBack]="false"
+  [showTitle]="false"
+  (toBack)="back($event)"
+  *ngIf="viewAutorityVerification">
+  <div class="authority-verification">
+    <app-authority-verification
+      [profile]="currentUser"
+      [status]="'primary-account'"
+      [abnInfo]="abnInfo"
+      (back)="reset()"></app-authority-verification>
+  </div>
+</app-auth-layout>
+
+<app-auth-layout
+  class="w-full"
+  [headerName]="'verifying-now-header'"
+  [name]="'Verifying now'"
+  [circles]="true"
+  [status]="'verifying-now'"
+  [noSplit]="false"
+  [showHeader]="false"
+  [showBack]="false"
+  [showTitle]="false"
+  (toBack)="back($event)"
+  *ngIf="viewVerifyingNow">
+  <div class="verifying-now">
+    <app-verifying-now></app-verifying-now>
+  </div>
+</app-auth-layout>
+
+<!-- <div *ngIf="viewPaymentPlane"> -->
+<!-- <app-auth-layout class="w-full" [name]="'Payment Plans'" [status]="'payment-plan'" *ngIf="viewPaymentPlane" [noSplit]="true">
+    <app-payment-plane (toBack)="nextStep($event)"></app-payment-plane>
+  </app-auth-layout>
+
+  <app-auth-layout class="w-full" [name]="'Add Payment Plans'" [status]="'add-payment-plan'" *ngIf="viewAddPaymentPlane" [noSplit]="true">
+    <app-add-payment-plane
+      [currentEvent]="currentEvent"
+      (nextStep)="nextStep($event)"
+    ></app-add-payment-plane>
+  </app-auth-layout> -->
+
+<app-auth-layout
+  class="w-full"
+  [headerName]="'complete-your-account-header'"
+  [name]="'Complete Your Account'"
+  [circles]="false"
+  [status]="'complete_account_details'"
+  *ngIf="viewCompleteAccount"
+  [noSplit]="true">
+  <app-complete-account-details></app-complete-account-details>
+</app-auth-layout>
+<!-- </div>
+
+  <app-auth-footer></app-auth-footer>
+</div> -->

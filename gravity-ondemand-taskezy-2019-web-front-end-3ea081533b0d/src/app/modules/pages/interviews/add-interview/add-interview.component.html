@@ -1,0 +1,29 @@
+<div class="add-interview p-8">
+  <form class="add-interview-form flex flex-col" [formGroup]="interviewFormSend" action="">
+    <mat-form-field class="template-field" appearance="fill">
+      <mat-label>Template</mat-label>
+      <mat-select placeholder="Template" formControlName="template">
+        <mat-option *ngFor="let option of templates" value="{{option.name}}">{{option.name}}</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field class="email" appearance="fill">
+      <mat-label>Email</mat-label>
+      <input matInput
+             name="email"
+             formControlName="email"
+             required>
+    </mat-form-field>
+
+    <button mat-raised-button
+            color="primary"
+            type="submit"
+            [disabled]="interviewFormSend.invalid"
+            (click)="sentInterview()"
+            class="sent-button"
+            aria-label="Sent">
+      Sent
+    </button>
+
+  </form>
+</div>

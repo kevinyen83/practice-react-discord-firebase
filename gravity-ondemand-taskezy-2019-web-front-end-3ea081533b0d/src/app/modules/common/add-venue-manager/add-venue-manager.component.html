@@ -1,0 +1,124 @@
+<div class="add-venue-manager">
+  <div
+    class="header-venue-manager bg-primary text-white flex justify-between text-2xl p-6"
+  >
+    <div class="text-3xl font-medium">Venue Manager</div>
+    <mat-icon class="text-white text-3xl cursor-pointer" mat-dialog-close
+      >close</mat-icon
+    >
+  </div>
+
+  <div class="content-venue-manager p-8">
+    <p>Choose Venue Managers</p>
+
+    <mat-table class="table-managers" data-cy="table-managers" [dataSource]="dataSource" matSort>
+      <!-- Name Column -->
+      <ng-container matColumnDef="name">
+        <mat-header-cell *matHeaderCellDef mat-sort-header="name">
+          Name
+        </mat-header-cell>
+        <mat-cell *matCellDef="let row; let i = index">
+          <div class="flex">
+            <mat-checkbox
+              color="primary"
+              [checked]="managers.includes(row.user_id) || selectedMemberIds.includes(row.user_id)"
+              [disabled]="managers.includes(row.user_id)"
+              (change)="changeSelect($event, row)"
+              data-cy="add-venue-manager-name"
+            ></mat-checkbox>
+            <div *ngIf="row?.name">{{ row.name }}</div>
+            <div *ngIf="row?.invite_name">{{ row.invite_name }}</div>
+          </div>
+        </mat-cell>
+      </ng-container>
+
+      <!-- Email Column -->
+      <ng-container matColumnDef="e-mail">
+        <mat-header-cell *matHeaderCellDef mat-sort-header="email"
+          >E-mail</mat-header-cell
+        >
+        <mat-cell *matCellDef="let row" data-cy="add-venue-manager-email">
+          <div class="overflow-hidden whitespace-nowrap">{{ row.email }}</div>
+        </mat-cell>
+      </ng-container>
+
+      <!-- Role Column -->
+      <ng-container matColumnDef="role">
+        <mat-header-cell *matHeaderCellDef mat-sort-header="role"
+          >Role</mat-header-cell
+        >
+        <mat-cell *matCellDef="let row" data-cy="add-venue-manager-role">
+          {{ row?.role }}
+        </mat-cell>
+      </ng-container>
+
+      <!-- Department Column -->
+      <ng-container matColumnDef="department">
+        <mat-header-cell *matHeaderCellDef mat-sort-header="department"
+          >Department</mat-header-cell
+        >
+        <mat-cell *matCellDef="let row" data-cy="add-venue-manager-department">
+          {{ row?.department }}
+        </mat-cell>
+      </ng-container>
+
+      <ng-container matColumnDef="status">
+        <mat-header-cell
+          *matHeaderCellDef
+          mat-sort-header="status"
+          class="link-container"
+          >Status</mat-header-cell
+        >
+        <mat-cell
+          fxLayout="row"
+          fxLayoutAlign="space-between center"
+          *matCellDef="let row"
+          class="link-container flex justify-start"
+        >
+          <div class="flex items-center">
+            <div
+              class="w-3 h-3 rounded-full mr-2"
+              [ngClass]="utils.getStatusColour(row?.status, false, false)"
+            ></div>
+            <div>
+              {{ utils.getStatus(row?.status, false, false) }}
+            </div>
+          </div>
+        </mat-cell>
+      </ng-container>
+
+      <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+      <mat-row
+        class="hover:bg-gray-100"
+        *matRowDef="let row; columns: displayedColumns; let index = index"
+      >
+      </mat-row>
+    </mat-table>
+    <p class="text-center text-gray-300 mt-8" *ngIf="notification">
+      {{ notification }}
+    </p>
+
+    <div class="buttons-venue mt-8 flex">
+      <button
+        mat-stroked-button
+        color="primary"
+        class="cancel-button text-center rounded-full ml-2 mr-3"
+        (click)="cancelSelect()"
+        data-cy="cancel-button"
+      >
+        Cancel
+      </button>
+
+      <button
+        color="primary"
+        class="save-button rounded-full"
+        mat-raised-button
+        [disabled]="!selectedMembers.length"
+        data-cy="save-venue"
+        (click)="select()"
+      >
+        <span>Select</span>
+      </button>
+    </div>
+  </div>
+</div>

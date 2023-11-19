@@ -1,0 +1,104 @@
+<app-auth-layout class="w-full" [showBack]="isMobileVerified" [showHeader]="false" [name]="'Mobile verification'" [status]="'verify-mobile'" [headerName]="'mobile-verification-header'">
+  <form
+      class="flex relative w-full flex-col m-auto"
+      name="mobileVerificationForm"
+      #mobileVerificationNgForm="ngForm"
+      [formGroup]="mobileVerificationForm"
+    >
+      <fuse-alert
+        class="mb-1 absolute z-50 -top-7 left-28"
+        *ngIf="showAlert"
+        [appearance]="'outline'"
+        [showIcon]="false"
+        [type]="alert.type"
+        [dismissible]="false"
+        [@shake]="alert.type === 'error'">
+        {{alert.message}}
+      </fuse-alert>
+
+      <p class="text-xl text-black mb-5 flex justify-start">{{notification}}</p>
+      <mat-form-field *ngIf="!isMobileVerified" class="mobile-number w-full mr-4">
+        <ngx-mat-intl-tel-input
+          [preferredCountries]="['au','us', 'gb']"
+          [enablePlaceholder]="true"
+          [enableSearch]="false"
+          formControlName="mobileNumber"
+          name="mobileNumber"
+          autocomplete="off"
+          format="national"
+          required
+          enableAutoCountrySelect="true">
+        </ngx-mat-intl-tel-input>
+        <mat-error *ngIf="mobileVerificationForm.get('mobileNumber').hasError('required')">
+          Phone Number is required
+        </mat-error>
+        <mat-error *ngIf="mobileVerificationForm.get('mobileNumber').hasError('validatePhoneNumber')">
+          Invalid Number
+        </mat-error>
+      </mat-form-field>
+
+      <mat-form-field *ngIf="isMobileVerified" class="w-full">
+        <mat-label>Verification code</mat-label>
+        <span matPrefix>T-</span>
+        <input matInput type="text" formControlName="token" autocomplete="one-time-code" required/>
+        <mat-error
+          *ngIf="mobileVerificationForm.get('token').hasError('required')"
+        >
+        Verficiation code is required
+        </mat-error>
+        <mat-error
+        *ngIf="mobileVerificationForm.get('token').errors?.pattern"
+      >
+      Invalid verficiation code, please enter a 4-digit number
+      </mat-error>
+      </mat-form-field>
+
+      <!-- Submit button -->
+    </form>
+
+  <div class="buttons flex flex-col mt-8">
+    <button
+      color="primary"
+      *ngIf="isMobileVerified"
+      class="text-xl font-bold w-full m-auto rounded-full"
+      mat-raised-button
+      [disabled]="mobileVerificationForm.disabled || mobileVerificationForm.get('token').errors?.pattern || mobileVerificationForm.get('token').hasError('required')"
+      (click)="verifyMobile()"
+    >
+      <span *ngIf="!mobileVerificationForm.disabled"> Verify Mobile </span>
+      <mat-progress-spinner
+        *ngIf="mobileVerificationForm.disabled"
+        [diameter]="24"
+        [mode]="'indeterminate'"
+      ></mat-progress-spinner>
+    </button>
+
+    <button mat-raised-button *ngIf="!isMobileVerified" [disabled]="timerView" color="primary" class="text-xl flex items-center w-full m-auto rounded-full mt-1" (click)="resendVerifySMS()">
+      <div class="mr-2">Send Code</div>
+      <div *ngIf="viewSpinner">
+        <mat-progress-spinner
+          color="accent"
+          [diameter]="24"
+          [mode]="'indeterminate'">
+        </mat-progress-spinner>
+      </div>
+    </button>
+    <button *ngIf="isMobileVerified" [disabled]="timerView" class="flex items-center text-gray-400 text-base justify-center mt-3" (click)="resendVerifySMS()" mat-button>
+      Resend code
+      <div *ngIf="viewSpinner">
+        <mat-progress-spinner
+          color="accent"
+          [diameter]="24"
+          [mode]="'indeterminate'">
+        </mat-progress-spinner>
+      </div>
+      <div class="ml-2" *ngIf="timerView">{{ time$ | async}}</div>
+    </button>
+
+    <div class="flex flex-col mt-2">
+      <div class="self-center">
+        <button mat-button color="primary" (click)="signOut()">Sign out</button>
+      </div>
+    </div>
+  </div>
+</app-auth-layout>

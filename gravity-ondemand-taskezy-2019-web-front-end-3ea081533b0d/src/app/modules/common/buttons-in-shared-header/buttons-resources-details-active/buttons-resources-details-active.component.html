@@ -1,0 +1,26 @@
+<ng-template #buttonsTemplate>
+  <div class="flex flex-row justify-end items-center">
+    <div class="buttons justify-end flex mr-12">
+      <button
+        mat-raised-button
+        color="warn"
+        *ngIf="currentResource?.status == 1"
+        data-cy="deactivate-resource-button"
+        (click)="deactivate()"
+        aria-label="Cancel"
+      >
+        Deactivate
+      </button>
+
+      <button
+        mat-raised-button
+        *ngIf="currentResource?.status == 2"
+        data-cy="activate-resource-button"
+        class="bg-success text-white"
+        (click)="activate()"
+      >
+        Activate
+      </button>
+    </div>
+  </div>
+</ng-template>

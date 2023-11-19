@@ -1,0 +1,38 @@
+<div class="locations-content">
+  <h1>Locations
+    <mat-icon *ngIf="!viewLocations" (click)="addLocations()">add</mat-icon>
+    <mat-icon *ngIf="viewLocations" (click)="removeLocations()">remove</mat-icon>
+  </h1>
+  <div class="locations" *ngIf="viewLocations">
+    <div class="block-left">
+      <div class="plan-header" fxLayout="row">
+        <span>Floor Plan</span>
+        <mat-icon (click)="addLocation()">add</mat-icon>
+      </div>
+      <button mat-raised-button color="accent" type="button" (click)="file.click()">Add plan</button>
+      <span style="color: #37aae7; cursor: pointer;margin-top: 20px;visibility: hidden">+ Add New Document <input type="file" accept="img/*" #file (change)="onFileChange($event)"/></span>
+      <sdk-drop>
+        <div class="floor-plan" *ngIf="plan">
+          <button mat-mini-fab *ngIf="plan" class="remove" color="primary"><mat-icon (click)="reduce()">remove</mat-icon></button>
+          <button mat-mini-fab *ngIf="plan" class="add" color="primary"><mat-icon (click)="enlarge()">add</mat-icon></button>
+          <div #img class="platform" cdkDrag [cdkDragFreeDragPosition]="dragPosition">
+            <img *ngIf="plan" src="{{plan}}" alt="plan">
+            <div class="markers" *ngFor="let marker of markers; let i = index">
+              <div class="marker">
+                <app-tooltip-input #tooltip (tooltipname)="setName($event, i)" cdkDrag [cdkDragFreeDragPosition]="marker.position" (cdkDragEnded)="dragend($event, i)"></app-tooltip-input>
+              </div>
+            </div>
+          </div>
+        </div>
+      </sdk-drop>
+    </div>
+    <div class="block-right">
+      <div class="location-names">
+        <p *ngFor="let location of markers; let i = index" (click)="toCurrentLocation(location)">{{i + 1}} {{location.name}}
+          <button mat-mini-fab color="warn"><mat-icon (click)="removeLocation(i)">remove</mat-icon></button>
+        </p>
+      </div>
+    </div>
+  </div>
+
+</div>

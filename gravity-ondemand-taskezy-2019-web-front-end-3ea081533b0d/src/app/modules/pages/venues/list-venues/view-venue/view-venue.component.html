@@ -1,0 +1,45 @@
+<div class="venue-details flex flex-col flex-1 w-full">
+  <!-- APP TITLE -->
+
+  <app-header-with-buttons
+    [title]="currentVenue?.name"
+    [isVenuePage]="true"
+  ></app-header-with-buttons>
+  <app-buttons-venues-detail-page
+    [addNewVenue]="false"
+    [currentAccount]="currentAccount"
+    [venue]="currentVenue"
+    [showEdit]="
+      accountService.currentAccountIsSubscriber &&
+      currentVenueClient?.invitation?.uuid === '' &&
+        currentVenueClient?.connection_request?.invited_account_uuid === ''
+    "
+    [showDelete]="
+      currentAccount?.uuid === currentVenueClient?.uuid ||
+      (currentVenueClient?.invitation?.uuid === '' &&
+        currentVenueClient?.connection_request?.invited_account_uuid === '')
+    "
+    *ngIf="isVenueTab == 'VENUE_DETAILS_TAB'"
+  ></app-buttons-venues-detail-page>
+  <!-- <div class="row" fxLayout="row" fxLayoutAlign="space-between center">
+      <div class="flex text-3xl flex-row items-center">
+        <div class="mr-16">
+          <img src="./assets/images/icons/venue.svg" />
+        </div>
+        <span class="pl-2">
+          <span *ngIf="currentVenue">{{ currentVenue?.name }}</span>
+        </span>
+      </div>
+    </div> -->
+  <!-- / APP TITLE -->
+
+  <app-sub-view-venue
+    class="flex flex-1"
+    [venue]="currentVenue"
+    [venueClient]="currentVenueClient"
+    [accountType]="accountType"
+    [showSidemenu]="true"
+    (updatedVenues)="showNotification($event)"
+    (pressBack)="closeVenue()"
+  ></app-sub-view-venue>
+</div>

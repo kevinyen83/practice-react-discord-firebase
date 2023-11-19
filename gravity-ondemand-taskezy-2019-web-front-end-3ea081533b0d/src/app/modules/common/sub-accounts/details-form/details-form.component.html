@@ -1,0 +1,414 @@
+<div class="bg-white rounded-2xl p-2">
+  <div class="flex flex-col p-6 md:justify-between">
+    <form
+      class="w-full flex lg:flex md:flex-col sm:flex-col justify-between"
+      [formGroup]="detailsForm"
+    >
+      <div
+        class="flex-col md:order-2 sm:order-2 lg:flex-col md:flex-col sm:flex-col w-full"
+      >
+        <!-- Alert -->
+        <fuse-alert
+          *ngIf="showAlert"
+          [appearance]="'outline'"
+          [showIcon]="false"
+          [type]="alert.type"
+          [dismissible]="true"
+          [dismissed]="false"
+          [@shake]="alert.type === 'error'"
+        >
+          {{ alert.message }}
+        </fuse-alert>
+
+        <div class="text-primary text-3xl font-semibold flex justify-between">
+          <span data-cy="account-details-header">Account details</span>
+        </div>
+
+        <!-- <div class="flex flex-row justify-end items-center">
+          <div *ngIf="(editing || creating) && isCreatingClient == true">
+            <button
+              mat-stroked-button
+              color="primary"
+              class="rounded-[33px] mr-2"
+              (click)="cancelEdit()"
+            >
+              Back
+            </button>
+
+            <button
+              mat-raised-button
+              color="primary"
+              class="add-venue-button rounded-[33px]"
+              id="save-details-button"
+              data-cy="save-details-button"
+              [disabled]="detailsForm.invalid || viewSpinner"
+              (click)="saveDetails()"
+            >
+              Save
+            </button>
+          </div>
+        </div> -->
+        <div
+          class="col1 mt-6 xl:mr-2 2xl:mr-3 w-full md:order-2 sm:order-2 flex flex-col"
+        >
+          <div
+            *ngIf="status === 'edit' && !editing"
+            class="header-text flex flex-row items-center mb-8"
+          >
+            <div
+              class="flex sm:hidden overflow-hidden w-[100px] h-[100px] mr-4 border-2 rounded-full"
+            >
+              <img
+                class="photo avatar"
+                [src]="currentAvatar || defaultAvatar"
+              />
+            </div>
+
+            <div
+              data-cy="status-element"
+              class="w-24 ml-4 rounded-3xl text-center p-1"
+              [ngClass]="
+                utils.getStatusColour(
+                  selectedAccount?.connection_status,
+                  false,
+                  true
+                )
+              "
+            >
+              <span>{{
+                utils.getStatus(selectedAccount?.connection_status, false, true)
+              }}</span>
+            </div>
+
+            <!-- <div class="flex">
+              <button mat-icon-button>
+                <mat-icon class="text-gray-300">autorenew</mat-icon>
+              </button>
+              <button mat-icon-button>
+                <mat-icon class="text-gray-300">delete</mat-icon>
+              </button>
+            </div> -->
+
+            <div
+              class="ml-auto flex flex-col items-end"
+              *ngIf="
+                selectedAccount?.connection_status === 0 &&
+                currentAccount.uuid ===
+                  selectedAccount.invitation.sub_account_id
+              "
+            >
+              <div class="flex">
+                <button
+                  mat-raised-button
+                  color="warn"
+                  class="decline-invite-button"
+                  (click)="declineInvite()"
+                >
+                  Decline
+                </button>
+
+                <button
+                  mat-raised-button
+                  color="primary"
+                  class="accept-invite-button ml-2"
+                  (click)="acceptInvite()"
+                >
+                  Accept
+                </button>
+              </div>
+              <div class="mt-2 text-sm text-gray-500">
+                You have been invited to connect with this account
+              </div>
+            </div>
+          </div>
+
+          <div class="flex flex-col justify-start" *ngIf="abnInfo.abn !== ''">
+            <div class="flex flex-col justify-start items-start">
+              <div class="text-zinc-400">ABN</div>
+              <div data-cy="abn-input" class="text-lg text-neutral-800">
+                {{ abnInfo.abn }}
+              </div>
+            </div>
+            <div class="mt-5 flex flex-col justify-start items-start">
+              <div class="text-zinc-400">Name</div>
+              <div data-cy="name-input" class="text-lg text-neutral-800">
+                {{ abnInfo.name }}
+              </div>
+            </div>
+            <!-- <div class="mt-5 flex flex-col justify-start items-start">
+              <div class="text-zinc-400">Trading Name</div>
+              <div
+                data-cy="trading-name-input"
+                class="text-lg text-neutral-800"
+              >
+                {{ abnInfo?.tradingname || "-----" }}
+              </div>
+            </div> -->
+            <div class="mt-5 mb-5 flex flex-col justify-start items-start">
+              <div class="text-zinc-400">Entity Type</div>
+              <div data-cy="entity-type-input" class="text-lg text-neutral-800">
+                {{ abnInfo.entitytype }}
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="flex w-full md:order-3 sm:order-3 col2 flex-col">
+          <div class="flex flex-col justify-start items-start" *ngIf="!editing">
+            <div class="text-zinc-400">Industry</div>
+            <div data-cy="abn-input" class="text-lg text-neutral-800">
+              {{ selectedAccount.detail.industry || "-----" }}
+            </div>
+
+            <div class="mt-5 text-zinc-400">Primary Address</div>
+            <div data-cy="abn-input" class="text-lg text-neutral-800">
+              {{ selectedAccount.detail.primary_address }}
+            </div>
+
+            <div class="mt-5 text-zinc-400">Postal Address</div>
+            <div data-cy="abn-input" class="text-lg text-neutral-800">
+              {{ selectedAccount.detail.postal_address }}
+            </div>
+
+            <div class="mt-5 text-zinc-400">Website</div>
+            <div data-cy="abn-input" class="text-lg text-neutral-800">
+              {{ selectedAccount.detail.website || "-----" }}
+            </div>
+
+            <div class="mt-5 text-zinc-400">Phone Number</div>
+            <div data-cy="abn-input" class="text-lg text-neutral-800">
+              {{ selectedAccount.detail.phone }}
+            </div>
+          </div>
+          <div class="flex w-full flex-col" *ngIf="editing || creating">
+            <mat-form-field class="primary-industry w-full">
+              <mat-label>Industry(Optional)</mat-label>
+              <mat-select
+                data-cy="primary-industry"
+                placeholder="Security"
+                formControlName="primaryIndustry"
+              >
+                <mat-option *ngFor="let opt of industryOptions" [value]="opt">{{
+                  opt
+                }}</mat-option>
+              </mat-select>
+            </mat-form-field>
+
+            <mat-form-field data-cy="primary-address" class="address">
+              <mat-label>Primary Address</mat-label>
+              <input
+                matInput
+                #addressTitlePrimary
+                name="primaryAddress"
+                formControlName="primaryAddress"
+                data-cy="primary-address-input"
+              />
+              <mat-error
+                *ngIf="detailsForm.get('primaryAddress').hasError('required')"
+              >
+                This field is required
+              </mat-error>
+            </mat-form-field>
+            <mat-label>Billing Address</mat-label>
+            <mat-checkbox
+              color="primary"
+              formControlName="sameAddress"
+              (change)="selectSameAddress($event)"
+              >Same as the Primary address</mat-checkbox
+            >
+            <mat-form-field
+              *ngIf="!boxTicked"
+              data-cy="post-address"
+              class="address"
+            >
+              <input
+                matInput
+                #addressTitlePost
+                name="postAddress"
+                formControlName="postAddress"
+                required
+                data-cy="post-address-input"
+              />
+              <mat-error
+                *ngIf="detailsForm.get('postAddress').hasError('required')"
+              >
+                This field is required
+              </mat-error>
+            </mat-form-field>
+
+            <mat-form-field data-cy="website" class="website mt-5">
+              <mat-label>Website(Optional)</mat-label>
+              <input
+                matInput
+                #website
+                name="website"
+                formControlName="website"
+              />
+            </mat-form-field>
+
+            <mat-form-field data-cy="phone-number" class="phone-number w-full">
+              <mat-label>Phone Number</mat-label>
+              <ngx-mat-intl-tel-input
+                [preferredCountries]="['au', 'us', 'gb']"
+                [enablePlaceholder]="true"
+                [enableSearch]="false"
+                name="phoneNumber"
+                formControlName="phoneNumber"
+                autocomplete="off"
+                format="national"
+                required
+                #phoneNumber
+                enableAutoCountrySelect="true"
+              >
+              </ngx-mat-intl-tel-input>
+              <mat-error
+                *ngIf="detailsForm.get('phoneNumber').hasError('required')"
+              >
+                This field is required
+              </mat-error>
+              <mat-error
+                *ngIf="
+                  detailsForm.get('phoneNumber').hasError('validatePhoneNumber')
+                "
+              >
+                Invalid Number
+              </mat-error>
+            </mat-form-field>
+          </div>
+
+          <div class="block-of-admin mt-4" *ngIf="status === 'create'">
+            <div class="text-primary text-3xl font-semibold">
+              <div *ngIf="this.accountType == 'client'">Invite Client Administrator</div>
+              <div *ngIf="this.accountType == 'supplier'">Invite Supplier Administrator</div>
+            </div>
+            <mat-form-field *ngIf="this.accountType == 'client'" class="primary-industry w-full">
+              <mat-label class="font-medium text-primary">Management Type?</mat-label>
+              <mat-select
+                data-cy="managed-type-selector"
+                placeholder="internally managed"
+                formControlName="managedType"
+                [formControl]="managedType"
+                (selectionChange)="onSelectionChange($event)"
+              >
+                <mat-option *ngFor="let value of managedTypeOptions" [value]="value"
+                >
+                  {{value}}
+                </mat-option>
+                <!-- <mat-option *ngFor="let opt of industryOptions" [value]="opt">{{
+                  opt
+                }}</mat-option> -->
+              </mat-select>
+            </mat-form-field>
+            <div class="font-medium text-primary" *ngIf="selectedManagedType === 'externally' && this.accountType == 'client'">
+              <div class="mb-3">
+              You want to grant the Client access to TaskEzy so they can manage their own activities, <br/>please complete the details and the Client will be Externally Managed.
+            </div>
+              <div>
+              You may change your selection later from Internally Managed to Externally Managed.<br/> However, a Client cannot be changed to Internally Managed if you select Externally Managed.</div>
+              <!-- <span class="capitalize">{{ accountType }}</span> Account -->
+            </div>
+            <div class="font-medium text-primary" *ngIf="selectedManagedType === 'internally' && this.accountType == 'client'">
+              <div class="mb-3 primary">
+              The Client will be Internally Managed and Client activities on TaskEzy will be managed you.
+            </div>
+            <div>
+              You may change your selection later from Internally Managed to Externally Managed.<br/> However, a Client cannot be changed to Internally Managed if you select Externally Managed.
+            </div>
+            </div>
+            <div class="font-medium" *ngIf="this.accountType == 'supplier'">
+              As a Primary Account, you are required to invite an Administrator that will act as the owner of this Supplier Account
+            </div>
+
+            <mat-form-field
+            *ngIf="selectedManagedType === 'externally' || this.accountType == 'supplier'"
+              data-cy="name-administrator"
+              class="w-full mt-8 name-administrator"
+            >
+              <mat-label>Name</mat-label>
+              <input
+                matInput
+                name="nameAdministrator"
+                formControlName="nameAdministrator"
+              />
+              <mat-error
+                *ngIf="
+                  detailsForm.get('nameAdministrator').hasError('required')
+                "
+                data-cy="invite-name-required-error"
+              >
+                This field is required
+              </mat-error>
+            </mat-form-field>
+
+            <mat-form-field
+            *ngIf="selectedManagedType === 'externally' || this.accountType == 'supplier'"
+              data-cy="email-administrator"
+              class="w-full email-administrator"
+            >
+              <mat-label>Email</mat-label>
+              <input
+                matInput
+                name="emailAdministrator"
+                formControlName="emailAdministrator"
+
+              />
+              <mat-error
+              data-cy="invite-email-required-error"
+                *ngIf="
+                  detailsForm.get('emailAdministrator').hasError('required')
+                "
+              >
+                This field is required
+              </mat-error>
+            </mat-form-field>
+          </div>
+        </div>
+      </div>
+    </form>
+
+    <div
+    *ngIf="selectedManagedType === 'externally' || this.accountType == 'supplier'"
+      class="w-[150px] flex flex-col"
+      [ngClass]="status === 'create' ? 'm-auto' : ''"
+    >
+      <div class="relative">
+        <div
+          class="flex m-auto overflow-hidden w-[150px] h-[150px] border-2 rounded-full"
+        >
+          <img
+            class="photo avatar w-full"
+            [src]="currentAvatar || preview || defaultAvatar"
+          />
+          <input
+            #file
+            type="file"
+            accept="image/*"
+            data-cy="uploaded-file"
+            (change)="uploadAvatar(file)"
+            hidden
+          />
+        </div>
+        <button
+          mat-mini-fab
+          *ngIf="status === 'create' || editing"
+          color="primary"
+          data-cy="attach-file"
+          (click)="file.click()"
+          class="absolute top-14 -right-5"
+        >
+          <mat-icon class="text-white">camera_enhance</mat-icon>
+        </button>
+      </div>
+      <div class="text-center">
+        Please upload your company logo in one of the formats .png .jpg .tiff
+        and no more 5MB in size
+      </div>
+    </div>
+  </div>
+  <!-- <div class="" *ngIf="notification">{{notification | async}}</div> -->
+</div>
+
+<div class="progress-spiner absolute inset-0 opacity-0.5" *ngIf="viewSpinner">
+  <mat-spinner
+    class="mat-spinner m-auto absolute inset-x-1/2 top-80 md:top-1/2"
+  ></mat-spinner>
+</div>

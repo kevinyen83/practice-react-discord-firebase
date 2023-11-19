@@ -1,0 +1,17 @@
+<div class="accreditations-required">
+  <mat-toolbar class="mat-accent m-0 bg-primary flex items-center h-[95px]">
+    <mat-toolbar-row class="flex justify-between">
+      <div class="header-task mt-8 text-4xl font-semibold">Accreditations required</div>
+
+      <div class="text-xs">
+        <button class="close" mat-icon-button mat-dialog-close aria-label="Close dialog">
+          <mat-icon>close</mat-icon>
+        </button>
+      </div>
+    </mat-toolbar-row>
+  </mat-toolbar>
+
+  <mat-dialog-content class="content-accreditations">
+    <app-accreditations-content [listAccreditations]="listAccreditations" [type]="'roster'"></app-accreditations-content>
+  </mat-dialog-content>
+</div>

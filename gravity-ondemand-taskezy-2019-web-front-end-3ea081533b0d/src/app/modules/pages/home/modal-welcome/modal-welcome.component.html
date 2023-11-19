@@ -1,0 +1,19 @@
+<div class="modal flex w-full">
+  <div class="info flex flex-col justify-between bg-white text-center w-full lg:w-1/2 xl:w-1/2 2xl:w-1/2 p-12">
+    <h1 class="text-center mb-10 text-primary font-semibold text-4xl">Welcome,John!</h1>
+    <p class="text-center font-medium text-2xl">Take a spin through your account and complete your profile details.</p>
+    <p class="text-center font-medium text-2xl">This quick tour will help you get down to business.</p>
+
+    <button mat-raised-button
+            color="primary"
+            type="button"
+            (click)="closeModal()"
+            class="getstarted-button w-[256px] m-auto mt-10 rounded-full"
+            aria-label="get started">
+      Get started
+    </button>
+  </div>
+  <div class="welcome bg-primary w-1/2 p-12 hidden lg:block xl:block 2xl:block">
+<!--    <img class="w-full" src="/assets/images/logo/4-4.svg" alt="welcome">-->
+  </div>
+</div>

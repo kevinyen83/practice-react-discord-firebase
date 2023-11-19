@@ -1,0 +1,62 @@
+<div id="copy-shift">
+  <mat-toolbar class="mat-accent m-0">
+    <mat-toolbar-row>
+      <div>
+        <span class="title dialog-title">Copy Shift(s)</span>
+      </div>
+      <button class="close" mat-icon-button (click)="close()" aria-label="Close dialog">
+        <mat-icon>close</mat-icon>
+      </button>
+    </mat-toolbar-row>
+  </mat-toolbar>
+
+  <div class="content">
+    <form action="" [formGroup]="copyShiftForm">
+      <div class="h3">Copying {{countShifts}} Shift</div>
+
+      <mat-form-field class="day" appearance="fill">
+        <mat-label>Day to copy to</mat-label>
+        <mat-select placeholder="Day to copy to" formControlName="day">
+          <mat-option *ngFor="let day of daysOfWeek" [value]="day">{{day}}</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <div class="h3">Or</div>
+
+      <mat-form-field class="year" appearance="fill">
+        <mat-label>Year to copy to</mat-label>
+        <mat-select placeholder="Year to copy to" formControlName="year">
+          <mat-option *ngFor="let year of years" [value]="year">{{year}}<span *ngIf="+year === currentYear">*</span></mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field class="week" appearance="fill">
+        <mat-label>Week to copy to</mat-label>
+        <mat-select placeholder="Week to copy to" formControlName="week">
+          <mat-option *ngFor="let week of weeks; let index = index" [value]="week">
+            {{week}}<span *ngIf="+currentWeek === week">*</span>
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+      <p style="text-align: center; color: red;">{{notification}}</p>
+
+      <div class="buttons">
+        <button mat-raised-button
+                type="button"
+                (click)="cancel()"
+                class="cancel-button"
+                aria-label="Cancel">
+          Cancel
+        </button>
+
+        <button mat-raised-button color="accent"
+                type="button"
+                (click)="copyShift(copyShiftForm)"
+                class="save-button"
+                aria-label="saver">
+          Copy Shift(s)
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

@@ -1,0 +1,63 @@
+<div class="search mb-5 w-[420px]">
+
+  <div class="relative w-full">
+    <div class="absolute h-full flex items-center" style="left: 20px">
+      <mat-icon class="text-gray-400">search</mat-icon>
+    </div>
+    <input [formControl]="search" (input)="searchAccreditation()" class="mr-2 py-2 pl-14 w-full border rounded-full border-gray-400"
+           placeholder="Search"/>
+  </div>
+
+</div>
+
+<div class="overflow-y-scroll max-h-[300px]">
+  <mat-accordion class="list w-full" multi>
+    <mat-expansion-panel [expanded]="accreditation['indexExpanded']" [togglePosition]="'before'" *ngFor="let accreditation of accreditations;let i = index">
+      <mat-expansion-panel-header class="bg-zinc-100">
+        <mat-panel-title>
+          {{accreditation?.category}}
+        </mat-panel-title>
+      </mat-expansion-panel-header>
+
+      <ng-template matExpansionPanelContent>
+        <div>
+<!--          <div class="flex justify-between">-->
+<!--            <div class="p-3 w-1/3">Type</div>-->
+<!--            <div class="p-3 w-2/3">Name and Description</div>-->
+<!--          </div>-->
+          <div>
+            <mat-accordion multi>
+              <mat-expansion-panel [togglePosition]="'before'" *ngFor="let cred of accreditation?.credentials">
+                <mat-expansion-panel-header>
+                  <mat-panel-title>{{cred?.accreditation}}</mat-panel-title>
+                </mat-expansion-panel-header>
+
+                <ng-template matExpansionPanelContent>
+                  <form action="" [formGroup]="checkboxesForm">
+                    <div *ngFor="let input of cred?.inputs">
+                      <mat-checkbox color="primary" (change)="selectLicence($event, cred, input.label)" [formControlName]="input.label">{{input.label}}</mat-checkbox>
+                    </div>
+                  </form>
+                </ng-template>
+              </mat-expansion-panel>
+            </mat-accordion>
+<!--            <div *ngFor="let type of accreditation.types">-->
+<!--              <form action="" [formGroup]="checkboxesForm">-->
+<!--                <div class="flex border-b justify-between">-->
+<!--                  <div class="w-1/3 p-3">{{type.type}}</div>-->
+<!--                  <div class="leading-8 border-l p-3 w-2/3 flex flex-col">-->
+<!--                    <div *ngFor="let name of type.names">-->
+<!--                      <mat-checkbox color="primary" (change)="selectLicence($event, type, name)" [formControlName]="name">{{name}}</mat-checkbox>-->
+<!--                    </div>-->
+<!--                  </div>-->
+<!--                </div>-->
+<!--              </form>-->
+<!--            </div>-->
+          </div>
+        </div>
+      </ng-template>
+
+    </mat-expansion-panel>
+
+  </mat-accordion>
+</div>

@@ -1,0 +1,31 @@
+<div class="found-supplier">
+  <div class="card" *ngFor="let resource of resources">
+    <div class="h2">{{resource.name}}</div>
+    <div class="content-card">
+      <div class="blocks">
+        <div class="block1">
+          <p><b>Name</b></p>
+          <p><b>Preferred Name</b></p>
+          <p><b>Primary Resource Type</b></p>
+          <p><b>Primary Accreditation Number</b></p>
+          <p><b>State</b></p>
+        </div>
+        <div class="block2">
+          <p>{{resource.name}}</p>
+          <p>{{resource.preferredName}}</p>
+          <p>{{resource.resourceType}}</p>
+          <p>{{resource.licenceNumber}}</p>
+          <p>{{resource.state}}</p>
+        </div>
+      </div>
+
+      <button mat-raised-button color="accent"
+              type="button"
+              (click)="sendConnection(resource)"
+              class="sendconnection-button"
+              aria-label="send connection requests">
+        Send Connection Requests
+      </button>
+    </div>
+  </div>
+</div>

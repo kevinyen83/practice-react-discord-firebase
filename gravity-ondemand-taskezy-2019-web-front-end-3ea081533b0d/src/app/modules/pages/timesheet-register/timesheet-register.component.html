@@ -1,0 +1,235 @@
+<div class="w-full">
+  <mat-drawer-container
+    class="absolute top-0 left-0 bottom-0 right-0"
+    [hasBackdrop]="true"
+  >
+    <mat-drawer-content class="flex-auto flex flex-col overflow-hidden">
+      <div
+        class="text-size-all-headers bg-primary text-white w-full p-8 flex items-center"
+      >
+        <div class="w-5 h-5 mr-16">
+          <img src="assets/images/icons/timesheet-register.svg" />
+        </div>
+        <!-- Title -->
+        <div data-cy="timesheet-header" class="text-4xl font-extrabold">
+          Timesheet Register
+        </div>
+        <mat-form-field
+          class="fuse-mat-dense fuse-mat-no-subscript fuse-mat-rounded min-w-64"
+        >
+          <mat-icon
+            class="icon-size-5"
+            matPrefix
+            [svgIcon]="'heroicons_solid:search'"
+          ></mat-icon>
+          <input
+            matInput
+            [formControl]="searchInputControl"
+            [autocomplete]="'off'"
+            [placeholder]="'Search products'"
+          />
+        </mat-form-field>
+        <!-- Add product button -->
+        <button
+          class="ml-4"
+          mat-flat-button
+          [color]="'primary'"
+          (click)="createProduct()"
+        >
+          <mat-icon [svgIcon]="'heroicons_outline:plus'"></mat-icon>
+          <span class="ml-2 mr-1">Add</span>
+        </button>
+      </div>
+
+      <div class="content-wrapper w-full h-full overflow-y-auto p-10 bg-white">
+        <div
+          class="flex w-full bg-white justify-between absolute h-26 top-22 left-0 z-99"
+        >
+          <div class="flex w-1/3">
+            <div class="flex items-center">
+              <button
+                color="primary"
+                class="ml-2 mat-elevation-z0"
+                matTooltip="filters"
+                mat-mini-fab
+                (click)="toggleShiftFilter()"
+              >
+                <mat-icon>filter_alt</mat-icon>
+              </button>
+              <mat-form-field class="fuse-mat-no-subscript">
+                <mat-icon class="text-gray-400" matPrefix> search </mat-icon>
+                <input matInput placeholder="Search" [ngModel]="searchStr" />
+                <!-- (ngModelChange)="handleSearch($event)" -->
+              </mat-form-field>
+            </div>
+          </div>
+
+          <div class="flex flex-auto items-center justify-center">
+            <mat-form-field
+              class="w-[280px] fuse-mat-no-subscript"
+              (click)="dp.open()"
+            >
+              <button
+                mat-icon-button
+                color="white"
+                mwlCalendarPreviousView
+                [view]="viewAngularCalendar"
+                [(viewDate)]="viewDate"
+                (click)="dateChanged(); $event.stopPropagation(); (false)"
+                matPrefix
+              >
+                <mat-icon>keyboard_arrow_left</mat-icon>
+              </button>
+              <input matInput readonly [ngModel]="viewDateString()" />
+              <input
+                matInput
+                [matDatepicker]="dp"
+                hidden
+                (dateChange)="gotoDate($event.target.value)"
+              />
+              <mat-datepicker #dp disabled="false"> </mat-datepicker>
+              <button
+                mat-icon-button
+                color="white"
+                mwlCalendarNextView
+                [view]="viewAngularCalendar"
+                [(viewDate)]="viewDate"
+                (click)="dateChanged(); $event.stopPropagation(); (false)"
+                matSuffix
+              >
+                <mat-icon>keyboard_arrow_right</mat-icon>
+              </button>
+              <button
+                mat-icon-button
+                color="primary"
+                mwlCalendarToday
+                matTooltip="today"
+                [(viewDate)]="viewDate"
+                (click)="dateChanged(); $event.stopPropagation(); (false)"
+                matSuffix
+              >
+                <mat-icon>today</mat-icon>
+              </button>
+            </mat-form-field>
+          </div>
+
+          <div class="flex items-center justify-end w-1/3">
+            <button
+              mat-stroked-button
+              color="primary"
+              class="py-2 px-4 rounded-full flex items-center"
+              [matMenuTriggerFor]="beforeMenu"
+            >
+              Export
+              <mat-icon class="ml-2">arrow_drop_down</mat-icon>
+            </button>
+            <mat-menu #beforeMenu="matMenu" xPosition="before">
+              <button mat-menu-item (click)="handleExportPDF()">
+                Save as PDF
+              </button>
+              <button mat-menu-item (click)="handleExportCSV()">
+                Save as CSV
+              </button>
+            </mat-menu>
+          </div>
+        </div>
+
+        <div
+          class="tab-container flex items-center w-full bg-white h-8 absolute top-44 left-0 z-99"
+        >
+          <div
+            class="{{
+              activeTab === 'TAB_CLIENTS'
+                ? 'text-primary underline flex-1 p-4 flex justify-center rounded-t-2xl cursor-pointer'
+                : 'text-gray-400 flex-1 p-4 flex justify-center rounded-t-2xl cursor-pointer'
+            }}"
+            (click)="handleActiveTab('TAB_CLIENTS', 'Clients')"
+          >
+            <div class="text-xl">Clients</div>
+          </div>
+
+          <div
+            class="{{
+              activeTab === 'TAB_SUPPLIERS'
+                ? 'text-primary underline flex-1 p-4 flex justify-center rounded-t-2xl cursor-pointer'
+                : 'text-gray-400 flex-1 p-4 flex justify-center rounded-t-2xl cursor-pointer'
+            }}"
+            (click)="handleActiveTab('TAB_SUPPLIERS', 'Suppliers')"
+          >
+            <div class="text-xl">Suppliers</div>
+          </div>
+        </div>
+
+        <div
+          class="flex justify-between items-center w-11/12 mb-2 h-12 bg-white absolute top-52 z-99"
+        >
+          <div
+            *ngFor="let column of displayedColumns"
+            [ngClass]="{
+              'w-1/3 ml-8': column === 'Clients' || column === 'Suppliers',
+              'w-1/6': column !== 'Clients' && column !== 'Suppliers'
+            }"
+            class="flex justify-center text-center"
+          >
+            {{ column }}
+          </div>
+        </div>
+
+        <div
+          *ngIf="activeTab === 'TAB_CLIENTS'"
+          class="main-content w-full p-4 mt-22 relative"
+        >
+          <app-timesheet-table-users
+            [status]="'clients'"
+            [shifts]="shifts"
+            [shiftsColumns]="tableColumns"
+            [clientsForView]="clientsForView"
+          ></app-timesheet-table-users>
+        </div>
+
+        <div
+          *ngIf="activeTab === 'TAB_SUPPLIERS'"
+          class="main-content w-full p-4 mt-22"
+        >
+          <app-timesheet-table-users
+            [status]="'suppliers'"
+            [shifts]="shifts"
+            [shiftsColumns]="tableColumns"
+            [clientsForView]="clientsForView"
+          ></app-timesheet-table-users>
+        </div>
+
+        <div
+          class="progress-spiner w-full h-full absolute left-0 top-0 opacity-0.5"
+          *ngIf="viewSpinner"
+        >
+          <mat-spinner class="mat-spinner m-auto md:top-1/2"></mat-spinner>
+        </div>
+      </div>
+    </mat-drawer-content>
+    <mat-drawer
+      class="w-100 dark:bg-gray-900"
+      [autoFocus]="false"
+      [mode]="'over'"
+      [position]="'start'"
+      (openedStart)="changeDrawer($event)"
+      #matDrawerShiftFilter
+    >
+      <app-shift-filter
+        (closeSideBar)="matDrawerShiftFilter.toggle()"
+        *ngIf="matDrawerShiftFilter.opened"
+      >
+      </app-shift-filter>
+    </mat-drawer>
+    <mat-drawer
+      class="w-100 dark:bg-gray-900"
+      [autoFocus]="false"
+      [mode]="'over'"
+      [position]="'end'"
+      (openedStart)="changeDrawer($event)"
+      #matDrawerShiftDetail
+    >
+      <!--      <app-shift-description *ngIf="matDrawerShiftDetail.opened"> </app-shift-description>-->
+    </mat-drawer>
+  </mat-drawer-container>
+</div>

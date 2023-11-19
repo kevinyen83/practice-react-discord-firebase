@@ -1,0 +1,56 @@
+<div class="end-of-shift-reports-table">
+  <h1 class="font-bold text-3xl my-6">End of Shift Reports</h1>
+
+  <mat-table
+    [dataSource]="dataSource"
+    matSort
+    (matSortChange)="sortData($event)"
+  >
+    <!-- Date Created Column -->
+    <ng-container matColumnDef="dateCreated">
+      <mat-header-cell *matHeaderCellDef mat-sort-header="dateCreated"
+        >Date Created</mat-header-cell
+      >
+      <mat-cell *matCellDef="let row; let i = index"> </mat-cell>
+    </ng-container>
+
+    <!-- Created By Column -->
+    <ng-container matColumnDef="createdBy">
+      <mat-header-cell *matHeaderCellDef mat-sort-header="createdBy"
+        >Created By</mat-header-cell
+      >
+      <mat-cell *matCellDef="let row; let i = index"> </mat-cell>
+    </ng-container>
+
+    <!-- Last Modified Column -->
+    <ng-container matColumnDef="lastModified">
+      <mat-header-cell *matHeaderCellDef mat-sort-header="lastModified"
+        >Last Modified</mat-header-cell
+      >
+      <mat-cell *matCellDef="let row; let i = index"> </mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="file">
+      <mat-header-cell
+        *matHeaderCellDef
+        mat-sort-header="file"
+        class="link-container"
+      >
+        File
+      </mat-header-cell>
+      <mat-cell
+        fxLayout="row"
+        fxLayoutAlign="space-between center"
+        *matCellDef="let row; let i = index"
+      >
+      </mat-cell>
+    </ng-container>
+
+    <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+    <mat-row
+      class="hover:bg-gray-100"
+      *matRowDef="let row; columns: displayedColumns; let index = index"
+    >
+    </mat-row>
+  </mat-table>
+</div>

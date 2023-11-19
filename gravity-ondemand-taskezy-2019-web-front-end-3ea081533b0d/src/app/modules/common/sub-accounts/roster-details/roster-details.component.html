@@ -1,0 +1,48 @@
+<div class="roster-details w-full">
+  <div class="header-table my-8 flex justify-center">
+    <div class="flex">
+      <button
+        mat-flat-button
+        mwlCalendarPreviousView
+        (click)="dateChanged()"
+      >
+        <mat-icon>keyboard_arrow_left</mat-icon>
+      </button>
+      <button mat-flat-button (click)="dp.open()">
+        {{ viewDateString() }}
+      </button>
+      <mat-form-field class="cdk-visually-hidden" appearance="fill">
+        <input
+          matInput
+          [matDatepicker]="dp"
+          hidden
+          (dateChange)="gotoDate($event.target.value)"
+        />
+        <mat-datepicker #dp disabled="false"></mat-datepicker>
+      </mat-form-field>
+      <button
+        mat-flat-button
+        mwlCalendarNextView
+        (click)="dateChanged()"
+      >
+        <mat-icon>keyboard_arrow_right</mat-icon>
+      </button>
+      <mat-icon class="mt-2 ml-2 text-primary">calendar_today</mat-icon>
+    </div>
+  </div>
+  <div class="content-table">
+    <table class="w-full">
+      <tr class="bg-white">
+        <th *ngFor="let column of columns">{{column}}</th>
+      </tr>
+      <tr class="bg-white m-6" *ngFor="let task of tasks">
+        <td class="text-center">{{task.datetime | date: 'shortTime'}}</td>
+        <td class="text-center">{{task.resource.profile_name}}</td>
+        <td class="text-center">{{task.supplier.profile_name}}</td>
+        <td class="text-center">{{task.client.profile_name}}</td>
+        <td class="text-center">{{task.venue.name}}</td>
+        <td class="text-center">{{task.client.status}}</td>
+      </tr>
+    </table>
+  </div>
+</div>

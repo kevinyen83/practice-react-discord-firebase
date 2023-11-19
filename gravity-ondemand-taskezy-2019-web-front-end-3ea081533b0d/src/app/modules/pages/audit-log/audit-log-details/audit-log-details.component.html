@@ -1,0 +1,90 @@
+<div class="flex flex-col flex-auto min-w-0">
+  <!--Header-->
+  <div class="header accent p-20 p-sm-24" fxLayout="column" fxLayoutAlign="start"
+       fxLayout.gt-xs="row" fxLayoutAlign.gt-xs="space-between center">
+    <!-- APP TITLE -->
+    <div fxLayout="row" fxLayoutAlign="start center">
+
+      <div class="logo" fxLayout="row" fxLayoutAlign="start center">
+        <div class="logo-icon">
+          <mat-icon class="logo-icon mr-16">
+                    person
+          </mat-icon>
+        </div>
+        <span class="logo-text h1">
+
+                    Audit Log
+        </span>
+      </div>
+    </div>
+    <!-- / APP TITLE -->
+  </div>
+  <!--/Header-->
+
+  <div class="content">
+    <div class="card" *ngIf="currentLog.auditableId">
+      <div class="h2">View Audit Log :: {{currentLog.auditableId}} from {{currentLog.dateOfEvent | date: 'medium'}}</div>
+
+      <div class="details">
+        <h2>Audit Details</h2>
+        <div class="event-type">
+          <span><b>Event Type: </b></span>
+          <span>{{currentLog.eventType}}</span>
+        </div>
+        <div class="auditable-id">
+          <span><b>Auditable Id: </b></span>
+          <span>{{currentLog['auditableId']}}</span>
+        </div>
+        <div class="auditable-type">
+          <span><b>Auditable Type: </b></span>
+          <span>{{currentLog.auditableType}}</span>
+        </div>
+        <div class="url">
+          <span><b>URL:</b></span>
+          <span>{{currentLog.url}}</span>
+        </div>
+        <div class="ip-address">
+          <span><b>IP Address: </b></span>
+          <span>{{currentLog.ipAddress}}</span>
+        </div>
+        <div class="user-agent">
+          <span><b>User Agent: </b></span>
+          <span>{{currentLog.userAgent}}</span>
+        </div>
+        <div class="date-of-event">
+          <span><b>Date Of Event: </b></span>
+          <span>{{currentLog.dateOfEvent | date: 'medium'}}</span>
+        </div>
+
+        <form action="" [formGroup]="auditLogForm">
+          <mat-form-field class="start-day" appearance="fill">
+            <input matInput [matDatepicker]="startDay" readonly (click)="startDay.open()" placeholder="Start Day*" formControlName="startDay" required>
+            <mat-datepicker-toggle matSuffix [for]="startDay"></mat-datepicker-toggle>
+            <mat-datepicker #startDay></mat-datepicker>
+          </mat-form-field>
+
+          <mat-form-field class="end-day" appearance="fill">
+            <input matInput [matDatepicker]="endDay" readonly (click)="endDay.open()" placeholder="End Day*" formControlName="endDay" required>
+            <mat-datepicker-toggle matSuffix [for]="endDay"></mat-datepicker-toggle>
+            <mat-datepicker #endDay></mat-datepicker>
+          </mat-form-field>
+
+          <mat-form-field class="classes" appearance="fill">
+            <mat-label>Classes</mat-label>
+            <input matInput
+                      name="classes"
+                      formControlName="classes">
+          </mat-form-field>
+        </form>
+
+        <button mat-raised-button
+                type="button"
+                (click)="cancelAuditLog()"
+                class="cancel-button"
+                aria-label="Cancel">
+          Cancel
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

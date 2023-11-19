@@ -1,0 +1,518 @@
+<div class="absolute inset-0 flex flex-col min-w-0">
+  <!--Header-->
+  <div
+    class="flex-none accent text-white w-full h-[114px] p-8 p-sm-24 bg-primary"
+  >
+    <!-- APP TITLE -->
+    <div class="row flex flex-col">
+      <div class="row-top">
+        <div class="logo flex items-center">
+          <div class="logo-block mb-2 flex items-center">
+            <div class="logo-icon w-5 h-5 mr-16">
+              <img src="assets/images/icons/incident_report.svg" />
+            </div>
+            <div class="logo-text h1 text-size-all-headers">
+              Incident Report
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- / APP TITLE -->
+  </div>
+  <!--/Header-->
+
+  <!--Content-->
+  <div class="content p-12">
+    <div class="flex items-center cursor-pointer" (click)="goToBack()">
+      <mat-icon class="active:text-primary mr-4 text-[#369BE5]"
+        >arrow_back</mat-icon
+      >
+      <div class="text-sm text-[#BEBEC0]">
+        Original / Report #{{ incident?.uuid }}
+      </div>
+    </div>
+
+    <div class="py-12 px-10">
+      <div class="flex justify-between mb-10">
+        <div class="text-3xl">Incident Report #{{ incident?.uuid }}</div>
+        <div class="text-sm flex">
+          <div class="text-[#BEBEC0] mr-2">Linked Reports:</div>
+          <div class="">
+            <div class="text-[#369BE5]">Incident Report #125</div>
+            <div class="text-[#369BE5]">Incident Report #126</div>
+          </div>
+        </div>
+      </div>
+      <div class="mb-20">
+        <div class="text-2xl mb-7">General Information</div>
+        <mat-card>
+          <mat-card-content>
+            <div class="grid grid-cols-2 gap-20">
+              <div>
+                <div class="grid grid-cols-2 gap-6 mb-4">
+                  <div>
+                    <label class="text-xs mb-2">Date</label>
+                    <div
+                      class="rounded-xl py-3 px-3 bg-[#f2f2f299] min-h-[45px]"
+                    >
+                      {{ incident?.shift?.datetime | date: "dd MMM yyyy" }}
+                    </div>
+                  </div>
+                  <div>
+                    <label class="text-xs mb-2">Time</label>
+                    <div
+                      class="rounded-xl py-3 px-3 bg-[#f2f2f299] min-h-[45px]"
+                    >
+                      {{ incident?.shift?.datetime | date: "HH:mm aa" }} -
+                      {{ incident?.shift?.timeEnd | date: "HH:mm aa" }}
+                    </div>
+                  </div>
+                </div>
+                <div class="mb-4">
+                  <label class="text-xs mb-2">Client Name</label>
+                  <div class="rounded-xl py-3 px-3 bg-[#f2f2f299] min-h-[45px]">
+                    {{ incident?.shift?.client?.detail?.name }}
+                  </div>
+                </div>
+                <div class="">
+                  <label class="text-xs mb-2">Venue</label>
+                  <div class="rounded-xl py-3 px-3 bg-[#f2f2f299] min-h-[45px]">
+                    {{ incident?.shift?.venue?.name }}
+                  </div>
+                </div>
+              </div>
+              <div>
+                <div class="mb-4">
+                  <label class="text-xs mb-2">Venue Name</label>
+                  <div class="rounded-xl py-3 px-3 bg-[#f2f2f299] min-h-[45px]">
+                    {{ incident?.shift?.venue?.licence_name }}
+                  </div>
+                </div>
+                <div class="mb-4">
+                  <label class="text-xs mb-2">Venue License Number</label>
+                  <div class="rounded-xl py-3 px-3 bg-[#f2f2f299] min-h-[45px]">
+                    {{ incident?.shift?.venue?.licence_number }}
+                  </div>
+                </div>
+
+                <div class="">
+                  <label class="text-xs mb-2">Logged By</label>
+                  <div class="rounded-xl py-3 px-3 bg-[#f2f2f299] min-h-[45px]">
+                    {{ incident?.task?.resource?.name }},
+                    {{ incident?.task?.supplier?.name }}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </mat-card-content>
+        </mat-card>
+      </div>
+
+      <div class="mb-20" *ngFor="let section of incidentTemplate.sections">
+        <div *ngIf="!section.multi">
+          <div class="text-2xl mb-7" *ngIf="section.label">
+            {{ section.label }}
+          </div>
+          <mat-card>
+            <mat-card-content>
+              <div class="grid grid-cols-2 gap-x-20 gap-y-4">
+                <div *ngFor="let attribute of section.attributes">
+                  <div *ngIf="attribute.type == 'string'">
+                    <label class="text-xs mb-2">{{ attribute.label }}</label>
+                    <div
+                      class="rounded-xl py-3 px-3 bg-[#f2f2f299] min-h-[45px]"
+                    >
+                      {{ incident.parsedData[attribute.name] }}
+                    </div>
+                  </div>
+                  <div *ngIf="attribute.type == 'textarea'">
+                    <label class="text-xs mb-2">{{ attribute.label }}</label>
+                    <div
+                      class="rounded-xl py-3 px-3 bg-[#f2f2f299] min-h-[45px]"
+                    >
+                      {{ incident.parsedData[attribute.name] }}
+                    </div>
+                  </div>
+                  <div *ngIf="attribute.type == 'single-choice-string'">
+                    <label class="text-xs mb-2">{{ attribute.label }}</label>
+                    <div
+                      class="rounded-xl py-3 px-3 bg-[#f2f2f299] min-h-[45px]"
+                    >
+                      {{ incident.parsedData[attribute.name] }}
+                    </div>
+                  </div>
+                  <div *ngIf="attribute.type == 'multi-choice-string'">
+                    <label class="text-xs mb-2">{{ attribute.label }}:</label>
+                    <div
+                      class="rounded-xl py-3 px-3 bg-[#f2f2f299] min-h-[45px]"
+                    >
+                      <span
+                        *ngFor="
+                          let multiChoiceString of incident.parsedData[
+                            attribute.name
+                          ]
+                        "
+                      >
+                        {{ multiChoiceString }}
+                      </span>
+                    </div>
+                  </div>
+                  <div *ngIf="attribute.type == 'datetime'">
+                    <label class="text-xs mb-2">{{ attribute.label }}</label>
+                    <div
+                      class="rounded-xl py-3 px-3 bg-[#f2f2f299] min-h-[45px]"
+                    >
+                      {{
+                        incident.parsedData[attribute.name]
+                          | date: "dd MMM yyyy HH:mm aa"
+                      }}
+                    </div>
+                  </div>
+                  <div *ngIf="attribute.type == 'date'">
+                    <label class="text-xs mb-2">{{ attribute.label }}</label>
+                    <div
+                      class="rounded-xl py-3 px-3 bg-[#f2f2f299] min-h-[45px]"
+                    >
+                      {{
+                        incident.parsedData[attribute.name]
+                          | date: "dd MMM yyyy"
+                      }}
+                    </div>
+                  </div>
+                  <div *ngIf="attribute.type == 'time'">
+                    <label class="text-xs mb-2"> {{ attribute.label }}</label>
+                    <div
+                      class="rounded-xl py-3 px-3 bg-[#f2f2f299] min-h-[45px]"
+                    >
+                      {{
+                        incident.parsedData[attribute.name] | date: "HH:mm aa"
+                      }}
+                    </div>
+                  </div>
+                  <div *ngIf="attribute.type == 'boolean'">
+                    <label class="text-xs mb-2">{{ attribute.label }}</label>
+                    <div
+                      class="rounded-xl py-3 px-3 bg-[#f2f2f299] min-h-[45px]"
+                    >
+                      <div class="flex justify-end">
+                        <mat-icon *ngIf="incident.parsedData[attribute.name]"
+                          >checkmark</mat-icon
+                        >
+                      </div>
+                      <div class="flex justify-end">
+                        <mat-icon *ngIf="!incident.parsedData[attribute.name]"
+                          >close</mat-icon
+                        >
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </mat-card-content>
+          </mat-card>
+        </div>
+        <div *ngIf="section.multi">
+          <div class="text-2xl mb-7" *ngIf="section.label">
+            {{ section.label }}
+          </div>
+          <mat-card
+            class="mt-2"
+            *ngFor="
+              let multi of incident.parsedData[section.name];
+              let i = index
+            "
+          >
+            <mat-card-content>
+              <div class="font-bold mb-3" *ngIf="section.label">
+                {{ section.label + " #" + i }}
+              </div>
+              <div class="grid grid-cols-2 gap-x-20 gap-y-4">
+                <div *ngFor="let attribute of section.attributes">
+                  <div *ngIf="attribute.type == 'string'">
+                    <label class="text-xs mb-2">{{ attribute.label }}</label>
+                    <div
+                      class="rounded-xl py-3 px-3 bg-[#f2f2f299] min-h-[45px]"
+                    >
+                      {{ multi[attribute.name] }}
+                    </div>
+                  </div>
+                  <div *ngIf="attribute.type == 'textarea'">
+                    <label class="text-xs mb-2">{{ attribute.label }}</label>
+                    <div
+                      class="rounded-xl py-3 px-3 bg-[#f2f2f299] min-h-[45px]"
+                    >
+                      {{ multi[attribute.name] }}
+                    </div>
+                  </div>
+                  <div *ngIf="attribute.type == 'tel'">
+                    <label class="text-xs mb-2">{{ attribute.label }}</label>
+                    <div
+                      class="rounded-xl py-3 px-3 bg-[#f2f2f299] min-h-[45px]"
+                    >
+                      {{ multi[attribute.name] }}
+                    </div>
+                  </div>
+                  <div *ngIf="attribute.type == 'file'">
+                    <label class="text-xs mb-2">{{ attribute.label }}</label>
+                    <div
+                      class="rounded-xl py-3 px-3 bg-[#f2f2f299] min-h-[45px]"
+                    >
+                      <div *ngIf="multi.type.includes('image')">
+                        <img *ngIf="multi.imageSource" [src]="multi.imageSource" />
+                        <div *ngIf="!multi.imageSource" class="w-full h-64 flex items-center text-center text-gray-400">
+                          You don't have permission to view this file
+                        </div>
+                      </div>
+                      <div *ngIf="!multi.type.includes('image')">
+                        <div class="mb-4">
+                          <div>
+                            <label class="text-xs mb-2">File Name</label>
+                            <div
+                              class="rounded-xl py-3 px-3 bg-[#f2f2f299] min-h-[45px]"
+                            >
+                              {{ multi?.metaData?.filename }}
+                            </div>
+                          </div>
+                          <div>
+                            <label class="text-xs mb-2">Size</label>
+                            <div
+                              class="rounded-xl py-3 px-3 bg-[#f2f2f299] min-h-[45px]"
+                            >
+                              {{ multi?.metaData?.length }}
+                            </div>
+                          </div>
+                          <div>
+                            <label class="text-xs mb-2">Type</label>
+                            <div
+                              class="rounded-xl py-3 px-3 bg-[#f2f2f299] min-h-[45px]"
+                            >
+                              {{ multi?.metaData?.metadata?.content_type }}
+                            </div>
+                          </div>
+                        </div>
+                        <button mat-icon-button color="primary">
+                          <mat-icon
+                            (click)="
+                              handleDownload(multi.imageSource, multi.uuid)
+                            "
+                            >download</mat-icon
+                          >
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                  <div *ngIf="attribute.type == 'single-choice-string'">
+                    <label class="text-xs mb-2">{{ attribute.label }}</label>
+                    <div
+                      class="rounded-xl py-3 px-3 bg-[#f2f2f299] min-h-[45px]"
+                    >
+                      {{ multi[attribute.name] }}
+                    </div>
+                  </div>
+                  <div *ngIf="attribute.type == 'multi-choice-string'">
+                    <label class="text-xs mb-2">{{ attribute.label }}</label>
+                    <div
+                      class="rounded-xl py-3 px-3 bg-[#f2f2f299] min-h-[45px]"
+                    >
+                      <span
+                        *ngFor="let multiChoiceString of multi[attribute.name]"
+                      >
+                        {{ multiChoiceString }}
+                      </span>
+                    </div>
+                  </div>
+                  <div *ngIf="attribute.type == 'datetime'">
+                    <label class="text-xs mb-2">{{ attribute.label }}</label>
+                    <div
+                      class="rounded-xl py-3 px-3 bg-[#f2f2f299] min-h-[45px]"
+                    >
+                      {{ multi[attribute.name] | date: "dd MMM yyyy HH:mm aa" }}
+                    </div>
+                  </div>
+                  <div *ngIf="attribute.type == 'date'">
+                    <label class="text-xs mb-2">{{ attribute.label }}</label>
+                    <div
+                      class="rounded-xl py-3 px-3 bg-[#f2f2f299] min-h-[45px]"
+                    >
+                      {{ multi[attribute.name] | date: "dd MMM yyyy" }}
+                    </div>
+                  </div>
+                  <div *ngIf="attribute.type == 'time'">
+                    <label class="text-xs mb-2">{{ attribute.label }}</label>
+                    <div
+                      class="rounded-xl py-3 px-3 bg-[#f2f2f299] min-h-[45px]"
+                    >
+                      {{ multi[attribute.name] | date: "HH:mm aa" }}
+                    </div>
+                  </div>
+                  <div
+                    class="flex items-center"
+                    *ngIf="attribute.type == 'boolean'"
+                  >
+                    <label class="text-xs mb-2">{{ attribute.label }}</label>
+                    <div
+                      class="rounded-xl py-3 px-3 bg-[#f2f2f299] min-h-[45px]"
+                    >
+                      <div class="flex justify-end">
+                        <mat-icon *ngIf="multi[attribute.name]"
+                          >checkmark</mat-icon
+                        >
+                      </div>
+                      <div class="flex justify-end">
+                        <mat-icon *ngIf="!multi[attribute.name]"
+                          >close</mat-icon
+                        >
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </mat-card-content>
+          </mat-card>
+        </div>
+      </div>
+      <!-- {{ incident | json }} -->
+
+      <mat-card class="mt-2" *ngIf="incident.uuid">
+        <mat-card-content>
+          <div class="grid grid-cols-2 gap-x-20 gap-y-4">
+            <div>
+              <label class="text-xs mb-2">Created</label>
+              <div class="rounded-xl py-3 px-3 bg-[#f2f2f299] min-h-[45px]">
+                {{ incident.creation_date_time | date: "dd MMM yyyy HH:mm aa" }}
+              </div>
+            </div>
+            <div *ngIf="incident.edited">
+              <label class="text-xs mb-2">Edited</label>
+              <div class="rounded-xl py-3 px-3 bg-[#f2f2f299] min-h-[45px]">
+                {{ incident.edited_date_time | date: "dd MMM yyyy HH:mm aa" }}
+              </div>
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+      <!-- <div *ngFor="let section of incidentTemplate.sections">
+          <div *ngIf="!section.multi">
+              <div *ngIf="section.label">
+                  {{section.label}}
+              </div>
+              <ion-card>
+                  <div *ngFor="let attribute of section.attributes">
+                      <div *ngIf="attribute.type == 'string'">
+
+                              <p>{{attribute.label}}: {{incident.parsedData[attribute.name]}}</p>
+
+                      </div>
+                      <div *ngIf="attribute.type == 'textarea'">
+
+                              <p>{{attribute.label}}:</p>
+                              <p> {{incident.parsedData[attribute.name]}}</p>
+
+                      </div>
+                      <div *ngIf="attribute.type == 'single-choice-string'">
+
+                              <p>{{attribute.label}}: {{incident.parsedData[attribute.name]}}</p>
+
+                      </div>
+                      <div *ngIf="attribute.type == 'multi-choice-string'">
+
+                              <p>{{attribute.label}}:</p>
+                              <p *ngFor="let multiChoiceString of incident.parsedData[attribute.name]">
+                                  {{multiChoiceString}}</p>
+
+                      </div>
+                      <div *ngIf="attribute.type == 'datetime'">
+
+                              <p>{{attribute.label}}: {{incident.parsedData[attribute.name] |
+                                  date: 'dd MMM yyyy HH:mm aa'}}</p>
+
+                      </div>
+                      <div *ngIf="attribute.type == 'date'">
+
+                              <p>{{attribute.label}}: {{incident.parsedData[attribute.name] | date: 'dd MMM yyyy'}}</p>
+
+                      </div>
+                      <div *ngIf="attribute.type == 'time'">
+
+                              <p>{{attribute.label}}: {{incident.parsedData[attribute.name] | date: 'HH:mm aa'}}</p>
+
+                      </div>
+                      <div *ngIf="attribute.type == 'boolean'">
+
+                              <p>{{attribute.label}}?</p>
+
+                          <ion-icon *ngIf="incident.parsedData[attribute.name]" name="checkmark" slot="end"></ion-icon>
+                          <ion-icon *ngIf="!incident.parsedData[attribute.name]" name="close" slot="end"></ion-icon>
+                      </div>
+                  </div>
+              </ion-card>
+          </div>
+          <div *ngIf="section.multi">
+              <div *ngIf="section.label">
+                  {{section.label}}
+              </div>
+              <ion-card *ngFor="let multi of incident.parsedData[section.name]; let i = index">
+                  <ion-card-header *ngIf="section.label">
+                      <ion-card-subtitle>{{section.label + ' #' + i}}</ion-card-subtitle>
+                  </ion-card-header>
+                  <div *ngFor="let attribute of section.attributes">
+                      <div *ngIf="attribute.type == 'string'">
+
+                              <p>{{attribute.label}}: {{multi[attribute.name]}}</p>
+
+                      </div>
+                      <div *ngIf="attribute.type == 'textarea'">
+
+                              <p>{{attribute.label}}:</p>
+                              <p> {{multi[attribute.name]}}</p>
+
+                      </div>
+                      <div *ngIf="attribute.type == 'single-choice-string'">
+
+                              <p>{{attribute.label}}: {{multi[attribute.name]}}</p>
+
+                      </div>
+                      <div *ngIf="attribute.type == 'multi-choice-string'">
+
+                              <p>{{attribute.label}}:</p>
+                              <p *ngFor="let multiChoiceString of multi[attribute.name]">
+                                  {{multiChoiceString}}</p>
+
+                      </div>
+                      <div *ngIf="attribute.type == 'datetime'">
+
+                              <p>{{attribute.label}}: {{multi[attribute.name] |
+                                  date: 'dd MMM yyyy HH:mm aa'}}</p>
+
+                      </div>
+                      <div *ngIf="attribute.type == 'date'">
+
+                              <p>{{attribute.label}}: {{multi[attribute.name] | date: 'dd MMM yyyy'}}</p>
+
+                      </div>
+                      <div *ngIf="attribute.type == 'time'">
+
+                              <p>{{attribute.label}}: {{multi[attribute.name] | date: 'HH:mm aa'}}</p>
+
+                      </div>
+                      <div *ngIf="attribute.type == 'boolean'">
+
+                              <p>{{attribute.label}}?</p>
+
+                          <ion-icon *ngIf="multi[attribute.name]" name="checkmark" slot="end"></ion-icon>
+                          <ion-icon *ngIf="!multi[attribute.name]" name="close" slot="end"></ion-icon>
+                      </div>
+                  </div>
+              </ion-card>
+          </div>
+      </div>
+      <div>
+
+              <p>created: {{incident.creation_date_time | date: 'dd MMM yyyy HH:mm aa'}}</p>
+              <p *ngIf="incident.edited">edited: {{incident.edited_date_time | date: 'dd MMM yyyy HH:mm aa'}}</p>
+
+      </div> -->
+    </div>
+  </div>
+</div>

@@ -1,0 +1,14 @@
+<div class="document">
+  <img *ngIf="data.name.split('.')[data.name.split('.').length - 1] === 'png' || data.name.split('.')[data.name.split('.').length - 1] === 'jpg'"
+       [src]="data.file" alt="screen">
+  <pdf-viewer *ngIf="data.name.split('.')[data.name.split('.').length - 1] === 'pdf' ||
+                       data.name.split('.')[data.name.split('.').length - 1] === 'doc'"
+              [src]="data.file"
+              [render-text]="true" [original-size]="true" [fit-to-page]="false" [show-all]="false">
+  </pdf-viewer>
+  <!--<iframe *ngIf="data.name.split('.')[data.name.split('.').length - 1] === 'docx'" [src]="sanitizer.bypassSecurityTrustResourceUrl(data.file)" width="640" height="360" frameborder="0"></iframe>-->
+  <!--<ngx-doc-viewer *ngIf="data.name.split('.')[data.name.split('.').length - 1] === 'docx'" [url]="data.file" viewer="google" style="width:100%;height:50vh;"></ngx-doc-viewer>-->
+  <div class="text-document" *ngIf="data.name.split('.')[data.name.split('.').length - 1] === 'txt'">
+    {{data.file}}
+  </div>
+</div>

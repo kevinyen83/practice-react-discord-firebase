@@ -1,0 +1,151 @@
+<div class="authority-verification">
+  <fuse-alert
+    class="mt-4 mb-1"
+    *ngIf="showAlert"
+    [appearance]="'outline'"
+    [showIcon]="false"
+    [type]="alert.type"
+    [dismissible]="true"
+    [@shake]="alert.type === 'error'"
+  >
+    {{ alert.message }}
+  </fuse-alert>
+
+  <p class="text-xl font-normal">
+    Please check the details and if you accept the appointment of Owner, we will
+    need to confirm your authority.
+  </p>
+
+  <div class="flex flex-row justify-evenly mt-7">
+    <div class="flex flex-col">
+      <div class="flex flex-row leading-9 content-start justify-evenly">
+        <div class="flex flex-col">
+          <div class="flex flex-col p-2">
+            <div class="text-gray-300 text-base">Industry</div>
+            <div class="text-lg">{{ abnInfo?.industry }}</div>
+          </div>
+          <div class="flex flex-col p-2">
+            <div class="text-gray-300 text-base">ABN</div>
+            <div class="text-lg">{{ abnInfo?.Abn }}</div>
+          </div>
+        </div>
+        <div class="flex flex-col">
+          <div class="flex flex-col p-2">
+            <div class="text-gray-300 text-base">Name</div>
+            <div class="text-lg">{{ abnInfo?.EntityName }}</div>
+          </div>
+          <div class="flex flex-col p-2">
+            <div class="text-gray-300 text-base">Trading Name</div>
+            <div class="text-lg">{{ abnInfo?.BusinessName[0] }}</div>
+          </div>
+        </div>
+        <div class="flex flex-col">
+          <div class="flex flex-col p-2">
+            <div class="text-gray-300 text-base">Entity Type</div>
+            <div class="text-lg">{{ abnInfo?.EntityTypeName }}</div>
+          </div>
+        </div>
+      </div>
+      <div
+        class="flex flex-row leading-9 content-start justify-evenly"
+        *ngIf="invitation.sub_account_detail"
+      >
+        <div class="flex flex-col">
+          <div class="flex flex-col p-2">
+            <div class="text-gray-300 text-base">Primary address</div>
+            <div class="text-lg">
+              {{ invitation?.sub_account_detail?.primary_address }}
+            </div>
+          </div>
+          <div class="flex flex-col p-2">
+            <div class="text-gray-300 text-base">Postal address</div>
+            <div class="text-lg">
+              {{ invitation?.sub_account_detail?.postal_address }}
+            </div>
+          </div>
+        </div>
+        <div class="flex flex-col">
+          <div class="flex flex-col p-2">
+            <div class="text-gray-300 text-base">Website</div>
+            <div class="text-lg">
+              {{ invitation?.sub_account_detail?.website }}
+            </div>
+          </div>
+          <div class="flex flex-col p-2">
+            <div class="text-gray-300 text-base">Phone number</div>
+            <div class="text-lg">
+              {{ invitation?.sub_account_detail?.phone }}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="flex items-center" *ngIf="invitation.sub_account_detail">
+      <div
+        class="flex overflow-hidden w-[150px] h-[150px] border-2 rounded-full"
+      >
+        <img
+          class="photo avatar"
+          [src]="invitation.sub_account_detail?.logo || defaultAvatar"
+        />
+      </div>
+    </div>
+  </div>
+
+  <p class="text-xl font-normal mt-9">
+    Confirmation that may be uploaded includes a current company search, letter
+    of authority on official letterhead or similar document from the entity.
+    <br />
+    We accept either Images or .pdf formats.
+  </p>
+
+  <div class="mt-9">
+    <div class="list-files flex flex-row mb-6">
+      <div
+        class="flex items-center align-start mr-2"
+        *ngFor="let file of listFiles; let i = index"
+      >
+        <button mat-icon-button (click)="deleteFile(i)">
+          <mat-icon>close</mat-icon>
+        </button>
+        <app-file-icon
+          [type]="file.type"
+          [ext]="file.name.split('.')[1]"
+        ></app-file-icon>
+        <div class="flex flex-col">
+          <div class="flex ml-2">{{ file.name }}</div>
+          <div class="flex ml-2">{{ file.size | filesize }}</div>
+        </div>
+      </div>
+    </div>
+    <!-- //here -->
+    <app-choose-files
+      [accept]="'image/*,application/pdf'"
+      [isDisable]="true"
+      (saveFiles)="saveFiles($event)"
+    ></app-choose-files>
+  </div>
+
+  <div class="buttons flex justify-start mt-12">
+    <button
+      *ngIf="!hideBack"
+      mat-stroked-button
+      (click)="goBack()"
+      color="primary"
+      class="w-[200px]"
+    >
+      Back
+    </button>
+
+    <button
+      data-cy="button-confirm-verify"
+      mat-raised-button
+      color="primary"
+      class="button-confirm w-[200px] ml-2"
+      [disabled]="disableConfirm || listFiles.length == 0"
+      (click)="handleSave()"
+    >
+      Confirm
+    </button>
+  </div>
+</div>

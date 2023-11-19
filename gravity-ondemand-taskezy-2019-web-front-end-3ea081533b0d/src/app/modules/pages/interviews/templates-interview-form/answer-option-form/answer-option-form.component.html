@@ -1,0 +1,36 @@
+<div class="answer-option-form-container">
+  <form action="" [formGroup]="optionsForm">
+    <div class="option-list-container">
+      <div
+        formArrayName="answerOptions"
+        *ngFor="let item of optionsForm.get('answerOptions')['controls']; let i = index;"
+      >
+        <div [formGroupName]="i" class="option-item">
+          <mat-form-field class="questionName" appearance="fill">
+            <mat-label>Answer Option</mat-label>
+            <input matInput
+                   name="optionName"
+                   formControlName="optionName">
+          </mat-form-field>
+          <button mat-raised-button color="warn" class="close-question-btn" (click)="handleRemoveOption(i)"><mat-icon>close</mat-icon></button>
+        </div>
+      </div>
+      <button mat-raised-button color="primary" class="close-question-btn" (click)="handleAddOption()"><mat-icon>add</mat-icon></button>
+    </div>
+  </form>
+  <div class="form-footer-container">
+    <button mat-raised-button color="primary"
+      (click)="saveOptions()"
+      class="save-btn"
+      aria-label="Sent">
+      Save
+    </button>
+    <button mat-raised-button color="primary"
+      (click)="closeModal()"
+      class="cancel-button"
+      color="primary"
+      aria-label="Sent">
+      Close
+    </button>
+  </div>
+</div>

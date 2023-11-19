@@ -1,0 +1,158 @@
+<div class="flex flex-col flex-auto min-w-0">
+  <div
+    class="header text-white p-10 p-sm-24 bg-blue-400"
+    fxLayout="column"
+    fxLayoutAlign="start"
+    fxLayout.gt-xs="row"
+    fxLayoutAlign.gt-xs="space-between center">
+    <div>
+      <!-- APP TITLE -->
+      <div
+        fxLayout="row"
+        class="row"
+        fxLayoutAlign="start center">
+        <div
+          class="text-3xl flex items-center"
+          fxLayout="row"
+          fxLayoutAlign="start center">
+          <mat-icon class="text-4xl mr-16 text-white">people_outline </mat-icon>
+          <span class="logo-text h1"> Members </span>
+        </div>
+      </div>
+      <!-- / APP TITLE -->
+    </div>
+  </div>
+  <!--/Header-->
+
+  <div class="content-edit p-10">
+    <p
+      class="text-gray-400 flex items-center mb-14 cursor-pointer"
+      (click)="backToListMembers()">
+      <mat-icon class="mr-2 text-primary">arrow_back</mat-icon>
+      <span>Members / Add new members</span>
+    </p>
+
+    <form
+      class="flex justify-between"
+      [formGroup]="editMemberForm"
+      action="">
+      <div class="block_1 w-1/3 mr-2">
+        <mat-form-field class="name w-full">
+          <mat-label>Name</mat-label>
+          <input
+            matInput
+            name="name"
+            formControlName="name" />
+        </mat-form-field>
+
+        <mat-form-field class="email w-full">
+          <mat-label>Email</mat-label>
+          <input
+            matInput
+            name="email"
+            formControlName="email" />
+        </mat-form-field>
+
+        <mat-form-field class="phone w-full">
+          <mat-label>Phone</mat-label>
+          <!-- <input matInput name="phone" formControlName="phone" /> -->
+          <ngx-mat-intl-tel-input
+            [preferredCountries]="['au', 'us', 'gb']"
+            [enablePlaceholder]="true"
+            [enableSearch]="false"
+            formControlName="phone"
+            name="phone"
+            autocomplete="off"
+            format="national"
+            required
+            enableAutoCountrySelect="true">
+          </ngx-mat-intl-tel-input>
+          <mat-error *ngIf="editMemberForm.get('phone').hasError('required')">
+            Phone Number is required
+          </mat-error>
+          <mat-error
+            *ngIf="editMemberForm.get('phone').hasError('validatePhoneNumber')">
+            Invalid Number
+          </mat-error>
+        </mat-form-field>
+      </div>
+
+      <div class="block_2 w-1/3 mr-2">
+        <mat-form-field class="role w-full">
+          <mat-label>Role</mat-label>
+          <mat-select
+            placeholder="Role"
+            formControlName="role">
+            <mat-option value="Administrator">Administrator</mat-option>
+            <mat-option value="Assistant">Assistant</mat-option>
+            <mat-option value="Manager">Manager</mat-option>
+            <mat-option value="Resource">Resource</mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field class="department w-full">
+          <mat-label>Department</mat-label>
+          <input
+            matInput
+            name="department"
+            formControlName="department" />
+        </mat-form-field>
+
+        <mat-form-field class="address-member w-full">
+          <mat-label>Address</mat-label>
+          <input
+            matInput
+            name="address"
+            formControlName="address" />
+        </mat-form-field>
+      </div>
+
+      <div class="flex w-1/3 items-center flex-col text-center relative">
+        <div class="relative">
+          <div
+            class="logo overflow-hidden flex items-center w-50 h-50 bg-gray-200 m-auto rounded-full">
+            <img
+              class="photo avatar"
+              [src]="currentAvatar || defaultAvatar" />
+
+            <input
+              #file
+              type="file"
+              accept="image/*"
+              (change)="uploadAvatar(file)"
+              hidden />
+          </div>
+
+          <div
+            class="w-10 h-10 overflow-visible cursor-pointer absolute -right-4 top-20 p-2 rounded-full bg-blue-400"
+            (click)="file.click()">
+            <mat-icon class="text-white">camera_enhance</mat-icon>
+          </div>
+        </div>
+
+        <div class="description mt-4 w-1/2">
+          Please a company logo in one of the formats .png .jpg .tiff and no
+          more 5MB in size
+        </div>
+      </div>
+    </form>
+
+    <div class="buttons flex">
+      <button
+        color="primary"
+        class="w-40 cancel-button mr-3 p-3 rounded-full"
+        mat-stroked-button
+        (click)="backToListMembers()">
+        Cancel
+      </button>
+
+      <button
+        color="primary"
+        class="w-40 save-button p-3 rounded-full ml-2 mr-3"
+        (click)="saveMember()"
+        mat-raised-button>
+        SAVE
+      </button>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,90 @@
+<div class="add-document-container">
+  <button mat-raised-button
+          color="primary"
+          type="button"
+          (click)="addDocumentsNotes()"
+          id="adddocuments-button"
+          class="adddocuments-button"
+          aria-label="Edit">
+        Add Documents & Notes
+        </button>
+      <p class="mt-5" *ngIf="selectedAccount && (!selectedAccount.documents || !selectedAccount.documents.length || selectedAccount.documents.length === 0)">You have no documents. Add one now.</p>
+</div>
+
+<div class="documents-view mt-5">
+   <div class="border-2 border-gray-300 rounded-2xl p-5">
+    <div class="card"  *ngFor="let document of selectedAccount.documents;let i = index;">
+      <div class="h2">{{document.type}}</div>
+      <div class="content-documents">
+        <div class="description">
+          <p class="title"><span><b>Title: </b><span>{{document.title}}</span></span></p>
+          <p class="desc"><span><b>Description: </b>&nbsp;&nbsp;&nbsp;</span> <span>{{document.description}}</span></p>
+        </div>
+        <div class="documents-img">
+          <p><b>Documents & Notes</b></p>
+          <div class="screens">
+            <!-- <div class="screen" *ngIf="document.fileType === 'img'">
+              <mat-icon class="image">image</mat-icon>
+              <div class="block-invisible">
+                <mat-icon (click)="downloadFile(document)">arrow_downward</mat-icon>
+                <mat-icon (click)="showDocument(document)">visibility</mat-icon>
+              </div>
+            </div> -->
+            <div class="screen" *ngIf="document.location">
+              <mat-icon class="image">image</mat-icon>
+              <div class="block-invisible">
+                <mat-icon (click)="downloadFile(document)">arrow_downward</mat-icon>
+                <!-- <mat-icon (click)="showDocument(document)">visibility</mat-icon> -->
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="buttons-documents flex justify-end">
+        <button mat-stroked-button
+                color="primary"
+                type="button"
+                (click)="deleteDocument(i)"
+                class="delete-button"
+                aria-label="Delete">
+          Delete
+        </button>
+
+        <button mat-raised-button
+                color="primary"
+                type="button"
+                (click)="editDocumentsNotes(i)"
+                class="edit-button ml-2"
+                aria-label="Edit">
+          Edit
+        </button>
+      </div>
+    </div>
+  </div>
+  <div class="buttons flex justify-end">
+    <button mat-stroked-button
+            color="primary"
+            type="button"
+            *ngIf="user !== 'account'"
+            (click)="cancelDocumentsNotes()"
+            class="cancel-button"
+            aria-label="Save">
+      Cancel
+    </button>
+    <button mat-raised-button
+            color="primary"
+            type="button"
+            *ngIf="user !== 'account'"
+            (click)="saveProfileDone()"
+            class="done-button ml-2"
+            aria-label="Save">
+      Done
+    </button>
+
+  </div>
+</div>
+
+<div class="progress-spiner w-full h-full absolute left-0 top-0 opacity-0.5" *ngIf="viewSpinner">
+  <mat-spinner class="mat-spinner m-auto md:top-1/2"></mat-spinner>
+</div>

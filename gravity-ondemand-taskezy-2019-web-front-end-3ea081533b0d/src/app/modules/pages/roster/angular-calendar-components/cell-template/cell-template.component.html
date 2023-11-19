@@ -1,0 +1,58 @@
+<div class="cal-cell-top">
+  <span class="cal-day-number" *ngIf="day && day.date">
+     {{ day['date'] | calendarDate:'monthViewDayNumber':locale }}
+  </span>
+</div>
+
+<div class="relative p-2 overflow-hidden -mt-8" *ngIf="day.events?.length">
+  <div class="text-sm mb-2 font-bold" *ngIf="day && day.events">Total - {{ day.events.length }}</div>
+
+  <div class="flex mb-3">
+    <div class="flex mr-3 break-normal">
+      <mat-icon class="text-xl">schedule</mat-icon>
+      <div>{{hours}}h</div>
+    </div>
+    <div class="flex">
+      <mat-icon class="text-xl">people_outline</mat-icon>
+      <div>{{resources}}</div>
+    </div>
+  </div>
+
+  <div class="text-sm mb-1 flex cursor-pointer hover:text-primary" *ngIf="acceptedEvents.length > 0" (click)="getMenu('accepted')">
+    <div class="h-4 w-4 bg-green-300 text-center">{{ acceptedEvents.length }}</div>
+    <span class="ml-2" [ngClass]="{'text-primary':isOpen && statusNumber === 2}">Accepted</span>
+  </div>
+  <div class="text-sm mb-1 cursor-pointer hover:text-primary" *ngIf="declinedEvents.length > 0" (click)="getMenu('declined')">
+    <div class="h-4 w-4 bg-red-300 text-center">{{ declinedEvents.length }}</div>
+    <span class="ml-2" [ngClass]="{'text-primary':isOpen && statusNumber === 3}">Alert</span>
+  </div>
+  <div class="text-sm mb-1 flex cursor-pointer hover:text-primary" *ngIf="pendingEvents.length > 0" (click)="getMenu('pending')">
+    <div class="h-4 w-4 bg-yellow-400 text-center">{{ pendingEvents.length }}</div>
+    <span class="ml-2" [ngClass]="{'text-primary':isOpen && statusNumber === 1}">Pending</span>
+  </div>
+  <div class="text-sm mb-1 flex cursor-pointer hover:text-primary" *ngIf="draftEvents.length > 0" (click)="getMenu('draft')">
+    <div class="h-4 w-4 bg-gray-300 text-center">{{ draftEvents.length }}</div>
+    <span class="ml-2" [ngClass]="{'text-primary':isOpen && statusNumber === 0}">Draft</span>
+  </div>
+
+  <!-- <div class="events absolute top-25 left-15 w-56 bg-white rounded-md p-3 z-30" *ngIf="showEvents && currentEvents.length">
+    <div class="flex justify-end" (click)="showEvents = false"><mat-icon class="text-base">close</mat-icon></div>
+    <div *ngFor="let event of currentEvents">
+      <ng-template *ngIf="currentEvents.length; then showEventsBlock">
+      </ng-template>
+      <ng-template #showEventsBlock>
+        <div class="cal-events p-3 flex flex-col leading-tight"
+             [ngStyle]="{ backgroundColor: event.issue && !event['draft'] ? '#ff4c4c' : 'blue' ||
+                                  event['draft'] && event['released'] === false &&
+                                  !event['issue'] ? '#bebec0' : 'blue' ||
+                                  !event['draft'] && !event['issue'] ? 'white' : 'blue',
+                          borderLeft: event.color}"
+             [ngClass]="event?.cssClass" (mwlClick)="eventClicked.emit({event: event})" [mwlCalendarTooltip]="event.title | calendarEventTitle: 'monthTooltip':event"
+             [tooltipPlacement]="tooltipPlacement" [tooltipEvent]="event" [tooltipTemplate]="tooltipTemplate"
+             [tooltipAppendToBody]="tooltipAppendToBody" [tooltipDelay]="tooltipDelay">
+          <div class="w-full">{{event.client.profile_name}}</div>
+        </div>
+      </ng-template>
+    </div>
+  </div> -->
+</div>

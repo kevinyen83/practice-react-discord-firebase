@@ -1,0 +1,349 @@
+<div class="task-description" *ngIf="currentShift?.uuid">
+  <mat-toolbar
+    class="mat-accent pt-2 pb-16 pr-2 pl-2 sticky top-0 z-99"
+    [ngClass]="rosterService.getBGColour(currentShift)"
+  >
+
+    <mat-toolbar-row class="w-full flex flex-col justify-between">
+
+      <div class="w-full flex justify-between">
+
+        <div>
+          <span class="title dialog-title mr-3">Shift Details</span>
+
+          <mat-icon class="cursor-pointer" (click)="openChangelog()">
+            history
+          </mat-icon>
+        </div>
+
+        <div
+          data-cy="close-sidebar-icon"
+          class="close flex justify-end text-sm cursor-pointer"
+          (click)="close()"
+          aria-label="Close dialog"
+        >
+          <mat-icon>close</mat-icon>
+        </div>
+      </div>
+
+      <div class="text-right w-full break-all italic text-sm" *ngIf="shiftInPast">
+        <p>
+          Shift is in the past, you can't edit or change it.
+        </p>
+      </div>
+
+      <div data-cy="action-buttons-details" class="w-full flex flex-wrap justify-end" *ngIf="viewAs.value === 'subscriber' &&
+      !isSignedTask() || viewAs.value === 'supplier' && oneTaskIsAccepted() && !isSignedTask() || currentAccount?.uuid === currentShift?.account_uuid && !isSignedTask()">
+        <!-- stroke is still blue -->
+        <button
+          mat-flat-button
+          class="ml-1"
+          color="accent"
+          type="button"
+          data-cy="shift-details-Cancel"
+          (click)="cancelShift()"
+          [disabled]="shiftInPast"
+          aria-label="cancel task"
+        >
+            <span class="text-white"
+            >{{
+              currentShift.release_status == 0 ? "Delete" : "Cancel"
+              }}
+              Shift</span
+            >
+        </button>
+
+        <button
+          mat-flat-button
+          class="ml-1"
+          color="accent"
+          type="button"
+          data-cy="shift-details-edit"
+          (click)="editShift()"
+          [disabled]="shiftInPast"
+          aria-label="edit shift"
+        >
+          <span class="text-white">Edit</span>
+        </button>
+        <button
+          mat-flat-button
+          class="ml-1"
+          color="accent"
+          type="button"
+          data-cy="shift-details-release"
+          (click)="releaseShift()"
+          [disabled]="shiftInPast || currentShift.release_status == 3"
+          aria-label="release shift"
+        >
+          <span class="text-white">Release</span>
+        </button>
+      </div>
+    </mat-toolbar-row>
+  </mat-toolbar>
+
+  <div class="content p-6 overflow-y-hidden">
+    <div class="content-header">
+      <div class="stepper flex flex-col w-full">
+        <div class="flex flex-row justify-around relative">
+          <div class="absolute inset-0 flex items-center">
+            <div class="w-full border-b border-gray-300"></div>
+          </div>
+          <div class="w-1/3 flex justify-center items-center">
+            <mat-icon
+              class="bg-white text-green-400 scale-150"
+              *ngIf="currentShift?.release_status >= 1"
+            >
+              check_circle
+            </mat-icon>
+            <mat-icon
+              class="bg-white text-gray-400 scale-150"
+              *ngIf="currentShift?.release_status < 1"
+            >
+              cancel
+            </mat-icon>
+          </div>
+          <div class="w-1/3 flex justify-center items-center">
+            <mat-icon
+              class="bg-white text-green-400 scale-150"
+              *ngIf="currentShift?.release_status >= 2"
+            >
+              check_circle
+            </mat-icon>
+            <mat-icon
+              class="bg-white text-gray-400 scale-150"
+              *ngIf="currentShift?.release_status < 2"
+            >
+              cancel
+            </mat-icon>
+          </div>
+          <div class="w-1/3 flex justify-center items-center">
+            <mat-icon
+              class="bg-white text-green-400 scale-150"
+              *ngIf="currentShift?.release_status == 3"
+            >
+              check_circle
+            </mat-icon>
+            <mat-icon
+              class="bg-white text-gray-400 scale-150"
+              *ngIf="currentShift?.release_status < 3"
+            >
+              cancel
+            </mat-icon>
+          </div>
+        </div>
+        <div class="flex flex-row justify-around">
+          <div
+            class="w-1/3 text-base whitespace-normal text-center"
+            [ngClass]="{ 'text-gray-300': currentShift?.release_status >= 1 }"
+          >
+            Released to Client
+          </div>
+          <div
+            class="w-1/3 text-base whitespace-normal text-center"
+            [ngClass]="{ 'text-gray-300': currentShift?.release_status >= 2 }"
+          >
+            Released to Supplier
+          </div>
+          <div
+            class="w-1/3 text-base whitespace-normal text-center"
+            [ngClass]="{ 'text-gray-300': currentShift?.release_status >= 3 }"
+          >
+            Released to Resource
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="flex mt-4 lg:flex-col md:flex-col sm:flex-col">
+      <div
+        class="flex w-full font-bold text-xl lg:order-last md:order-last sm:order-last"
+      >
+        General information:
+      </div>
+    </div>
+    <!-- <div class="mt-5 flex flex-row"> -->
+    <div
+      class="flex items-center"
+      *ngIf="viewAs.value === 'client' || viewAs.value === 'subscriber'"
+    >
+      <span class="font-bold text-gray-300 text-lg w-24 shrink-0">Client:</span>
+      <span data-cy="client-name" class="text-left capitalize">{{
+        currentClient?.detail?.name
+      }}</span>
+
+      <div
+        class="w-24 h-10 ml-4 rounded-3xl text-center p-1 flex items-center justify-center"
+        data-cy="client-status-color"
+        [ngClass]="getStatusColor(currentShift?.client_status, 'client')"
+      >
+            <span class="text-sm flex items-center justify-center" data-cy="client-status">{{
+                getStatus(currentShift?.client_status, 'client')
+              }}</span>
+      </div>
+
+      <div class="buttons-right ml-2 flex flex-col">
+        <div
+          class="flex justify-center items-center flex-wrap"
+          *ngIf="(currentAccount?.uuid === currentShift?.client_uuid || currentAccount?.uuid === currentShift?.account_uuid) && !shiftInPast
+          && currentShift.release_status !== 0 && isDirectVenue"
+        >
+          <button
+            mat-raised-button
+            class="text-red-400 mt-1"
+            data-cy="decline-shift"
+            *ngIf="currentShift?.client_status !== 2"
+            (click)="declineShift(currentShift)"
+            type="button"
+          >
+            Decline
+          </button>
+
+          <button
+            mat-raised-button
+            class="text-green-400 ml-2 mt-1"
+            data-cy="accept-shift"
+            *ngIf="currentShift?.client_status !== 1"
+            (click)="acceptShift(currentShift)"
+            type="button"
+          >
+            Accept
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="venue flex w-full mb-3 items-center">
+      <div class="flex flex-row items-center">
+        <div class="flex">
+          <span class="font-bold text-gray-300 text-lg w-24 shrink-0"
+            >Venue:</span
+          >
+        </div>
+        <div class="flex flex-col">
+          <span class="font-bold text-left capitalize" data-cy="venue-name">
+            {{ currentShift?.venue?.name }}
+          </span>
+          <span class="text-left" data-cy="venue-address">
+            {{ currentShift?.venue?.address.street_location }}
+          </span>
+        </div>
+      </div>
+      <div class="cursor-pointer">
+        <img src="assets/images/icons/place.png" alt="place" />
+      </div>
+    </div>
+
+    <div class="flex mb-3 items-center">
+      <span class="font-bold text-gray-300 text-lg w-24 shrink-0"
+        >Start day:</span
+      >
+      <span class="text-left" data-cy="start-date">
+        {{ currentShift?.start | date: "dd MMMM YYYY" }}
+      </span>
+    </div>
+
+    <div class="flex mb-3 items-center">
+      <span class="font-bold text-gray-300 text-lg w-24 shrink-0"
+        >Start Time:</span
+      >
+      <span class="text-left" data-cy="start-time">
+        {{ currentShift?.start | date: "HH:mm" }}
+      </span>
+    </div>
+    <div class="flex mb-3 items-center">
+      <span class="font-bold text-gray-300 text-lg w-24 shrink-0"
+        >End Day:</span
+      >
+      <span class="text-left" data-cy="end-date">
+        {{ currentShift?.end | date: "dd MMMM YYYY" }}
+      </span>
+    </div>
+    <div class="flex mb-3 items-center">
+      <span class="font-bold text-gray-300 text-lg w-24 shrink-0"
+        >End Time:</span
+      >
+      <span class="text-left" data-cy="end-time">{{ currentShift?.end | date: "HH:mm" }}</span>
+    </div>
+    <span class="info-shift text-base text-gray-300">
+      Duration: {{ currentShift?.duration / 60 | number: "1.0-2" }} h
+    </span>
+
+    <div
+      class="tasks-section w-full mt-6"
+      data-cy="tasks-section"
+    >
+      <div class="flex flex-col" [@.disabled]="disableAnimation">
+        <h1 class="font-bold text-2xl mb-3">Resources Requirements:</h1>
+
+        <div *ngIf="viewAs?.value === 'supplier'">
+          <div class="list-cards" *ngFor="let taskRoles of tasksSortedByRole">
+            <mat-card *ngFor="let task of taskRoles.tasks">
+              <div *ngIf="task?.supplier?.uuid === currentAccount?.uuid">
+                <app-task [task]="task" [currentAccount]="currentAccount" [currentShift]="currentShift"></app-task>
+              </div>
+            </mat-card>
+          </div>
+        </div>
+
+        <mat-accordion *ngIf="viewAs.value !== 'supplier'" [hideToggle]="viewAs.value === 'client'" multi>
+          <mat-expansion-panel
+            *ngFor="let taskRoles of tasksSortedByRole;let i = index"
+            [expanded]="openedTask === i"
+            [disabled]="viewAs.value === 'client'"
+            (opened)="openedTask = i"
+          >
+            <mat-expansion-panel-header>
+              <mat-panel-title>
+                Shift Role: {{ taskRoles?.name }}
+              </mat-panel-title>
+              <mat-panel-description>
+                {{ taskRoles.tasks.length }}
+              </mat-panel-description>
+              <!-- <div class="flex w-full justify-between">
+                <div class="font-bold text-gray-300 text-lg">Shift Role</div>
+                <div class="mr-3">
+                  {{ taskRoles?.name }} x {{ taskRoles.tasks.length }}
+                </div>
+              </div> -->
+            </mat-expansion-panel-header>
+
+            <!-- <div class="flex w-1/2 justify-between">
+              <div class="font-bold text-gray-300 text-lg">Number</div>
+              <div>{{ taskRoles.tasks.length }}</div>
+            </div> -->
+            <ng-template matExpansionPanelContent>
+              <div
+                class="resource mt-5 flex items-center justify-between"
+                *ngFor="let task of taskRoles.tasks"
+              >
+                <app-task [task]="task" [currentAccount]="currentAccount" [currentShift]="currentShift"></app-task>
+              </div>
+            </ng-template>
+          </mat-expansion-panel>
+        </mat-accordion>
+
+
+        <!-- <div class="task-checklist cursor-pointer flex items-center text-primary mt-10">
+          <mat-icon class="text-primary">description</mat-icon>
+          <div class="ml-4">Task Checklist</div>
+        </div> -->
+      </div>
+    </div>
+    <div class="buttons mt-8 flex flex-col">
+      <div *ngIf="shiftInPast" class="flex justify-end">
+        <span class="text-right italic">
+          Shift is in the past, you can't edit or change it.
+        </span>
+      </div>
+    </div>
+
+    <fuse-alert
+      class="mt-4"
+      *ngIf="showAlert"
+      [type]="alert.type"
+      [dismissible]="true"
+    >
+      <span fuseAlertTitle>Success</span>
+      {{ alert.message }}
+    </fuse-alert>
+  </div>
+</div>

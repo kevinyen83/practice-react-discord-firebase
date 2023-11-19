@@ -1,0 +1,43 @@
+<div>
+  <ng-template #buttonsTemplate>
+    <div class="flex flex-row justify-end items-center">
+      <div>
+        <button
+          *ngIf="editing"
+          mat-stroked-button
+          color="primary"
+          class="rounded-[33px] mr-2 text-white"
+          (click)="isCancelEdit()"
+        >
+          Back
+        </button>
+
+        <button
+          *ngIf="editing"
+          mat-stroked-button
+          color="primary"
+          class="add-venue-button rounded-[33px] text-white"
+          id="save-details-button"
+          data-cy="save-details-button"
+          (click)="saveDetails()"
+        >
+          Save
+        </button>
+      </div>
+
+      <div>
+        <button
+          *ngIf="!editing && ((subAccountEditable && (subAccountConnectionStatus=='1' || subAccountConnectionStatus=='6' || (subAccountConnectionStatus=='0' && subAccountEditable)))) "
+          mat-stroked-button
+          color="primary"
+          class="edit-venue-button rounded-[33px] text-white"
+          id="edit-details-button"
+          data-cy="edit-details-button"
+          (click)="isEditDetails()"
+        >
+          Edit
+        </button>
+      </div>
+    </div>
+  </ng-template>
+</div>

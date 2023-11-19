@@ -1,0 +1,57 @@
+
+<div
+  id="profile"
+  class="flex flex-col flex-auto min-w-0 h-full">
+  <!-- <div class="header relative text-white p-8 p-sm-24 h-[114px] bg-primary">
+    <div
+      class="absolute right-2 top-2"
+      (click)="toClose()">
+      <mat-icon class="text-white cursor-pointer">close</mat-icon>
+    </div>
+
+    <div
+      class="row"
+      fxLayout="row"
+      fxLayoutAlign="space-between center">
+      <div
+        class="header-text flex items-center"
+        fxLayout="row">
+
+        <div
+          class="logo truncate"
+          data-cy="header-text-client"
+          title="{{ pageTitle }}"
+          fxLayout="column">
+          <span class="logo-text text-3xl"> {{ pageTitle }} </span>
+        </div>
+      </div>
+    </div>
+
+  </div> -->
+
+    <app-header-with-buttons
+    [title]="'Add a New Client'"
+    ></app-header-with-buttons>
+    <app-buttons-create-new-clients-suppliers></app-buttons-create-new-clients-suppliers>
+    <div class="content w-full overflow-y-auto">
+  <!-- Alert -->
+  <fuse-alert
+    class="mt-4 mb-1"
+    *ngIf="showAlert"
+    [appearance]="'outline'"
+    [showIcon]="false"
+    [type]="alert.type"
+    [dismissible]="true"
+    [@shake]="alert.type === 'error'">
+    {{ alert.message }}
+  </fuse-alert>
+
+
+  <app-sub-account-form
+
+    type="client"
+    (updateSubAccounts)="toClose()"
+    (changedHeader)="changedStatus($event)"></app-sub-account-form>
+
+  </div>
+</div>

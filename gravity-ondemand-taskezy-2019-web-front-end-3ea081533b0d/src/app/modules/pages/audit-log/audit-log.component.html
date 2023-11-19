@@ -1,0 +1,167 @@
+<div class="flex flex-col flex-auto min-w-0">
+  <!--Header-->
+  <div
+    class="header accent text-white p-10 p-sm-24 bg-primary"
+    fxLayout="column"
+    fxLayoutAlign="start"
+    fxLayout.gt-xs="row"
+    fxLayoutAlign.gt-xs="space-between center"
+  >
+    <!-- APP TITLE -->
+    <div fxLayout="row" fxLayoutAlign="start center">
+      <div
+        class="logo flex text-3xl"
+        fxLayout="row"
+        fxLayoutAlign="start center"
+      >
+        <!--        <div class="logo-icon">-->
+        <!--          <mat-icon class="logo-icon mr-16 text-white">person</mat-icon>-->
+        <!--        </div>-->
+        <div class="logo-icon flex items-center mr-16">
+          <img src="assets/images/icons/web_logs.svg" />
+        </div>
+        <span data-cy="logo-text" class="logo-text h1"> Audit Log </span>
+      </div>
+    </div>
+    <!-- / APP TITLE -->
+  </div>
+  <!--/Header-->
+
+  <!--Content-->
+
+  <div class="content p-12">
+    <div class="total">
+      <p>{{ logs.length }} Total Audits</p>
+    </div>
+
+    <form class="mt-3" action="" [formGroup]="searchLogs">
+      <mat-form-field class="search w-full" appearance="fill">
+        <input
+          matInput
+          placeholder="Search"
+          name="searchLogs"
+          [formControl]="searchLog"
+        />
+        <mat-icon class="absolute right-1.5 top-2.5">search</mat-icon>
+      </mat-form-field>
+    </form>
+
+    <div class="table w-full">
+      <mat-table
+        [dataSource]="dataSource"
+        matSort
+        (matSortChange)="sortData($event)"
+      >
+        <!-- Name Column -->
+        <ng-container matColumnDef="email">
+          <mat-header-cell mat-header-cell *matHeaderCellDef mat-sort-header
+            >Email Address</mat-header-cell
+          >
+          <mat-cell mat-cell *matCellDef="let row">
+            {{ row.email }}
+          </mat-cell>
+        </ng-container>
+
+        <!-- Email Column -->
+        <ng-container matColumnDef="event">
+          <mat-header-cell mat-header-cell *matHeaderCellDef mat-sort-header>
+            Event
+          </mat-header-cell>
+          <mat-cell mat-cell *matCellDef="let row">
+            <a href="">{{ row.eventType }}</a>
+          </mat-cell>
+        </ng-container>
+
+        <!-- Phone Column -->
+        <ng-container matColumnDef="auditableType">
+          <mat-header-cell mat-header-cell *matHeaderCellDef mat-sort-header>
+            Auditable Type
+          </mat-header-cell>
+          <mat-cell mat-cell *matCellDef="let row">
+            {{ row.auditableType }}:: {{ row.auditableId }}
+          </mat-cell>
+        </ng-container>
+
+        <!-- Compliance Column -->
+        <ng-container matColumnDef="url">
+          <mat-header-cell mat-header-cell *matHeaderCellDef mat-sort-header>
+            URL</mat-header-cell
+          >
+          <mat-cell mat-cell *matCellDef="let row">
+            {{ row.url }}
+          </mat-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="ipAddress">
+          <mat-header-cell
+            mat-header-cell
+            *matHeaderCellDef
+            mat-sort-header
+            class="link-container"
+            >IP address</mat-header-cell
+          >
+          <mat-cell
+            fxLayout="row"
+            fxLayoutAlign="space-between center"
+            *matCellDef="let row"
+            class="link-container"
+          >
+            {{ row.ipAddress }}
+          </mat-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="userAgent">
+          <mat-header-cell
+            mat-header-cell
+            *matHeaderCellDef
+            mat-sort-header
+            class="link-container"
+            >User Agent</mat-header-cell
+          >
+          <mat-cell
+            fxLayout="row"
+            fxLayoutAlign="space-between center"
+            *matCellDef="let row"
+            class="link-container"
+          >
+            {{ row.userAgent }}
+          </mat-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="createdAt">
+          <mat-header-cell
+            mat-header-cell
+            *matHeaderCellDef
+            mat-sort-header
+            class="link-container"
+            >Created At</mat-header-cell
+          >
+          <mat-cell
+            fxLayout="row"
+            fxLayoutAlign="space-between center"
+            *matCellDef="let row"
+            class="link-container"
+          >
+            {{ row.dateOfEvent | date: "medium" }}
+          </mat-cell>
+        </ng-container>
+
+        <mat-header-row
+          mat-header-row
+          *matHeaderRowDef="displayedColumns"
+        ></mat-header-row>
+        <mat-row
+          class="hover:bg-gray-100"
+          (click)="toCurrentLog(row)"
+          mat-row
+          *matRowDef="let row; columns: displayedColumns"
+        >
+        </mat-row>
+      </mat-table>
+      <mat-paginator
+        #paginator
+        [pageSizeOptions]="[5, 10, 25, 100]"
+      ></mat-paginator>
+    </div>
+  </div>
+</div>

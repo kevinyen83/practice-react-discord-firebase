@@ -1,0 +1,32 @@
+<div class="shift-changelog">
+  <mat-toolbar class="mat-accent bg-primary m-0 flex justify-between">
+    <mat-toolbar-row>
+      <div>
+        <span class="title dialog-title">Shift Changelog</span>
+      </div>
+      <button class="close absolute top-2 right-1 z-30" mat-icon-button (click)="close()" aria-label="Close dialog">
+        <mat-icon>close</mat-icon>
+      </button>
+    </mat-toolbar-row>
+  </mat-toolbar>
+
+  <div class="content p-6">
+    <div class="list" *ngIf="currentShift">
+        <div *ngFor="let log of currentShift['changelog']">
+          <mat-chip-list>
+            <mat-chip class="bg-blue-600 text-white mt-3">{{log.date | date: 'dd MMM YYYY'}}</mat-chip>
+          </mat-chip-list>
+          <div class="item flex mt-4">
+            <div class="avatar w-11 h-11 border-2 rounded-full mr-3">
+              <mat-icon class="text-5xl mt-2 ml-2" *ngIf="!log['avatar']">person_outline</mat-icon>
+            </div>
+            <div class="changelog-info">
+              <span>{{log.user}}</span>
+              <span class="font-bold"> {{log.status}}</span><br>
+              <span class="text-gray-400 text-sm"> {{log.date | date: 'cccc dd MMMM yyyy'}}</span>
+            </div>
+          </div>
+        </div>
+    </div>
+  </div>
+</div>

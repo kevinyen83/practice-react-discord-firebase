@@ -1,0 +1,58 @@
+<div
+  class="additional-header pr-3 py-3 pl-6 w-50 h-full border-b border-gray-200 border-solid"
+>
+  <div
+    class="line-1 flex justify-between items-center cursor-pointer"
+    (click)="toggleVenueContent(venue)"
+  >
+    <mat-icon
+      class="text-4xl text-primary"
+      [attr.data-cy]="'sub-venue-arrow-icon-' + indexFirst + indexSecond"
+      >{{ arrowIcon }}</mat-icon
+    >
+    <div *ngIf="venue" class="company-name text-sm">
+      <p class="capitalize" [attr.data-cy]="'sub-venue-name-' + indexSecond">
+        {{ venue?.name }}
+      </p>
+      <p
+        class="capitalize"
+        [attr.data-cy]="'sub-venue-street_location-' + indexFirst + indexSecond"
+      >
+        {{ venue?.address.street_location }}
+      </p>
+    </div>
+  </div>
+  <div class="line-2 flex mt-4 justify-around">
+    <div class="flex">
+      <mat-icon class="text-primary">watch_later</mat-icon>
+      <div>
+        <span
+          class="count-hours"
+          [attr.data-cy]="'sub-venue-countHours-' + indexFirst + indexSecond"
+          >{{ countHours | number: "1.0-2" }}</span
+        >
+        h
+      </div>
+    </div>
+    <div class="flex">
+      <mat-icon class="text-primary">people_outline</mat-icon>
+      <div
+        [attr.data-cy]="'sub-venue-countResource-' + indexFirst + indexSecond"
+      >
+        {{ countResources }}
+      </div>
+    </div>
+  </div>
+  <div class="flex justify-end">
+    <button
+      [attr.data-cy]="'sub-venue-release-button-' + indexFirst + indexSecond"
+      class="w-full"
+      mat-flat-button
+      color="primary"
+      [disabled]="releaseDisabled"
+      (click)="release()"
+    >
+      Release
+    </button>
+  </div>
+</div>

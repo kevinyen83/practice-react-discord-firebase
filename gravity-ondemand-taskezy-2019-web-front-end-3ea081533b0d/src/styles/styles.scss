@@ -1,0 +1,201 @@
+/* ----------------------------------------------------------------------------------------------------- */
+/*  @ Import/write your custom styles here.
+/*  @ Styles from this file will override 'vendors.scss' and Fuse's base styles.
+/* ----------------------------------------------------------------------------------------------------- */
+// @import "~@angular/material/prebuilt-themes/indigo-pink.css";
+// @use '@angular/material' as mat;
+// @include mat.core();
+
+// $my-primary: mat.define-palette(mat.$blue-palette);
+// $my-accent: mat.define-palette(mat.$pink-palette, A200, A100, A400);
+// $my-warn: mat.define-palette(mat.$red-palette);
+
+// $my-theme: mat.define-light-theme((
+//  color: (
+//    primary: $my-primary,
+//    accent: $my-accent,
+//    warn: $my-warn,
+//  )
+// ));
+
+// @include mat.core-theme($my-theme);
+// @include mat.button-theme($my-theme);
+// @include mat.all-component-themes($my-theme);
+
+@import "../@fuse/styles/main.scss";
+
+// body {
+//   overflow: hidden;
+// }
+
+layout {
+  router-outlet {
+    width: 100%;
+  }
+}
+
+.mat-dialog-container {
+  padding: 0px !important;
+}
+
+.mat-dialog-content {
+  padding: 0px !important;
+  margin: 0px !important;
+}
+
+.fc-daygrid-day {
+  cursor: pointer;
+}
+
+.cal-day-column {
+  min-width: 5%;
+}
+
+.cal-month-view .cal-cell-top {
+  min-height: 50px !important;
+}
+
+mwl-calendar-open-day-events .cal-open-day-events {
+  background: #fafafa !important;
+  color: black !important;
+}
+
+.tasks .mat-list-item-content {
+  padding-bottom: 9px !important;
+  padding-top: 0 !important;
+  width: 100% !important;
+}
+
+.text-orange-300 .mat-select-min-line {
+  color: #f2c881;
+}
+
+.text-green-400 .mat-select-min-line {
+  color: #13b8a6;
+}
+
+.text-red-400 .mat-select-min-line {
+  color: #d02571;
+}
+
+.tabs .mat-tab-label-active {
+  background: white;
+  border-radius: 10px 10px 0 0;
+}
+
+.tabs .table-members {
+  border-radius: 12px !important;
+  overflow: hidden;
+}
+
+.table-members,
+.operating-regulations,
+.venue-managers,
+.training,
+.engagement-details,
+.incident-report-table,
+.end-of-shift-reports-table,
+.assessments-table,
+.resource-requirements {
+  background: rgba(0, 0, 0, 0) !important;
+}
+
+.documents .table mat-table .mat-header-row {
+  background: white !important;
+}
+
+.documents .table mat-paginator {
+  background: white !important;
+}
+
+.documents .table mat-paginator .mat-paginator-container {
+  display: flex !important;
+  justify-content: space-between !important;
+}
+
+.select-plane .mat-form-field-wrapper {
+  margin-bottom: 0 !important;
+}
+
+.resources .table-resources .mat-table .mat-row {
+  background: #f2f2f2 !important;
+  margin-bottom: 5px;
+  border-radius: 5px;
+}
+
+.google-map .search .mat-form-field-wrapper .mat-form-field-outline {
+  background: white;
+}
+
+tr.example-detail-row {
+  height: 0;
+}
+
+tr.example-element-row:not(.example-expanded-row):hover {
+  background: whitesmoke;
+}
+
+tr.example-element-row:not(.example-expanded-row):active {
+  background: #efefef;
+}
+
+.example-element-row td {
+  border-bottom-width: 0;
+}
+
+.element-detail {
+  overflow: hidden;
+  display: flex;
+}
+
+.element-diagram {
+  min-width: 80px;
+  padding: 8px;
+  margin: 8px 0;
+  height: 104px;
+}
+
+.element-description {
+  padding: 16px;
+}
+
+.ngx-material-timepicker-toggle {
+  display: none !important;
+}
+
+.dialog-container {
+  border: 2px solid #1e80fe;
+  border-radius: 15px;
+}
+
+.mat-progress-spinner circle,
+.mat-spinner circle {
+  stroke: #369be5 !important;
+}
+
+.border-transparent {
+  border-color: transparent;
+}
+.information .mat-input-element:disabled {
+  color: #bebec0 !important;
+}
+
+ngx-mat-intl-tel-input {
+  .mat-input-element {
+    padding-left: 62px !important;
+    padding-bottom: 14px !important;
+    padding-top: 14px !important;
+  }
+
+  .ngx-mat-tel-input-container .mat-menu-trigger {
+    margin-top: 3px;
+  }
+}
+
+input[type="number"]::-webkit-inner-spin-button {
+  opacity: 1;
+}
+
+mat-form-field {
+  color: black;
+}

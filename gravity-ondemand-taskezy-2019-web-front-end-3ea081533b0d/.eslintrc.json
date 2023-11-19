@@ -1,0 +1,125 @@
+{
+  "root": true,
+  "env": {
+    "es6": true
+  },
+  "parserOptions": {
+    "ecmaVersion": 2018
+  },
+  "ignorePatterns": [
+    "projects/**/*",
+    "dist/**/*",
+    "node_modules/**/*",
+    "src/@fuse/**/*",
+    "src/app/mock-api/**/*",
+    "src/app/modules/**/*",
+    "src/app/fake-db/**/*",
+    "cypress/**/*",
+    "cypress.config.ts"
+  ],
+  "overrides": [
+    {
+      "files": ["*.ts"],
+      "parserOptions": {
+        "project": [
+          "tsconfig.json",
+          "cypress/tsconfig.json"
+        ],
+        "createDefaultProgram": true
+      },
+      "extends": [
+        "eslint:recommended",
+        "plugin:@typescript-eslint/recommended",
+        "plugin:@angular-eslint/recommended",
+        "plugin:@angular-eslint/ng-cli-compat",
+        "plugin:@angular-eslint/ng-cli-compat--formatting-add-on",
+        "plugin:@angular-eslint/template/process-inline-templates",
+        "plugin:prettier/recommended"
+      ],
+      "rules": {
+        "@angular-eslint/component-selector": [
+          "error",
+          {
+            "type": "element",
+            "prefix": "",
+            "style": "kebab-case"
+          }
+        ],
+        "@angular-eslint/directive-selector": [
+          "error",
+          {
+            "type": "attribute",
+            "prefix": "",
+            "style": "camelCase"
+          }
+        ],
+        "@typescript-eslint/dot-notation": "off",
+        "@typescript-eslint/explicit-member-accessibility": [
+          "off",
+          {
+            "accessibility": "explicit"
+          }
+        ],
+        "@typescript-eslint/naming-convention": [
+          "error",
+          {
+            "selector": "variable",
+            "format": [
+              "camelCase",
+              "PascalCase",
+              "snake_case"
+            ],
+            "leadingUnderscore": "allow",
+            "trailingUnderscore": "allow"
+          }
+        ],
+        "@typescript-eslint/adjacent-overload-signatures": "off",
+        "@typescript-eslint/no-inferrable-types": "off",
+        "arrow-parens": [
+          "error",
+          "always",
+          {
+            "requireForBlockBody": true
+          }
+        ],
+        "brace-style": [
+          "off",
+          "off"
+        ],
+        "import/order": "off",
+        "max-len": [
+          "error",
+          {
+            "ignorePattern": "^import |^export | implements",
+            "code": 220
+          }
+        ],
+        "no-underscore-dangle": "off",
+        "object-shorthand": "off",
+        "quote-props": [
+          "error",
+          "consistent"
+        ],
+        "quotes": [
+          "error",
+          "single"
+        ],
+        "no-multiple-empty-lines": [
+          "error",
+          { "max": 2, "maxEOF": 0 }],
+        "array-element-newline": [
+          "error",
+          "always"
+        ]
+      }
+    },
+    {
+      "files": ["*.html"],
+      "extends": [
+        "plugin:@angular-eslint/template/recommended",
+        "plugin:prettier/recommended"
+      ],
+      "rules": {}
+    }
+  ]
+}

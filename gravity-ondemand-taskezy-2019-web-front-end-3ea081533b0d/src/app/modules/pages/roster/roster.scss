@@ -1,0 +1,90 @@
+@import "angular-calendar/scss/variables";
+
+app-roster {
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+
+  .time-sch-table-wrapper {
+    width: 2400px;
+  }
+
+  .time-sch-section {
+    position: sticky;
+    z-index: 10;
+    left: 0;
+    background-color: rgba(var(--fuse-bg-card-rgb));
+  }
+
+  .cal-week-view {
+    .cal-side-wrapper {
+      display: flex;
+    }
+
+    .cal-day-headers {
+      padding-left: 0 !important;
+      position: sticky !important;
+
+      .mat-button-wrapper {
+        font-weight: 500px;
+        opacity: inherit;
+      }
+    }
+
+    .cal-time-label-column {
+      display: none !important;
+    }
+
+    .cal-event {
+      height: 75px !important;
+      margin-top: 2px !important;
+      margin-bottom: 2px !important;
+    }
+
+    .cal-events-row {
+      margin: 0 !important;
+      height: 79px !important;
+    }
+
+    .cal-all-day-events {
+      min-height: 160px;
+      flex-grow: 1;
+      border-left-width: 0;
+      border-bottom-width: 1px;
+
+      .cal-day-column:hover {
+        background-color: map-get($cal-vars, bg-active);
+      }
+
+      .cal-day-column.cal-today {
+        background-color: map-get($cal-vars, today-bg);
+      }
+
+      .cal-day-column.cal-weekend span {
+        color: map-get($cal-vars, weekend-color);
+      }
+    }
+  }
+
+  .ngx-timepicker {
+    border: none !important;
+  }
+
+  .duration .ngx-timepicker__toggle {
+    display: none;
+  }
+
+  .mat-progress-spinner circle,
+  .mat-spinner circle {
+    stroke: #369be5 !important;
+  }
+
+  .table-users mat-icon[title]:hover:after {
+    content: attr(title);
+    background-color: white !important;
+  }
+
+  mat-accordion .list > .mat-expansion-panel-content {
+    background-color: #f2f2f2 !important;
+  }
+}

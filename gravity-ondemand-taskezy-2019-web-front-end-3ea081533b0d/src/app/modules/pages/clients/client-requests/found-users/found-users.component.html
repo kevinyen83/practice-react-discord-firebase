@@ -1,0 +1,37 @@
+<div class="flex flex-col flex-auto min-w-0">
+  <div
+    class="card"
+    *ngFor="let supplier of suppliers">
+    <div class="h2">{{ supplier.identifier }}</div>
+    <div class="content-card">
+      <div class="blocks">
+        <div class="block1">
+          <p><b>Identifier</b></p>
+          <p><b>Name</b></p>
+          <p><b>Trading Name</b></p>
+          <p><b>ABN</b></p>
+          <p><b>State</b></p>
+          <p><b>Primary Accreditation Number</b></p>
+        </div>
+        <div class="block2">
+          <p>{{ supplier.identifier }}</p>
+          <p>{{ supplier.name }}</p>
+          <p>{{ supplier.tradingname }}</p>
+          <p>{{ supplier.abn }}</p>
+          <p>{{ supplier.state }}</p>
+          <p>{{ supplier.accreditationNumber }}</p>
+        </div>
+      </div>
+
+      <button
+        mat-raised-button
+        color="accent"
+        type="button"
+        (click)="sendConnection(supplier)"
+        class="sendconnection-button"
+        aria-label="send connection requests">
+        Send Connection Requests
+      </button>
+    </div>
+  </div>
+</div>

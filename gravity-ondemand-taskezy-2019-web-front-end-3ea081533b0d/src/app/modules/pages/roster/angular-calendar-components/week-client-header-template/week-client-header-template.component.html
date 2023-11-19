@@ -1,0 +1,93 @@
+<div class="cal-day-headers" id="cal-day-headers" role="row">
+  <div class="additional-header p-3 w-50 border-r border-gray-200 border-solid">
+    <div
+      class="line-1 flex justify-between items-center cursor-pointer"
+      (click)="toggleClientContent(client)"
+    >
+      <mat-icon
+        class="text-4xl text-primary"
+        [attr.data-cy]="'roster-main-arrow-icon-' + index"
+        >{{ arrowIcon }}</mat-icon
+      >
+      <img
+        class="w-[50px] h-[50px] border border-solid border-gray-300 rounded-full"
+        [src]="avatar"
+        alt="logo"
+      />
+      <div *ngIf="client && client?.detail" class="company-name text-sm">
+        <p
+          class="capitalize"
+          [attr.data-cy]="'roster-main-detail-name-' + index"
+        >
+          {{ client?.detail?.name }}
+        </p>
+      </div>
+    </div>
+    <div class="line-2 flex mt-4 justify-between">
+      <div class="flex">
+        <mat-icon class="text-primary">watch_later</mat-icon>
+        <div [attr.data-cy]="'roster-main-countHours-' + index">
+          {{ countHours | number: "1.0-2" }} h
+        </div>
+      </div>
+      <div class="flex">
+        <mat-icon class="text-primary">people_outline</mat-icon>
+        <div [attr.data-cy]="'roster-main-countResources-' + index">
+          {{ countResources }}
+        </div>
+      </div>
+      <div class="flex">
+        <mat-icon class="text-primary">location_on</mat-icon>
+        <div [attr.data-cy]="'roster-main-countVenues-' + index">
+          {{ countVenues }}
+        </div>
+      </div>
+    </div>
+    <div class="flex justify-end">
+      <button
+        [attr.data-cy]="'roster-main-release-button-' + index"
+        class="w-full"
+        mat-flat-button
+        color="primary"
+        [disabled]="releaseDisabled"
+        (click)="release()"
+      >
+        Release
+      </button>
+    </div>
+  </div>
+  <!-- <div>
+    <div class="flex">
+      <mat-icon class="text-4xl text-primary">{{arrowIcon}}</mat-icon>
+      <div class="ml-4 text-lg">{{client?.name}}</div>
+    </div>
+  </div> -->
+  <div
+    class="pt-3 cal-header"
+    *ngFor="let day of days; trackBy: trackByWeekDayHeaderDate"
+    (contextmenu)="rightClick($event, day)"
+    [class.cal-past]="day.isPast"
+    [class.cal-today]="day.isToday"
+    [class.cal-future]="day.isFuture"
+    [class.cal-weekend]="day.isWeekend"
+    [ngClass]="day.cssClass"
+    (mwlClick)="dayHeaderClicked.emit({ day: day, sourceEvent: $event })"
+    mwlDroppable
+    dragOverClass="cal-drag-over"
+    (drop)="
+      eventDropped.emit({
+        event: $event.dropData.event,
+        newStart: day.date
+      })
+    "
+    (dragEnter)="dragEnter.emit({ date: day.date })"
+    tabindex="0"
+    role="columnheader"
+  >
+    <b>{{ day["date"] | calendarDate: "weekViewColumnHeader":locale }}</b
+    ><br />
+    <span>{{
+      day["date"] | calendarDate: "weekViewColumnSubHeader":locale
+    }}</span>
+  </div>
+</div>

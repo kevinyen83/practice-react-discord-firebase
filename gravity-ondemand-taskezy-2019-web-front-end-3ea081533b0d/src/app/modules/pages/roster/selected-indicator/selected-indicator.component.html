@@ -1,0 +1,6 @@
+<mat-toolbar class="flex flex-row justify-between" color="primary">
+  <div>{{selectedLength | i18nPlural: selectedMap}} Selected</div>
+  <button mat-icon-button (click)="clear()">
+    <mat-icon>close</mat-icon>
+  </button>
+</mat-toolbar>

@@ -1,0 +1,142 @@
+<div class="edit-profile">
+  <div
+    class="header accent text-white p-6 p-sm-24 bg-primary"
+    fxLayout="column"
+    fxLayoutAlign="start"
+    fxLayout.gt-xs="row"
+    fxLayoutAlign.gt-xs="space-between center">
+    <!-- APP TITLE -->
+    <div
+      fxLayout="row"
+      fxLayoutAlign="start center">
+      <div
+        class="logo flex text-3xl"
+        fxLayout="row"
+        fxLayoutAlign="start center">
+        <span class="logo-text h1"> Edit Profile </span>
+      </div>
+    </div>
+    <!-- / APP TITLE -->
+  </div>
+
+  <div class="content-edit-profile p-6">
+    <div class="flex flex-col">
+      <div
+        class="relative self-center flex w-[150px] h-[150px] border-2 rounded-full">
+        <img
+          class="photo avatar rounded-full"
+          [src]="currentAvatar || defaultAvatar" />
+        <input
+          #file
+          type="file"
+          accept="image/*"
+          (change)="uploadAvatar(file)"
+          hidden />
+        <button
+          mat-mini-fab
+          color="primary"
+          (click)="file.click()"
+          class="absolute bottom-14 -right-5">
+          <mat-icon class="text-white">camera_enhance</mat-icon>
+        </button>
+      </div>
+    </div>
+    <form
+      class="flex flex-col"
+      action=""
+      [formGroup]="profileForm">
+      <mat-form-field class="first-name">
+        <mat-label>First name</mat-label>
+        <input
+          matInput
+          name="first_name"
+          formControlName="first_name"
+          required />
+        <mat-error *ngIf="profileForm.get('first_name').hasError('required')">
+          This field is required
+        </mat-error>
+      </mat-form-field>
+
+      <mat-form-field class="last-name">
+        <mat-label>Last name</mat-label>
+        <input
+          matInput
+          name="last_name"
+          formControlName="last_name"
+          required />
+        <mat-error *ngIf="profileForm.get('last_name').hasError('required')">
+          This field is required
+        </mat-error>
+      </mat-form-field>
+
+      <mat-form-field class="phone-number w-full">
+        <mat-label>Mobile Number</mat-label>
+        <ngx-mat-intl-tel-input
+          [preferredCountries]="['au', 'us', 'gb']"
+          [enablePlaceholder]="true"
+          [enableSearch]="false"
+          name="mobile_number"
+          formControlName="mobile_number"
+          autocomplete="off"
+          format="national"
+          required
+          enableAutoCountrySelect="true">
+        </ngx-mat-intl-tel-input>
+        <mat-error
+          *ngIf="profileForm.get('mobile_number').hasError('required')">
+          This field is required
+        </mat-error>
+        <!--        <mat-error *ngIf="detailsForm.get('phoneNumber').hasError('validatePhoneNumber')">-->
+        <!--          Invalid Number-->
+        <!--        </mat-error>-->
+      </mat-form-field>
+
+      <mat-form-field class="email">
+        <mat-label>Email</mat-label>
+        <input
+          matInput
+          name="email"
+          formControlName="email"
+          required />
+        <mat-error *ngIf="profileForm.get('email').hasError('required')">
+          This field is required
+        </mat-error>
+      </mat-form-field>
+
+      <mat-form-field class="address">
+        <mat-label>Address</mat-label>
+        <input
+          matInput
+          #addressTitle
+          name="address"
+          formControlName="address"
+          required />
+        <mat-error *ngIf="profileForm.get('address').hasError('required')">
+          This field is required
+        </mat-error>
+      </mat-form-field>
+
+      <div class="flex flex-row items-center mt-6">
+        <div>
+          <button
+            mat-stroked-button
+            color="primary"
+            class="cancel-button rounded-[33px]"
+            (click)="cancel()">
+            Cancel
+          </button>
+        </div>
+
+        <div>
+          <button
+            mat-raised-button
+            color="primary"
+            class="save-button ml-4 rounded-[33px]"
+            (click)="save()">
+            Save
+          </button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>

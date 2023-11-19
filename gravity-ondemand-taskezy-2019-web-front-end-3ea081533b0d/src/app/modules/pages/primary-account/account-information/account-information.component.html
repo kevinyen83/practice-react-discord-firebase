@@ -1,0 +1,123 @@
+<div class="information w-full overflow-hidden">
+  <div class="content-information bg-white">
+    <fuse-alert
+      class="mt-4 mb-1"
+      *ngIf="showAlert"
+      [appearance]="'outline'"
+      [showIcon]="false"
+      [type]="alert.type"
+      [dismissible]="true"
+      [@shake]="alert.type === 'error'">
+      {{ alert.message }}
+    </fuse-alert>
+
+    <div
+      class="abn-verified"
+      *ngIf="!detailedInformation">
+      <p class="text-xl mb-12 font-medium flex justify-start">
+        Please provide your company ABN to identify your business
+      </p>
+
+      <form
+        class="flex items-center justify-left w-full"
+        [formGroup]="abnForm">
+        <mat-form-field
+          data-cy="abn"
+          class="abn min-w-1/2 w-1/3">
+          <mat-label>ABN</mat-label>
+          <input
+            placeholder="## ### ### ###"
+            matInput
+            formControlName="abn" />
+          <mat-error
+            *ngIf="
+              abnForm.get('abn').hasError('invalid') ||
+              abnForm.get('abn').hasError('pattern')
+            ">
+            Invalid ABN
+          </mat-error>
+          <mat-error
+            *ngIf="
+              abnForm.get('abn').hasError('self') ||
+              abnForm.get('abn').hasError('alreadyConnected')
+            ">
+            You are already a member of an account with this ABN
+          </mat-error>
+        </mat-form-field>
+
+        <button
+          data-cy="search-button"
+          class="ml-2"
+          mat-raised-button
+          color="primary"
+          (click)="searchAbn()">
+          Search
+          <mat-spinner
+            [diameter]="22"
+            *ngIf="spinnerSearch"></mat-spinner>
+        </button>
+      </form>
+    </div>
+
+    <div *ngIf="detailedInformation">
+      <p
+        class="mb-2 text-left font-medium text-neutral-900 text-xl whitespace-pre">
+        {{ message }}
+      </p>
+
+      <div class="flex flex-col justify-start mt-4">
+        <div class="flex flex-col justify-start items-start">
+          <div class="text-zinc-400">ABN</div>
+          <div
+            data-cy="abn-input"
+            class="text-lg text-neutral-800">
+            {{ abnInfo.Abn }}
+          </div>
+        </div>
+        <div class="mt-10 flex flex-col justify-start items-start">
+          <div class="text-zinc-400">Name</div>
+          <div
+            data-cy="name-input"
+            class="text-lg text-neutral-800">
+            {{ abnInfo.EntityName }}
+          </div>
+        </div>
+        <div class="mt-10 flex flex-col justify-start items-start">
+          <div class="text-zinc-400">Trading Name</div>
+          <div
+            data-cy="trading-name-input"
+            class="text-lg text-neutral-800">
+            {{ abnInfo?.BusinessName[0] }}
+          </div>
+        </div>
+        <div class="mt-10 flex flex-col justify-start items-start">
+          <div class="text-zinc-400">Entity Type</div>
+          <div
+            data-cy="entity-type-input"
+            class="text-lg text-neutral-800">
+            {{ abnInfo.EntityTypeName }}
+          </div>
+        </div>
+      </div>
+
+      <div class="buttons flex justify-start mt-12">
+        <button
+          mat-stroked-button
+          color="primary"
+          class="text-base w-[200px]"
+          (click)="resetAbn()">
+          Reset
+        </button>
+        <button
+          data-cy="button-confirm"
+          mat-raised-button
+          color="primary"
+          class="button-confirm w-[200px] ml-4"
+          [disabled]="disableConfirm"
+          (click)="confirmAbn()">
+          Confirm
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

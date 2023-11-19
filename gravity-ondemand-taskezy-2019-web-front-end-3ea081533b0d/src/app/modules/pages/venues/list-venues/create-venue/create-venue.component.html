@@ -1,0 +1,52 @@
+<div class="flex flex-col flex-auto min-w-0 h-full">
+  <!--Header-->
+  <!-- <div class="header accent text-white p-10 p-sm-24 bg-primary">
+
+    <div class="absolute right-2 top-2" (click)="backListVenues()">
+      <mat-icon class="text-white cursor-pointer">close</mat-icon>
+    </div>
+
+    <div class="row" fxLayout="row" fxLayoutAlign="space-between center">
+      <div class="flex flex-row items-center">
+        <div>
+          <mat-icon class="text-white">person</mat-icon>
+        </div>
+        <span class="pl-2 text-3xl">
+          <span *ngIf="currentVenue">{{ currentVenue?.name }}</span>
+          <span *ngIf="!currentVenue">Add new Venue</span>
+        </span>
+      </div>
+    </div>
+
+  </div> -->
+  <app-header-with-buttons [title]="'Add new Venue'"></app-header-with-buttons>
+  <app-buttons-venues-detail-page
+    [addNewVenue]="true"
+    [showEdit]="accountService.currentAccountIsSubscriber"
+  ></app-buttons-venues-detail-page>
+  <!--/Header-->
+
+  <div class="content w-full overflow-y-auto">
+    <!-- Alert -->
+    <fuse-alert
+      class="mt-4 mb-1"
+      *ngIf="showAlert"
+      [appearance]="'outline'"
+      [showIcon]="false"
+      [type]="alert.type"
+      [dismissible]="true"
+      [@shake]="alert.type === 'error'"
+    >
+      {{ alert.message }}
+    </fuse-alert>
+
+    <!--    <div class="h-full" *ngIf="currentVenue && !viewAddVenue && !viewEditVenue">-->
+    <!--      -->
+    <!--    </div>-->
+    <app-add-venue
+      [accountType]="'primaryAccount'"
+      [currentAccount]="currentAccount"
+      (closeAddVenueForm)="backListVenues()"
+    ></app-add-venue>
+  </div>
+</div>

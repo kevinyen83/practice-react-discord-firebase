@@ -1,0 +1,284 @@
+<div class="absolute inset-0 flex flex-col min-w-0 overflow-hidden">
+  <!--Header-->
+  <mat-drawer-container
+    class="absolute top-0 left-0 bottom-0 right-0"
+    [hasBackdrop]="true"
+  >
+    <mat-drawer-content class="flex-auto flex flex-col overflow-hidden">
+      <div
+        class="flex-none accent text-white w-full h-[114px] p-8 p-sm-24 bg-primary"
+      >
+        <!-- APP TITLE -->
+        <div class="row flex flex-col">
+          <div class="row-top">
+            <div class="logo flex items-center">
+              <div class="logo-block mb-2 w-1/2 flex items-center">
+                <div class="logo-icon w-5 h-5 mr-16">
+                  <img src="assets/images/icons/incident_report.svg" />
+                </div>
+                <div
+                  class="logo-text h1 w-80 text-size-all-headers"
+                  data-cy="logo-text"
+                >
+                  Incident Reports
+                </div>
+              </div>
+
+              <div class="row-bottom">
+                <div class="flex items-center">
+                  <label class="mb-4 mr-2">View As</label>
+                  <mat-form-field class="flex">
+                    <mat-select
+                      data-cy="view-as"
+                      [formControl]="viewAs"
+                      (selectionChange)="viewAsChanged($event)"
+                    >
+                      <mat-option value="subscriber"></mat-option>
+                      <mat-option value="client">Client</mat-option>
+                      <mat-option value="supplier">Supplier</mat-option>
+                    </mat-select>
+                  </mat-form-field>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </div>
+        <!-- / APP TITLE -->
+      </div>
+      <!--/Header-->
+
+      <!--Content-->
+      <div class="content p-12 overflow-auto h-full">
+        <!-- action bar -->
+        <div class="flex-none mt-2 mb-2">
+          <div class="col-md-4 w-full flex flex-row justify-start items-center">
+            <div class="flex">
+              <button
+                color="primary"
+                class="ml-2 mat-elevation-z0"
+                matTooltip="filters"
+                mat-mini-fab
+                (click)="openFilters()"
+              >
+                <mat-icon>filter_alt</mat-icon>
+              </button>
+            </div>
+
+            <mat-form-field
+              class="w-full max-w-[300px] mb-0 ml-7 rounded-full mt-4"
+              ><mat-icon>search</mat-icon>
+              <input matInput class="rounded-full" required />
+            </mat-form-field>
+
+            <div class="flex flex-auto items-center justify-center">
+              <mat-form-field
+                class="w-[280px] fuse-mat-no-subscript"
+                (click)="dp.open()"
+              >
+                <button
+                  mat-icon-button
+                  color="white"
+                  mwlCalendarPreviousView
+                  [view]="viewAngularCalendar"
+                  [(viewDate)]="viewDate"
+                  (click)="dateChanged(); $event.stopPropagation(); (false)"
+                  matPrefix
+                >
+                  <mat-icon>keyboard_arrow_left</mat-icon>
+                </button>
+                <input matInput readonly [ngModel]="viewDateString()" />
+                <input
+                  matInput
+                  [matDatepicker]="dp"
+                  hidden
+                  (dateChange)="gotoDate($event.target.value)"
+                />
+                <mat-datepicker #dp disabled="false"> </mat-datepicker>
+                <button
+                  mat-icon-button
+                  color="white"
+                  mwlCalendarNextView
+                  [view]="viewAngularCalendar"
+                  [(viewDate)]="viewDate"
+                  (click)="dateChanged(); $event.stopPropagation(); (false)"
+                  matSuffix
+                >
+                  <mat-icon>keyboard_arrow_right</mat-icon>
+                </button>
+                <button
+                  mat-icon-button
+                  color="primary"
+                  mwlCalendarToday
+                  matTooltip="today"
+                  [(viewDate)]="viewDate"
+                  (click)="dateChanged(); $event.stopPropagation(); (false)"
+                  matSuffix
+                >
+                  <mat-icon>today</mat-icon>
+                </button>
+              </mat-form-field>
+            </div>
+
+            <button
+              mat-raised-button
+              color="primary"
+              class="shadow-none text-white"
+              disabled="checked > 0"
+            >
+              Link reports
+            </button>
+          </div>
+        </div>
+        <!-- / actio bar -->
+
+        <div class="table w-full mt-5">
+          <div class="table-container w-full">
+            <mat-table
+              data-cy="table-reporting"
+              class="w-full bg-transparent"
+              [dataSource]="incidentsSource"
+              matSort
+            >
+              <!-- VenueName Column -->
+
+              <ng-container matColumnDef="status">
+                <mat-header-cell
+                  mat-header-cell
+                  *matHeaderCellDef
+                  mat-sort-header
+                ></mat-header-cell>
+                <mat-cell mat-cell class="w-[20px]" *matCellDef="let row">
+                  <mat-checkbox></mat-checkbox>
+                </mat-cell>
+              </ng-container>
+
+              <!-- Incidnet datetime Column -->
+              <ng-container matColumnDef="datetime">
+                <mat-header-cell
+                  mat-header-cell
+                  *matHeaderCellDef
+                  mat-sort-header
+                  >Date/Time</mat-header-cell
+                >
+                <mat-cell mat-cell *matCellDef="let row">
+                  {{ row.creation_date_time | date: "dd MMM yyyy HH:mm" }}
+                </mat-cell>
+              </ng-container>
+
+              <!-- Venue Address Column -->
+              <ng-container matColumnDef="venue">
+                <mat-header-cell
+                  mat-header-cell
+                  *matHeaderCellDef
+                  mat-sort-header
+                  >Venue</mat-header-cell
+                >
+                <mat-cell mat-cell *matCellDef="let row">
+                  <p>{{ row.shift.venue.name }}</p>
+                </mat-cell>
+              </ng-container>
+
+              <ng-container matColumnDef="client">
+                <mat-header-cell
+                  mat-header-cell
+                  *matHeaderCellDef
+                  mat-sort-header
+                  >Client</mat-header-cell
+                >
+                <mat-cell mat-cell *matCellDef="let row">
+                  <i>{{ row.shift.client?.detail?.name }}</i>
+                </mat-cell>
+              </ng-container>
+
+              <ng-container matColumnDef="reportId">
+                <mat-header-cell
+                  mat-header-cell
+                  *matHeaderCellDef
+                  mat-sort-header
+                  >Report ID</mat-header-cell
+                >
+                <mat-cell mat-cell *matCellDef="let row">
+                  <p>{{ row.uuid }}</p>
+                </mat-cell>
+              </ng-container>
+
+              <!-- Entry Date By Column -->
+              <ng-container matColumnDef="created">
+                <mat-header-cell
+                  *matHeaderCellDef
+                  mat-sort-header
+                  class="link-container"
+                  >Original Author</mat-header-cell
+                >
+                <mat-cell mat-cell *matCellDef="let row">
+                  <p>{{ row.task?.resource?.name }}</p>
+                </mat-cell>
+              </ng-container>
+              <ng-container matColumnDef="editedBy">
+                <mat-header-cell
+                  *matHeaderCellDef
+                  mat-sort-header
+                  class="link-container"
+                  >Edited By</mat-header-cell
+                >
+                <mat-cell mat-cell *matCellDef="let row">
+                  <p></p>
+                </mat-cell>
+              </ng-container>
+              <ng-container matColumnDef="lastModified">
+                <mat-header-cell
+                  *matHeaderCellDef
+                  mat-sort-header
+                  class="link-container"
+                  >Last modified</mat-header-cell
+                >
+                <mat-cell mat-cell *matCellDef="let row">
+                  <p></p>
+                </mat-cell>
+              </ng-container>
+              <ng-container matColumnDef="action">
+                <mat-header-cell
+                  *matHeaderCellDef
+                  mat-sort-header
+                  class="link-container"
+                ></mat-header-cell>
+                <mat-cell mat-cell *matCellDef="let row">
+                  <mat-icon>delete</mat-icon>
+                </mat-cell>
+              </ng-container>
+              <mat-header-row
+                mat-header-row
+                class="border-0"
+                *matHeaderRowDef="displayedColumns"
+              ></mat-header-row>
+              <mat-row
+                class="hover:bg-gray-100 border-0 py-5 bg-white rounded my-2"
+                mat-row
+                *matRowDef="let row; columns: displayedColumns"
+                (click)="goToReport(row)"
+              >
+              </mat-row>
+            </mat-table>
+            <mat-paginator
+              #paginator
+              [pageSizeOptions]="[5, 10, 25, 100]"
+            ></mat-paginator>
+            <p class="total ml-3 text-gray-400">
+              Total Reports: {{ incidents.length }}
+            </p>
+          </div>
+        </div>
+      </div>
+    </mat-drawer-content>
+  </mat-drawer-container>
+  <mat-drawer
+    class="w-2/5 dark:bg-primary"
+    [mode]="'side'"
+    #matDrawerFilterIncidents
+  >
+    <app-filters-incidents
+      (closeSideBar)="closeFilters()"
+    ></app-filters-incidents>
+  </mat-drawer>
+</div>

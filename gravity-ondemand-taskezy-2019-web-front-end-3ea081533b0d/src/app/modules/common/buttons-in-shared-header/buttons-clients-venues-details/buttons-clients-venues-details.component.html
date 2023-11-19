@@ -1,0 +1,19 @@
+<ng-template #buttonsTemplate>
+  <div class="flex flex-row items-center">
+    <button
+      mat-flat-button
+      type="button"
+      color="warn"
+      (click)="venueDelete()"
+      class="delete-button"
+      aria-label="Cancel"
+      data-cy="venue-details-delete"
+      *ngIf="showDelete"
+    >
+      Delete
+    </button>
+  </div>
+  <!-- This seems to be missing the ability to edit a venue of a client when its internally managed
+  if it is external then we dont have an edit button, but if its internal we can edit it, same as the delete above 
+it should use the same rules at buttons-venues-detail-page.component-->
+</ng-template>

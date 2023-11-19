@@ -1,0 +1,36 @@
+<ng-template #buttonsTemplate>
+  <div class="header-button flex justify-end">
+    <button
+      *ngIf="!editing && showAddVenue"
+      class="text-white"
+      color="primary"
+      mat-stroked-button
+      (click)="openAddVenue()"
+    >
+      <!-- <mat-icon class="text-white">add</mat-icon> -->
+      Add new venue
+    </button>
+
+    <div *ngIf="editing" class="buttons-venue flex items-center">
+      <button
+        mat-stroked-button
+        class="cancel-button text-center rounded-full ml-2 mr-3"
+        (click)="cancelVenue()"
+        data-cy="buttons-clients-venues-cancel-button"
+      >
+        Cancel
+      </button>
+
+      <button
+        color="primary"
+        [disabled]="headerButtonService.venueForm?.invalid"
+        class="save-button text-white rounded-full"
+        mat-stroked-button
+        data-cy="save-venue"
+        (click)="saveVenue()"
+      >
+        <span>SAVE</span>
+      </button>
+    </div>
+  </div>
+</ng-template>

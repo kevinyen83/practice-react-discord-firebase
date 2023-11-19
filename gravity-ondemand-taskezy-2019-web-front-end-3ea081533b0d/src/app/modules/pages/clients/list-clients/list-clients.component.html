@@ -1,0 +1,254 @@
+
+<mat-drawer-container
+    class="absolute top-0 left-0 bottom-0 right-0"
+    [hasBackdrop]="true"
+>
+  <mat-drawer-content class="flex-auto flex flex-col">
+      <div class="flex flex-col flex-auto min-w-0 h-full">
+        <!--Header-->
+        <div
+          class="header text-white p-10 p-sm-24 bg-primary flex flex-row justify-between"
+        >
+          <!-- APP TITLE -->
+          <div class="text-3xl flex items-center">
+            <div class="mr-16">
+              <img src="./assets/images/icons/client.svg" />
+            </div>
+            <div class="logo-text h1">Clients</div>
+          </div>
+          <div class="flex w-2/3 justify-between items-center">
+            <app-search-header-for-users
+              class="w-3/4 mr-2"
+              [currentUser]="'client'"
+              [users]="allClients"
+              (updateList)="updateListClients($event)"
+            ></app-search-header-for-users>
+            <button
+              *ngIf="accountService.currentAccountIsSubscriber"
+              data-cy="create-client-button"
+              mat-stroked-button
+              (click)="createClient()"
+            >
+              <mat-icon class="text-white">add</mat-icon>Add New Client
+            </button>
+          </div>
+          <!-- / APP TITLE -->
+        </div>
+        <!--/Header-->
+
+        <!--Content-->
+
+        <div>
+            <div class="card">
+              <div class="relative flex w-full">
+                <fuse-drawer
+                [name]="'leftDrawer'"
+                [opened]="drawerOpened"
+                [position]="'left'"
+                [mode]="'side'"
+                >
+                <app-filter-client-supplier
+                [currentUser]="'client'"
+                [users]="allClients"
+                [selectedValue]="selectedValue"
+                class="w-full"
+
+                (updateList)="updateListClients($event)"></app-filter-client-supplier>
+              </fuse-drawer>
+              <div class="p-3 w-full h-full">
+                <div class="flex flex-row">
+                  <mat-chip-list class="mb-4">
+                    <mat-chip class="m-2" *ngFor=" let selectedValueManaged of selectedValuesManaged; let i = index">
+                      <div class="mat-elevation-z0 p-2">
+                        {{selectedValueManaged === 10 ? 'Externally Managed' : 'Internally Managed'}}
+                      </div>
+                      <mat-icon [attr.data-cy]="'managed-cancel-' + i" class="hover:cursor-pointer" (click)="unTickSelectedValue(selectedValueManaged)">
+                        cancel
+                      </mat-icon>
+                    </mat-chip>
+                  </mat-chip-list>
+
+                  <mat-chip-list class="mb-4 ">
+                    <mat-chip class="m-2" *ngFor=" let selectedValueObject of selectedValuesObject; let i = index">
+                      <div class="mat-elevation-z0 p-2">
+                        {{ selectedValueObject === 0 ? 'Pending' : selectedValueObject === 1 ? 'Active' : selectedValueObject === 2 ? 'Inactive' : selectedValueObject === 3 ? 'Banned' : selectedValueObject === 4 ? 'Waiting for Approval' : selectedValueObject === 5 ? 'Failed' : selectedValueObject === 6 ? 'Verified' : ''}}
+                      </div>
+                      <mat-icon [attr.data-cy]="'status-cancel-' + i" class="hover:cursor-pointer" (click)="unTickSelectedValue(selectedValueObject)">
+                        cancel
+                      </mat-icon>
+                    </mat-chip>
+                  </mat-chip-list>
+
+                <!-- <div *ngFor=" let selectedValueManaged of selectedValuesManaged">
+                  <button
+                  (click)="unTickSelectedValue(selectedValueManaged)"
+                  class="mat-elevation-z0 m-2 p-2 gray-button">{{selectedValueManaged === 10 ? 'Externally Managed' : 'Internally Managed'}}
+                    <span class="close-icon ml-2">X</span>
+                  </button>
+                </div>
+                <div *ngFor=" let selectedValueObject of selectedValuesObject">
+                  <button>{{selectedValueObject}}</button>
+                </div> -->
+              </div>
+                <div class="flex flex-row">
+                  <button
+                  *ngIf="!drawerOpened"
+                  color="primary"
+                  data-cy="filters-icon"
+                  class="ml-2 mat-elevation-z0 mr-2"
+                  matTooltip="filters"
+                  mat-mini-fab
+                  (click)="toggleDrawerOpen()"
+                >
+                  <mat-icon >filter_alt</mat-icon>
+                </button>
+                <button
+                *ngIf="drawerOpened"
+                  color="primary"
+                  data-cy="filters-icon"
+                  class="ml-2 mat-elevation-z0 mr-2"
+                  matTooltip="close"
+                  mat-mini-fab
+                  (click)="toggleDrawerOpen()"
+                >
+                  <mat-icon class="ml-2">arrow_back_ios</mat-icon>
+                </button>
+                <p *ngIf="!drawerOpened && !(selectedValuesManaged.length || selectedValuesObject.length || selectedValuesString.length)" class="mt-7 mb-7 font-[14px] font-bold">
+                  Total Clients: {{ allClients?.length }}
+                </p>
+                <p data-cy="filtered-clients" *ngIf="drawerOpened || selectedValuesManaged.length || selectedValuesObject.length || selectedValuesString.length" class="mt-7 mb-7 font-[14px] font-bold">
+                  Filtered Clients: {{ allClients | filterClientSupplier: selectedValuesManaged:selectedValuesObject:selectedValuesString:'totalNumber'}}
+                </p>
+            </div>
+                <div class="content-table w-full">
+                  <table class="flex-flex-col w-full min-h-screen">
+                    <tr
+                      data-cy="client"
+                      class="flex flex-row items-center justify-between w-full border-b-2 pt-2 pb-2 cursor-pointer hover:bg-gray-100"
+                      *ngFor="let client of clients | filterClientSupplier: selectedValuesManaged:selectedValuesObject:selectedValuesString"
+                      (click)="editClient(client)"
+                    >
+                      <td class="flex w-fit logo">
+                        <div
+                          class="w-20 h-20 flex items-center border-2 rounded-full overflow-hidden"
+                        >
+                          <img
+                            [src]="client.detail?.logo || defaultAvatar"
+                            alt="logo"
+                          />
+                        </div>
+                      </td>
+                      <td
+                        class="flex flex-col items-start justify-center w-full pl-5 align-middle"
+                      >
+                        <div class="text-xl font-medium">
+                          {{ client.detail?.name }}
+                        </div>
+                        <div class="text-sm text-gray-500">
+                          {{ client.detail?.tradingname }}
+                        </div>
+                        <div>
+                          <td class=" text-left" *ngIf="client?.invitation?.email.length === 0 && client?.connection_request?.relationship !== 'client'">Internally managed</td>
+                          <td class=" text-left" *ngIf="client?.invitation?.email.length > 0 || client?.connection_request?.relationship === 'client'">Externally managed</td>
+                        </div>
+                      </td>
+
+                      <td class="flex items-center status w-1/5">
+                        <div
+                          data-cy="status-element"
+                          class="w-24 ml-4 rounded-3xl text-center p-1"
+                          [ngClass]="
+                            utils.getStatusColour(
+                              client?.connection_status,
+                              true,
+                              false
+                            )
+                          "
+                        >
+                          <span>{{
+                            utils.getStatus(
+                              client?.connection_status,
+                              true,
+                              false
+                            )
+                          }}</span>
+                        </div>
+                      </td>
+                    </tr>
+                  </table>
+                </div>
+              </div>
+              </div>
+            </div>
+          </div>
+        </div>
+    </mat-drawer-content>
+
+    <mat-drawer
+      class="sm:w-full md:w-3/5 lg:w-3/5 xl:w-3/5 2xl:w-3/5 dark:bg-primary"
+      [autoFocus]="false"
+      [mode]="'over'"
+      [position]="'end'"
+      #matDrawerClient
+    >
+      <app-create-client
+        *ngIf="matDrawerClient.opened"
+        (closeCreate)="matDrawerClient.toggle()"
+      ></app-create-client>
+    </mat-drawer>
+
+  </mat-drawer-container>
+  <!-- <mat-drawer
+  class="w-2/5 dark:bg-primary"
+  [mode]="'side'"
+  #matDrawerFilterClient
+>
+<app-filter-client-supplier
+[currentUser]="'client'"
+[users]="allClients"
+(closeSideBar)="closeSideNav('filter')"
+(updateList)="updateListClients($event)"></app-filter-client-supplier>
+</mat-drawer> -->
+
+<!-- <button
+    mat-flat-button
+    [color]="'primary'"
+    (click)="toggleDrawerMode();">
+        Toggle drawer mode
+</button>
+
+<button
+    class="ml-4"
+    mat-flat-button
+    [color]="'primary'"
+    (click)="toggleDrawerOpen();">
+    Toggle drawer open
+</button>
+
+<div class="relative flex overflow-hidden border mt-8 min-h-80">
+  <fuse-drawer
+      [name]="'leftDrawer'"
+      [opened]="drawerOpened"
+      [mode]="drawerMode">
+      <div class="p-4">
+          Left drawer
+      </div>
+  </fuse-drawer>
+
+  <div class="flex-auto bg-gray-100 p-4">
+      Some content
+  </div>
+
+
+  <fuse-drawer
+      [name]="'rightDrawer'"
+      [opened]="true"
+      [position]="'right'"
+      [mode]="'side'">
+      <div class="p-4">
+          Right drawer
+      </div>
+  </fuse-drawer>
+</div> -->
+
+

@@ -1,0 +1,27 @@
+<div class="w-full flex flex-wrap justify-between">
+
+  <div class="flex flex-row w-full md:justify-center sm:justify-center sm:flex-wrap items-center">
+    <mat-form-field class="fuse-mat-no-subscript w-1/2" appearance="fill">
+      <input data-cy="search-by-name" matInput placeholder="Search by name" [formControl]="sorting"
+      (input)="changeInput($event.target.value)">
+    </mat-form-field>
+      <!-- <mat-form-field class="fuse-mat-no-subscript w-1/2" appearance="fill">
+        <mat-select placeholder="Search By" [formControl]="sorting" (selectionChange)="changeSorting($event)">
+          <mat-option value="Company Name">Company Name</mat-option>
+          <mat-option value="Status">Status</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field class="pl-3 fuse-mat-no-subscript w-1/2" appearance="fill">
+        <mat-select placeholder="Select" [formControl]="select" (selectionChange)="changeSelect($event)" multiple>
+          <mat-option *ngFor="let select of selects" [value]="select.value">{{select.name}}</mat-option>
+        </mat-select>
+      </mat-form-field> -->
+<!--    <div class="flex text-white pl-3">-->
+<!--      <button mat-stroked-button (click)="searchUser()">-->
+<!--        Search-->
+<!--      </button>-->
+<!--    </div>-->
+
+  </div>
+</div>

@@ -1,0 +1,76 @@
+<ng-template #buttonsTemplate>
+  <div class="flex flex-row items-center">
+    <button
+      mat-flat-button
+      type="button"
+      color="warn"
+      *ngIf="!editing && showDelete && !addNewVenue"
+      (click)="venueDelete()"
+      class="delete-button"
+      aria-label="Cancel"
+      data-cy="venue-details-delete"
+    >
+      Delete
+    </button>
+    <div>
+      <button
+        *ngIf="editing && !addNewVenue"
+        mat-stroked-button
+        color="primary"
+        class="rounded-[33px] mr-1 ml-1 text-white"
+        (click)="cancelVenue()"
+        data-cy="buttons-venues-detial-back-button"
+      >
+        Back
+      </button>
+
+      <button
+        *ngIf="editing && !addNewVenue"
+        mat-stroked-button
+        color="primary"
+        class="add-venue-button rounded-[33px] text-white"
+        id="save-details-button"
+        data-cy="save-details-button"
+        (click)="venueSaveForVenueDetails()"
+      >
+        Save
+      </button>
+    </div>
+    <button
+      class="ml-2 text-white"
+      color="primary"
+      (click)="venueEdit()"
+      *ngIf="!editing && !addNewVenue && showEdit"
+      mat-stroked-button
+      data-cy="venue-details-edit"
+    >
+      Edit
+    </button>
+  </div>
+
+  <!-- add new venue -->
+  <div class="flex flex-row justify-end items-center" *ngIf="addNewVenue">
+    <div>
+      <button
+        mat-stroked-button
+        color="primary"
+        data-cy="cancel-button"
+        class="rounded-[33px] mr-2 text-white"
+        (click)="cancelAdd()"
+      >
+        Cancel
+      </button>
+
+      <button
+        mat-stroked-button
+        color="primary"
+        class="add-venue-button rounded-[33px] text-white"
+        id="save-details-button"
+        data-cy="save-button"
+        (click)="saveVenue()"
+      >
+        Save
+      </button>
+    </div>
+  </div>
+</ng-template>
